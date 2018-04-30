@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/virtual_keyboard_color" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
+
+        <ImageView
+            android:id="@+id/iv_hide_keyboard_button"
+            android:layout_width="@dimen/keyboard_button_size"
+            android:layout_height="@dimen/keyboard_button_size"
+            android:tint="@color/keyboard_button_color"
+            android:src="@drawable/ic_keyboard_hide_white_24dp"
+            android:padding="8dp"
+            android:contentDescription="@string/hide_keyboard" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/iv_reset_button"
+            android:layout_width="@dimen/keyboard_button_size"
+            android:layout_height="@dimen/keyboard_button_size"
+            android:tint="@color/keyboard_button_color"
+            android:src="@drawable/ic_refresh_white_24dp"
+            android:padding="8dp"
+            android:contentDescription="@string/reset" />
+
+        <ImageView
+            android:id="@+id/iv_undo_button"
+            android:layout_width="@dimen/keyboard_button_size"
+            android:layout_height="@dimen/keyboard_button_size"
+            android:tint="@color/keyboard_button_color"
+            android:src="@drawable/ic_undo_white_24dp"
+            android:padding="8dp"
+            android:contentDescription="@string/undo" />
+
+        <ImageView
+            android:id="@+id/iv_redo_button"
+            android:layout_width="@dimen/keyboard_button_size"
+            android:layout_height="@dimen/keyboard_button_size"
+            android:tint="@color/keyboard_button_color"
+            android:src="@drawable/ic_redo_white_24dp"
+            android:padding="8dp"
+            android:contentDescription="@string/redo" />
+
+        <ImageView
+            android:id="@+id/iv_backspace_button"
+            android:layout_width="@dimen/keyboard_button_size"
+            android:layout_height="@dimen/keyboard_button_size"
+            android:tint="@color/keyboard_button_color"
+            android:src="@drawable/ic_backspace_white_24dp"
+            android:padding="8dp"
+            android:contentDescription="@string/backspace" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+        <LinearLayout
+            android:id="@+id/ll_virtual_keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </ScrollView>
+
+</LinearLayout>

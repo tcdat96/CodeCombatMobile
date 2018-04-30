@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#10C57C</color>
+
+    <!--log in/up-->
+    <color name="login_background_color">#3F4050</color>
+    <color name="sign_in_button_color">#FF5E57</color>
+
+    <!--student classes-->
+    <color name="python_color">#03A9F4</color>
+    <color name="javascript_color">#FB9C1C</color>
+
+    <!--code editor-->
+    <color name="virtual_keyboard_color">#F2F6F7</color>
+    <color name="keyboard_button_color">#5E666A</color>
+    <color name="select_background_color">#BDBDBD</color>
+
+    <color name="condition_color">#FF647E</color>
+    <color name="declaration_color">#657DFF</color>
+    <color name="variable_color">#73B3C1</color>
+    <color name="function_color">#309CE8</color>
+    <color name="method_color">#2AE48A</color>
+    <color name="value_color">#F9A825</color>
+    <color name="operator_color">#F86AFF</color>
+</resources>
