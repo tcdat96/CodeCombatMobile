@@ -31,4 +31,16 @@
         <item quantity="other">%1$d students</item>
     </plurals>
     <string name="archive_class">Archive</string>
+    <string name="language_cover">Language cover</string>
+
+    <!--class detail-->
+    <string name="total_student">Student</string>
+    <string name="total_play_time">Playtime</string>
+    <string name="total_level">Level</string>
+    <string name="average_play_time">avg. playtime</string>
+    <string name="average_level">avg. level</string>
+    <string name="latest_level">Latest level</string>
+    <string name="icon">icon</string>
+
+    <string name="cover_transition_name" translatable="false">coverTrans</string>
 </resources>

@@ -16,6 +16,7 @@ import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.StudentClass;
+import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 /**
  * Created by ADMIN on 30/04/2018.
@@ -44,7 +45,7 @@ public class StudentClassAdapter extends RecyclerView.Adapter<StudentClassAdapte
     @Override
     public void onBindViewHolder(@NonNull StudentClassViewHolder holder, int position) {
         StudentClass stuClass = mClasses.get(position);
-        holder.mLanguageTextView.setText(stuClass.getLanguage());
+        holder.mLanguageTextView.setText(DisplayUtil.capitalize(stuClass.getLanguage()));
         holder.mClassNameTextView.setText(stuClass.getClassName());
         holder.mTeacherTextView.setText(stuClass.getTeacher());
         holder.mCourseNameTextView.setText(stuClass.getCourseName());

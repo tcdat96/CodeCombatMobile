@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.TeacherClass;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
+import tcd.android.com.codecombatmobile.ui.widget.DetailCardView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 LoginActivity.class,
                 StudentClassActivity.class,
                 TeacherClassActivity.class,
+                ClassDetailActivity.class,
                 CodeEditorActivity.class
         };
         for (final Class activity : activities) {
@@ -40,6 +42,6 @@ public class MainActivity extends AppCompatActivity {
             rootContainer.addView(button);
         }
 
-        startActivity(new Intent(MainActivity.this, TeacherClassActivity.class));
+        startActivity(new Intent(MainActivity.this, ClassDetailActivity.class));
     }
 }

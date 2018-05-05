@@ -12,4 +12,7 @@
     <!--student classes-->
     <dimen name="language_tag_padding">6dp</dimen>
     <dimen name="progress_bar_size">64dp</dimen>
+
+    <!--class detail-->
+    <dimen name="card_icon_size">24dp</dimen>
 </resources>

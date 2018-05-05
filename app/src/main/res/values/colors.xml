@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#10C57C</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
+    <color name="colorAccent">#4285F4</color>
 
     <!--log in/up-->
     <color name="login_background_color">#3F4050</color>
@@ -11,6 +11,9 @@
     <!--student classes-->
     <color name="python_color">#03A9F4</color>
     <color name="javascript_color">#FB9C1C</color>
+
+    <!--teacher class-->
+    <color name="ancillary_text_color">#d6d6d6</color>
 
     <!--code editor-->
     <color name="virtual_keyboard_color">#F2F6F7</color>

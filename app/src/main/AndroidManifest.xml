@@ -23,17 +23,20 @@
         </activity>
         <activity
             android:name=".ui.CodeEditorActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/LogInTheme" />
         <activity
             android:name=".ui.StudentClassActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.TeacherClassActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".ui.ClassDetailActivity" />
+
     </application>
 
 </manifest>
