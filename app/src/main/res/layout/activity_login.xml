@@ -165,6 +165,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textStyle="italic"
+                android:textColor="@android:color/white"
                 android:text="@string/or"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
