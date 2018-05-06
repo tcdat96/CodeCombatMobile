@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import tcd.android.com.codecombatmobile.data.Syntax.CodeBlock;
 import tcd.android.com.codecombatmobile.data.Syntax.Declaration;
 import tcd.android.com.codecombatmobile.data.Syntax.Function;
 import tcd.android.com.codecombatmobile.data.Syntax.Operation;
@@ -30,6 +31,8 @@ public class OperationFactory {
         switch (type) {
             case Operation.TYPE_CONDITION:
                 switch (name) {
+                    case "if": return new CodeBlock("If");
+                    case "for": return new CodeBlock("For");
                     case "return": return new Return();
                     default:
                         throw new IllegalArgumentException("Unknown syntax name");

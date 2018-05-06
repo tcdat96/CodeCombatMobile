@@ -21,6 +21,8 @@ import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public abstract class Operation {
 
+    protected static final String DEFAULT_INDENT = "    ";
+
     public static final int TYPE_CONDITION = 0,
             TYPE_DECLARATION = 1,
             TYPE_VARIABLE = 2,

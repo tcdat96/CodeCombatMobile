@@ -52,6 +52,8 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         LinearLayout rootContainer = findViewById(R.id.ll_virtual_keyboard);
 
         List<Pair<Integer, String>> opTypes = new ArrayList<>();
+        opTypes.add(new Pair<>(TYPE_CONDITION, "if"));
+        opTypes.add(new Pair<>(TYPE_CONDITION, "for"));
         opTypes.add(new Pair<>(TYPE_CONDITION, "return"));
         opTypes.add(new Pair<>(TYPE_DECLARATION, "var"));
         opTypes.add(new Pair<>(TYPE_VARIABLE, "abc"));
