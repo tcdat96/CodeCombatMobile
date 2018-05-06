@@ -74,11 +74,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_margin="8dp">
+
         <LinearLayout
-            android:id="@+id/ll_virtual_keyboard"
+            android:id="@+id/ll_button_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" />
+
     </ScrollView>
 
 </LinearLayout>

@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="tcd.android.com.codecombatmobile.ui.CodeEditorActivity">
 
-    <tcd.android.com.codecombatmobile.ui.widget.CodeEditor
-        android:id="@+id/code_editor"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="none"
-        android:gravity="top|start"
-        android:background="@android:color/transparent"
-        android:padding="16dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
+        <ScrollView
+            android:id="@+id/sv_editor_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <tcd.android.com.codecombatmobile.ui.widget.CodeEditor
+                android:id="@+id/code_editor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"/>
+
+        </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
@@ -28,14 +33,15 @@
             app:fabSize="auto"
             android:tint="@android:color/white"
             android:src="@drawable/ic_play_arrow_white_24dp"
-            android:layout_gravity="end"
+            android:layout_gravity="end|bottom"
             android:layout_marginBottom="@dimen/fab_margin"
             android:layout_marginRight="@dimen/fab_margin"
             android:layout_marginEnd="@dimen/fab_margin" />
 
-        <include
-            layout="@layout/view_virtual_keyboard" />
+    </FrameLayout>
 
-    </LinearLayout>
+    <include
+        android:id="@+id/ll_keyboard_layout"
+        layout="@layout/view_virtual_keyboard" />
 
-</FrameLayout>
+</LinearLayout>

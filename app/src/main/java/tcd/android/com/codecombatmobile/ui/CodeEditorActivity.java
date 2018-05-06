@@ -1,10 +1,12 @@
 package tcd.android.com.codecombatmobile.ui;
 
 import android.os.Bundle;
+import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,8 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
     private static final String TAG = CodeEditorActivity.class.getSimpleName();
 
+    private LinearLayout mRootLayout, mKeyboardLayout;
+    private ScrollView mEditorScrollView;
     private CodeEditor mCodeEditor;
 
     @Override
@@ -37,7 +41,12 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initUiComponents() {
+        mRootLayout = findViewById(R.id.ll_root);
+        mKeyboardLayout = findViewById(R.id.ll_keyboard_layout);
+        mEditorScrollView = findViewById(R.id.sv_editor_container);
+
         mCodeEditor = findViewById(R.id.code_editor);
+        mCodeEditor.setOnClickListener(this);
 
         findViewById(R.id.iv_hide_keyboard_button).setOnClickListener(this);
         findViewById(R.id.iv_reset_button).setOnClickListener(this);
@@ -49,7 +58,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initVirtualKeyboard() {
-        LinearLayout rootContainer = findViewById(R.id.ll_virtual_keyboard);
+        LinearLayout buttonContainer = findViewById(R.id.ll_button_container);
 
         List<Pair<Integer, String>> opTypes = new ArrayList<>();
         opTypes.add(new Pair<>(TYPE_CONDITION, "if"));
@@ -68,7 +77,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         for (int i = 0; i < opTypes.size(); i++) {
             if (i % 4 == 0) {
                 columnLayout = DisplayUtil.getVerticalLinearLayout(this);
-                rootContainer.addView(columnLayout);
+                buttonContainer.addView(columnLayout);
             }
 
             final Pair<Integer, String> pair = opTypes.get(i);
@@ -93,8 +102,30 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    public void onBackPressed() {
+        if (mKeyboardLayout.getVisibility() == View.VISIBLE) {
+            TransitionManager.beginDelayedTransition(mRootLayout);
+            mKeyboardLayout.setVisibility(View.GONE);
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.code_editor:
+                if (mKeyboardLayout.getVisibility() == View.GONE) {
+                    TransitionManager.beginDelayedTransition(mRootLayout);
+                    mKeyboardLayout.setVisibility(View.VISIBLE);
+                    mKeyboardLayout.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEditorScrollView.smoothScrollTo(0, mEditorScrollView.getHeight());
+                        }
+                    }, 500);
+                }
+                break;
             case R.id.iv_hide_keyboard_button:
                 break;
             case R.id.iv_reset_button:
