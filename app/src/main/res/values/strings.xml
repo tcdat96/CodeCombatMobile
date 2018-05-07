@@ -8,9 +8,9 @@
     <string name="redo">Redo</string>
     <string name="backspace">Backspace</string>
     <string name="cannot_insert_error">That cannot be inserted there.</string>
-    <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
+    <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -40,7 +40,20 @@
     <string name="average_play_time">avg. playtime</string>
     <string name="average_level">avg. level</string>
     <string name="latest_level">Latest level</string>
-    <string name="icon">icon</string>
+    <string name="description_icon">icon</string>
+    <string name="students">Students</string>
 
     <string name="cover_transition_name" translatable="false">coverTrans</string>
+
+    <!-- settings -->
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_username_title">Username</string>
+    <string name="pref_username_key" translatable="false">username</string>
+    <string name="pref_account_settings_group_title">Account</string>
+    <string name="pref_email_title">Email</string>
+    <string name="pref_email_key" translatable="false">email</string>
+    <string name="pref_notifications_group_title">Notifications</string>
+    <string name="pref_notifications_title">Notifications</string>
+    <string name="pref_notifications_key" translatable="false">notifications</string>
+    <string name="sign_out">Sign out</string>
 </resources>

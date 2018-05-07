@@ -18,7 +18,7 @@
             android:layout_height="@dimen/card_icon_size"
             android:tint="@android:color/black"
             android:src="@drawable/ic_person_white_24dp"
-            android:contentDescription="@string/icon"
+            android:contentDescription="@string/description_icon"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"/>
 

@@ -33,9 +33,10 @@
         <activity
             android:name=".ui.TeacherClassActivity"
             android:theme="@style/NoActionBar" />
+        <activity android:name=".ui.ClassDetailActivity" />
         <activity
-            android:name=".ui.ClassDetailActivity" />
-
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>
