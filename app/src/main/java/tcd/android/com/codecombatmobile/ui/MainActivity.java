@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout rootContainer = findViewById(R.id.ll_root);
         Class[] activities = new Class[]{
                 LoginActivity.class,
+                MoreInfoTeacherActivity.class,
                 StudentClassActivity.class,
                 TeacherClassActivity.class,
                 ClassDetailActivity.class,
@@ -44,6 +45,6 @@ public class MainActivity extends AppCompatActivity {
             rootContainer.addView(button);
         }
 
-        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+        startActivity(new Intent(MainActivity.this, MoreInfoTeacherActivity.class));
     }
 }

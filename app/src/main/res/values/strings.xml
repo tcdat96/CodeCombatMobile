@@ -25,6 +25,37 @@
     <string name="student">Student</string>
     <string name="teacher">Teacher</string>
 
+    <!-- more info screen -->
+    <string name="title_activity_more_info">Almost there…</string>
+    <string name="school_name">School</string>
+    <string name="country">Country</string>
+    <string name="phone_number">Phone number</string>
+    <string name="role">Role</string>
+    <string-array name="array_role_list">
+        <item>@string/teacher</item>
+        <item>@string/technology_coordinator</item>
+        <item>@string/consultant</item>
+        <item>@string/principal</item>
+        <item>@string/superintendent</item>
+        <item>@string/parent</item>
+    </string-array>
+    <string name="technology_coordinator">Technology Coordinator</string>
+    <string name="consultant">Consultant</string>
+    <string name="principal">Principal</string>
+    <string name="superintendent">Superintendent</string>
+    <string name="parent">Parent</string>
+    <string name="estimated_number_student">Estimated number of students</string>
+    <string-array name="array_estimated_students">
+        <item>1–10</item>
+        <item>11–50</item>
+        <item>51–100</item>
+        <item>101–200</item>
+        <item>201–500</item>
+        <item>501–1000</item>
+        <item>1000+</item>
+    </string-array>
+    <string name="create_account">Create account</string>
+
     <!--teacher classes-->
     <plurals name="student_total">
         <item quantity="one">%1$d student</item>
