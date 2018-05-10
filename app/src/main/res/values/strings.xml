@@ -57,12 +57,14 @@
     <string name="create_account">Create account</string>
 
     <!--teacher classes-->
+    <string name="class_list_activity_title">Current classes</string>
     <plurals name="student_total">
         <item quantity="one">%1$d student</item>
         <item quantity="other">%1$d students</item>
     </plurals>
     <string name="archive_class">Archive</string>
     <string name="language_cover">Language cover</string>
+    <string name="search">Search classes</string>
 
     <!--class detail-->
     <string name="total_student">Student</string>

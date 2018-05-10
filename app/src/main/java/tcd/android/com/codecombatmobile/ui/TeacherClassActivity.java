@@ -1,6 +1,5 @@
 package tcd.android.com.codecombatmobile.ui;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,30 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.StudentClass;
 import tcd.android.com.codecombatmobile.data.TeacherClass;
-import tcd.android.com.codecombatmobile.ui.adapter.StudentClassAdapter;
 import tcd.android.com.codecombatmobile.ui.adapter.TeacherClassAdapter;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 
-public class TeacherClassActivity extends AppCompatActivity {
+public class TeacherClassActivity extends SearchViewActivity {
 
     private List<TeacherClass> mClasses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_class);
+        setContentView(R.layout.activity_teacher_class);
 
         mClasses = DataUtil.getDebugTeacherClassList(10);
         initClassList();
 
         configureActionBar();
-    }
-
-    private void configureActionBar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
     }
 
     private void initClassList() {

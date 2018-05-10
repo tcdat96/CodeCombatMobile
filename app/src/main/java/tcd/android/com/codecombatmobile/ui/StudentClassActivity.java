@@ -15,7 +15,7 @@ import tcd.android.com.codecombatmobile.data.StudentClass;
 import tcd.android.com.codecombatmobile.ui.adapter.StudentClassAdapter;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 
-public class StudentClassActivity extends AppCompatActivity {
+public class StudentClassActivity extends SearchViewActivity {
 
     private List<StudentClass> mClasses = new ArrayList<>();
 
@@ -28,11 +28,6 @@ public class StudentClassActivity extends AppCompatActivity {
         initClassList();
 
         configureActionBar();
-    }
-
-    private void configureActionBar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
     }
 
     private void initClassList() {

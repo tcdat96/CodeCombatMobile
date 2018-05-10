@@ -45,6 +45,6 @@ public class MainActivity extends AppCompatActivity {
             rootContainer.addView(button);
         }
 
-        startActivity(new Intent(MainActivity.this, MoreInfoTeacherActivity.class));
+        startActivity(new Intent(MainActivity.this, TeacherClassActivity.class));
     }
 }

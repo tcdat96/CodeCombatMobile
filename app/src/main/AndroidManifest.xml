@@ -37,7 +37,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".ui.MoreInfoTeacherActivity"></activity>
+        <activity android:name=".ui.MoreInfoTeacherActivity" />
     </application>
 
 </manifest>
