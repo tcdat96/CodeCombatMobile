@@ -3,12 +3,17 @@ package tcd.android.com.codecombatmobile.data.Syntax;
 import android.text.SpannableString;
 import android.widget.TextView;
 
-public class CodeBlock extends Operation {
+public abstract class CodeBlock extends Operation {
 
-    public CodeBlock(String name) {
-        super(name.toLowerCase(), TYPE_FLOW_CONTROL);
-        mChildren.add(new Blank());
-        mChildren.add(new Blank());
+    private int mHeaderTotal;
+
+    public CodeBlock(String name, @SyntaxType int syntaxType, int headerTotal) {
+        super(name.toLowerCase(), syntaxType);
+
+        mHeaderTotal = headerTotal;
+        for (int i = 0; i < headerTotal + 1; i++) {
+            mChildren.add(new Blank());
+        }
 
         mSpannable = new SpannableString(mName);
         setSpannableColor();
@@ -20,22 +25,13 @@ public class CodeBlock extends Operation {
         if (index >= 0) {
             if (isNewOpValid(index, newOp)) {
                 mChildren.set(index, newOp);
+                if (!(mChildren.get(mChildren.size() - 1) instanceof Blank)) {
+                    mChildren.add(new Blank());
+                }
+                return true;
             }
-
-            if (!(mChildren.get(mChildren.size() - 1) instanceof Blank)) {
-                mChildren.add(new Blank());
-            }
-            return true;
         }
         return false;
-    }
-
-    @Override
-    protected boolean isNewOpValid(int index, Operation op) {
-        if (index == 1) {
-            return op instanceof Value || op instanceof Function || op instanceof Variable;
-        }
-        return true;
     }
 
     @Override
@@ -47,13 +43,27 @@ public class CodeBlock extends Operation {
                     // TODO: 06/05/2018 remove container
                 } else if (index < mChildren.size() - 1) {
                     mChildren.remove(index);
-                } else {
-                    mChildren.set(index, new Blank());
                 }
             } else {
                 mChildren.set(index, new Blank());
+                removeAdjacentBlank(index);
             }
         }
+    }
+
+    protected void removeAdjacentBlank(int index) {
+        // left item
+        if (index - 1 >= mHeaderTotal && isItemBlank(index - 1)) {
+            mChildren.remove(index - 1);
+        }
+        // right item
+        if (isItemBlank(index + 1)) {
+            mChildren.remove(index + 1);
+        }
+    }
+
+    boolean isItemBlank(int position) {
+        return position >= 0 && position < mChildren.size() && mChildren.get(position) instanceof Blank;
     }
 
     @Override

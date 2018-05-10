@@ -64,6 +64,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "if"));
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "for"));
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "return"));
+        opTypes.add(new Pair<>(TYPE_DECLARATION, "func"));
         opTypes.add(new Pair<>(TYPE_DECLARATION, "var"));
         opTypes.add(new Pair<>(TYPE_VARIABLE, "abc"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));

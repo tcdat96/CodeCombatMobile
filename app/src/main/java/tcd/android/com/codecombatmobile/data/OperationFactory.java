@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import tcd.android.com.codecombatmobile.data.Syntax.CodeBlock;
+import tcd.android.com.codecombatmobile.data.Syntax.FlowControl;
+import tcd.android.com.codecombatmobile.data.Syntax.FuncDeclaration;
 import tcd.android.com.codecombatmobile.data.Syntax.VarDeclaration;
 import tcd.android.com.codecombatmobile.data.Syntax.Function;
 import tcd.android.com.codecombatmobile.data.Syntax.Operation;
@@ -31,14 +33,22 @@ public class OperationFactory {
         switch (type) {
             case Operation.TYPE_FLOW_CONTROL:
                 switch (name) {
-                    case "if": return new CodeBlock("If");
-                    case "for": return new CodeBlock("For");
-                    case "return": return new Return();
+                    case "if":
+                        return new FlowControl("If");
+                    case "for":
+                        return new FlowControl("For");
+                    case "return":
+                        return new Return();
                     default:
                         throw new IllegalArgumentException("Unknown syntax name");
                 }
             case Operation.TYPE_DECLARATION:
-                return new VarDeclaration();
+                switch (name) {
+                    case "var":
+                        return new VarDeclaration();
+                    case "func":
+                        return new FuncDeclaration();
+                }
             case Operation.TYPE_VARIABLE:
                 return new Variable(name);
             case Operation.TYPE_FUNCTION:
