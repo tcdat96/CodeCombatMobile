@@ -23,7 +23,7 @@ public abstract class Operation {
 
     protected static final String DEFAULT_INDENT = "    ";
 
-    public static final int TYPE_CONDITION = 0,
+    public static final int TYPE_FLOW_CONTROL = 0,
             TYPE_DECLARATION = 1,
             TYPE_VARIABLE = 2,
             TYPE_FUNCTION = 3,
@@ -31,7 +31,7 @@ public abstract class Operation {
             TYPE_VALUE = 5,
             TYPE_OPERATOR = 6,
             TYPE_BLANK = 7;
-    @IntDef({TYPE_CONDITION, TYPE_DECLARATION, TYPE_VARIABLE, TYPE_FUNCTION, TYPE_METHOD, TYPE_VALUE, TYPE_OPERATOR, TYPE_BLANK})
+    @IntDef({TYPE_FLOW_CONTROL, TYPE_DECLARATION, TYPE_VARIABLE, TYPE_FUNCTION, TYPE_METHOD, TYPE_VALUE, TYPE_OPERATOR, TYPE_BLANK})
     @Retention(RetentionPolicy.SOURCE)
     public @interface SyntaxType {}
     private static OperationFactory mOperationFactory = new OperationFactory();

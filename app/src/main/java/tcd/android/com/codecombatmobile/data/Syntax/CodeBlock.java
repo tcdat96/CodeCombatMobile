@@ -6,7 +6,7 @@ import android.widget.TextView;
 public class CodeBlock extends Operation {
 
     public CodeBlock(String name) {
-        super(name.toLowerCase(), TYPE_CONDITION);
+        super(name.toLowerCase(), TYPE_FLOW_CONTROL);
         mChildren.add(new Blank());
         mChildren.add(new Blank());
 

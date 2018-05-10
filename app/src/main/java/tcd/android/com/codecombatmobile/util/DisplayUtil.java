@@ -9,22 +9,15 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.Random;
-
-import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.Syntax.Operation;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_BLANK;
-import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_CONDITION;
+import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_FLOW_CONTROL;
 import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_DECLARATION;
 import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_FUNCTION;
 import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_METHOD;
@@ -45,7 +38,7 @@ public class DisplayUtil {
 
     public static int getColor(@Operation.SyntaxType int type) {
         switch (type) {
-            case TYPE_CONDITION:
+            case TYPE_FLOW_CONTROL:
                 return Color.parseColor("#FF647E");
             case TYPE_DECLARATION:
                 return Color.parseColor("#657DFF");

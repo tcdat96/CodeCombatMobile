@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class Return extends Operation {
 
     public Return() {
-        super("return", TYPE_CONDITION);
+        super("return", TYPE_FLOW_CONTROL);
         mSpannable = new SpannableString("return");
         mChildren.add(new Blank());
     }

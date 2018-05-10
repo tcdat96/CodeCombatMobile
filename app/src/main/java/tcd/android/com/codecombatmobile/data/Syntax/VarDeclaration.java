@@ -6,11 +6,11 @@ import java.util.ArrayList;
  * Created by ADMIN on 23/04/2018.
  */
 
-public class Declaration extends Operation {
+public class VarDeclaration extends Operation {
 
-    private static final String TAG = Declaration.class.getSimpleName();
+    private static final String TAG = VarDeclaration.class.getSimpleName();
 
-    public Declaration() {
+    public VarDeclaration() {
         super("var", TYPE_DECLARATION);
         mChildren = new ArrayList<>(3);
         mChildren.add(new Blank());

@@ -18,7 +18,7 @@ import tcd.android.com.codecombatmobile.ui.widget.MainButton;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 import tcd.android.com.codecombatmobile.R;
 
-import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_CONDITION;
+import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_FLOW_CONTROL;
 import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_DECLARATION;
 import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_FUNCTION;
 import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_VALUE;
@@ -61,9 +61,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         LinearLayout buttonContainer = findViewById(R.id.ll_button_container);
 
         List<Pair<Integer, String>> opTypes = new ArrayList<>();
-        opTypes.add(new Pair<>(TYPE_CONDITION, "if"));
-        opTypes.add(new Pair<>(TYPE_CONDITION, "for"));
-        opTypes.add(new Pair<>(TYPE_CONDITION, "return"));
+        opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "if"));
+        opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "for"));
+        opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "return"));
         opTypes.add(new Pair<>(TYPE_DECLARATION, "var"));
         opTypes.add(new Pair<>(TYPE_VARIABLE, "abc"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));
