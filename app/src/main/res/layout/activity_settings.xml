@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fm_settings"
-        android:name="tcd.android.com.codecombatmobile.SettingsActivity$SettingsFragment"
+        android:name="tcd.android.com.codecombatmobile.ui.SettingsActivity$SettingsFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>

@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile;
+package tcd.android.com.codecombatmobile.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,6 +15,8 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceGroup;
 import android.support.v7.preference.PreferenceScreen;
 import android.view.MenuItem;
+
+import tcd.android.com.codecombatmobile.R;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -33,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+            onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
