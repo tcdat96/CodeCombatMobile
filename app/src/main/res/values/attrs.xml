@@ -7,5 +7,11 @@
 
     <declare-styleable name="RatioImageView">
         <attr name="ratio" format="string" />
+        <attr name="scaleUsingWidth" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ProgressBar">
+        <attr name="progressColor" format="reference" />
+        <attr name="controlThumbEnabled" format="boolean"/>
     </declare-styleable>
 </resources>

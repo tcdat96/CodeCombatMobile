@@ -38,6 +38,9 @@
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".ui.MoreInfoTeacherActivity" />
+        <activity android:name=".ui.GameActivity"
+            android:theme="@style/GameTheme"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

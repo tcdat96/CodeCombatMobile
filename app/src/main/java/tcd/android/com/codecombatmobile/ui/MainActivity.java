@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
                 TeacherClassActivity.class,
                 ClassDetailActivity.class,
                 CodeEditorActivity.class,
-                SettingsActivity.class
+                SettingsActivity.class,
+                GameActivity.class
         };
         for (final Class activity : activities) {
             Button button = new Button(this);
@@ -39,6 +40,6 @@ public class MainActivity extends AppCompatActivity {
             rootContainer.addView(button);
         }
 
-        startActivity(new Intent(MainActivity.this, CodeEditorActivity.class));
+        startActivity(new Intent(MainActivity.this, GameActivity.class));
     }
 }

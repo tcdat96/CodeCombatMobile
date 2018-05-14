@@ -19,7 +19,6 @@
     <color name="virtual_keyboard_color">#F2F6F7</color>
     <color name="keyboard_button_color">#5E666A</color>
     <color name="select_background_color">#BDBDBD</color>
-
     <color name="condition_color">#FF647E</color>
     <color name="declaration_color">#657DFF</color>
     <color name="variable_color">#73B3C1</color>
@@ -27,4 +26,8 @@
     <color name="method_color">#2AE48A</color>
     <color name="value_color">#F9A825</color>
     <color name="operator_color">#F86AFF</color>
+
+     <!--game-->
+    <color name="time_progress_color">#F5AA31</color>
+    <color name="hp_progress_color">#EA232D</color>
 </resources>

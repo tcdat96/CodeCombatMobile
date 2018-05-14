@@ -1,5 +1,6 @@
 package tcd.android.com.codecombatmobile.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,8 +10,10 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
+import android.view.Display;
 import android.widget.LinearLayout;
 
 import tcd.android.com.codecombatmobile.data.Syntax.Operation;
@@ -85,5 +88,28 @@ public class DisplayUtil {
         layout.setLayoutParams(params);
 
         return layout;
+    }
+
+    public static Point getScreenSize(Context context) {
+        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size;
+    }
+
+    public static int getStatusBarHeight(Resources resources) {
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
+
+    public static int getNavBarHeight(Resources resources) {
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
     }
 }

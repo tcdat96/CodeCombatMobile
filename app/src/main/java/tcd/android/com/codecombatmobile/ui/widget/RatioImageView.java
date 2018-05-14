@@ -15,6 +15,7 @@ import tcd.android.com.codecombatmobile.R;
 public class RatioImageView extends android.support.v7.widget.AppCompatImageView {
 
     private float mRatio = 4f / 3f;
+    private boolean mIsUsingWidth = false;
 
     public RatioImageView(Context context) {
         super(context);
@@ -34,6 +35,7 @@ public class RatioImageView extends android.support.v7.widget.AppCompatImageView
     private void init(AttributeSet attrs, int defStyleAttr) {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.RatioImageView, defStyleAttr, 0);
         String ratio = a.getString(R.styleable.RatioImageView_ratio);
+        mIsUsingWidth = a.getBoolean(R.styleable.RatioImageView_scaleUsingWidth, mIsUsingWidth);
         a.recycle();
 
         if (ratio != null) {
@@ -48,8 +50,14 @@ public class RatioImageView extends android.support.v7.widget.AppCompatImageView
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = getMeasuredWidth();
-        int height = Math.round(width * mRatio);
+        int width, height;
+        if (mIsUsingWidth) {
+            width = getMeasuredWidth();
+            height = Math.round(width * mRatio);
+        } else {
+            height = getMeasuredHeight();
+            width = Math.round(height / mRatio);
+        }
         setMeasuredDimension(width, height);
     }
 }
