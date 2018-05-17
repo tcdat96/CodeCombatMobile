@@ -45,10 +45,14 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
+import tcd.android.com.codecombatmobile.util.NetworkUtil;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -62,15 +66,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int RC_PERMISSION_READ_CONTACTS = 0;
     private static final int RC_GOOGLE_SIGN_IN = 1;
     private static final int RC_FACEBOOK_SIGN_IN = 2;
-
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -429,25 +424,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
+            JSONObject result = NetworkUtil.getInstance(LoginActivity.this).logInSync(mEmail, mPassword);
+            return result != null;
         }
 
         @Override
