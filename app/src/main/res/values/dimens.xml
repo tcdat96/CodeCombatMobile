@@ -9,6 +9,11 @@
     <dimen name="card_view_radius">8dp</dimen>
     <dimen name="sign_in_button_width">270dp</dimen>
 
+    <!--login screen-->
+    <dimen name="log_in_card_margin">24dp</dimen>
+    <dimen name="option_vertical_margin">20dp</dimen>
+    <dimen name="selection_dot_padding">4dp</dimen>
+
     <!--student classes-->
     <dimen name="search_toolbar_elevation">4dp</dimen>
     <dimen name="language_tag_padding">6dp</dimen>

@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
@@ -24,9 +25,11 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -45,13 +48,13 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
+import tcd.android.com.codecombatmobile.util.DisplayUtil;
 import tcd.android.com.codecombatmobile.util.NetworkUtil;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -59,7 +62,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, OnClickListener {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -77,10 +80,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private TextView mSignInTextView, mSignUpTextView;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private LinearLayout mAccountTypeLayout;
+    private LinearLayout mAccountTypeLayout, mUsernameLayout, mUserNameLayout;
     private TextView mStudentTextView, mTeacherTextView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private boolean mIsSignInSelected = true;
+    private boolean mIsStudentSelected = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,13 +94,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         setContentView(R.layout.activity_login);
 
+        // hide action bar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
         initUiComponents();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-    }
+        }
 
     @Override
     protected void onStart() {
@@ -119,58 +130,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = findViewById(R.id.btn_sign_in);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        Button mEmailSignInButton = findViewById(R.id.btn_email_sign_in);
+        mEmailSignInButton.setOnClickListener(this);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        mAccountTypeLayout = findViewById(R.id.ll_account_type);
-        mStudentTextView = findViewById(R.id.tv_student);
-        mTeacherTextView = findViewById(R.id.tv_teacher);
-        mStudentTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleStudentOption(true);
-            }
-        });
-        mTeacherTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleStudentOption(false);
-            }
-        });
-        toggleStudentOption(true);
-
+        // sign in or sign up options
         mSignInTextView = findViewById(R.id.tv_sign_in);
+        mSignInTextView.setOnClickListener(this);
         mSignUpTextView = findViewById(R.id.tv_sign_up);
-        mSignInTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleSignInOption(true);
-            }
-        });
-        mSignUpTextView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleSignInOption(false);
-            }
-        });
-        toggleSignInOption(true);
+        mSignUpTextView.setOnClickListener(this);
+
+        // student or teacher option (for sign up)
+        mStudentTextView = findViewById(R.id.tv_student);
+        mStudentTextView.setOnClickListener(this);
+        mTeacherTextView = findViewById(R.id.tv_teacher);
+        mTeacherTextView.setOnClickListener(this);
+        mUsernameLayout = findViewById(R.id.ll_username);
+        mUserNameLayout = findViewById(R.id.ll_user_name);
+        mAccountTypeLayout = findViewById(R.id.ll_account_type);
+
+        // default options
+        toggleSignInOption();
 
         SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in);
-        googleSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
-            }
-        });
+        googleSignInButton.setOnClickListener(this);
     }
 
     private void populateAutoComplete() {
@@ -216,6 +201,81 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_sign_in:
+                mIsSignInSelected = true;
+                toggleSignInOption();
+                break;
+            case R.id.tv_sign_up:
+                mIsSignInSelected = false;
+                toggleSignInOption();
+                break;
+            case R.id.tv_student:
+                mIsStudentSelected = true;
+                toggleStudentOption();
+                break;
+            case R.id.tv_teacher:
+                mIsStudentSelected = false;
+                toggleStudentOption();
+                break;
+            case R.id.btn_email_sign_in:
+                attemptLogin();
+                break;
+            case R.id.btn_google_sign_in:
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void toggleSignInOption() {
+        TransitionManager.beginDelayedTransition((ScrollView) mLoginFormView);
+
+        // show/hide sign up options
+        int visibility = mIsSignInSelected ? View.GONE : View.VISIBLE;
+        mAccountTypeLayout.setVisibility(visibility);
+
+        // highlight selection
+        if (mIsSignInSelected) {
+            mSignInTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.shape_circle);
+            mSignInTextView.setTextColor(Color.WHITE);
+            mSignUpTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            mSignUpTextView.setTextColor(Color.GRAY);
+
+            mUsernameLayout.setVisibility(View.GONE);
+            mUserNameLayout.setVisibility(View.GONE);
+        } else {
+            mSignInTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            mSignInTextView.setTextColor(Color.GRAY);
+            mSignUpTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.shape_circle);
+            mSignUpTextView.setTextColor(Color.WHITE);
+
+            toggleStudentOption();
+        }
+    }
+
+    private void toggleStudentOption() {
+        TransitionManager.beginDelayedTransition((ScrollView) mLoginFormView);
+
+        int selectedColor = ContextCompat.getColor(this, R.color.colorAccent);
+        if (mIsStudentSelected) {
+            mStudentTextView.setTextColor(selectedColor);
+            mTeacherTextView.setTextColor(Color.GRAY);
+
+            mUsernameLayout.setVisibility(View.VISIBLE);
+            mUserNameLayout.setVisibility(View.GONE);
+        } else {
+            mStudentTextView.setTextColor(Color.GRAY);
+            mTeacherTextView.setTextColor(selectedColor);
+
+            mUsernameLayout.setVisibility(View.GONE);
+            mUserNameLayout.setVisibility(View.VISIBLE);
+        }
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -270,13 +330,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 6;
     }
 
     /**
@@ -302,33 +360,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
-    }
-
-    private void toggleSignInOption(boolean isSignIn) {
-        TransitionManager.beginDelayedTransition((ScrollView) mLoginFormView);
-        mAccountTypeLayout.setVisibility(isSignIn ? View.GONE : View.VISIBLE);
-        if (isSignIn) {
-            mSignInTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.shape_circle);
-            mSignInTextView.setTextColor(Color.WHITE);
-            mSignUpTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            mSignUpTextView.setTextColor(Color.GRAY);
-        } else {
-            mSignInTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            mSignInTextView.setTextColor(Color.GRAY);
-            mSignUpTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.shape_circle);
-            mSignUpTextView.setTextColor(Color.WHITE);
-        }
-    }
-
-    private void toggleStudentOption(boolean isStudent) {
-        int selectedColor = ContextCompat.getColor(this, R.color.colorAccent);
-        if (isStudent) {
-            mStudentTextView.setTextColor(selectedColor);
-            mTeacherTextView.setTextColor(Color.GRAY);
-        } else {
-            mStudentTextView.setTextColor(Color.GRAY);
-            mTeacherTextView.setTextColor(selectedColor);
-        }
     }
 
     @Override

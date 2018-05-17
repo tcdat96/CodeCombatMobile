@@ -26,8 +26,7 @@
             android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.LoginActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/LogInTheme" />
+            android:label="@string/title_activity_login"/>
         <activity
             android:name=".ui.StudentClassActivity"
             android:theme="@style/NoActionBar" />
