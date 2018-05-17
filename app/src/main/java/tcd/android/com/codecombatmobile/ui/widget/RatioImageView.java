@@ -15,7 +15,7 @@ import tcd.android.com.codecombatmobile.R;
 public class RatioImageView extends android.support.v7.widget.AppCompatImageView {
 
     private float mRatio = 4f / 3f;
-    private boolean mIsUsingWidth = false;
+    private boolean mIsUsingWidth = true;
 
     public RatioImageView(Context context) {
         super(context);
