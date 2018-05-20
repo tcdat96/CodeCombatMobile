@@ -598,7 +598,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             JSONObject result = NetworkUtil.getInstance(LoginActivity.this).logInSync(mUser.getEmail(), mPassword);
+            if (result != null) {
+                NetworkUtil.mUser = getUserData(result);
+            }
             return result != null;
+        }
+
+        private User getUserData(JSONObject result) {
+            User user = null;
+            try {
+                String id = result.getString("_id");
+                String email = result.getString("email");
+                String role = result.getString("role");
+                if ("teacher".equalsIgnoreCase(role)) {
+                    String firstName = result.getString("firstName");
+                    String lastName = result.getString("lastName");
+                    user = new Teacher(email, firstName, lastName);
+                } else {
+                    String username = result.getString("username");
+                    user = new Student(email, username);
+                }
+                user.setId(id);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return user;
         }
 
         @Override

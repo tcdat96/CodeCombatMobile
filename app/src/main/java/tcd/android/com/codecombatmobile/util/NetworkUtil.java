@@ -25,11 +25,11 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.CookieStore;
 import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
+import tcd.android.com.codecombatmobile.data.User.User;
 
 import static com.android.volley.Request.Method.GET;
 import static com.android.volley.Request.Method.POST;
@@ -44,7 +44,9 @@ public class NetworkUtil {
     private ImageLoader mImageLoader;
     private RequestQueue mRequestQueue;
     private static Context mContext;
+    public static User mUser;
 
+    // singleton pattern
     private NetworkUtil(Context context) {
         mContext = context;
         mRequestQueue = getRequestQueue();
@@ -81,6 +83,8 @@ public class NetworkUtil {
         return mRequestQueue;
     }
 
+
+    // fundamental methods
     private String getRequestUrl(String path) {
         String protocol = "http://";
         String domainName = getIpAddress() + ":3000";
@@ -129,6 +133,8 @@ public class NetworkUtil {
         return response;
     }
 
+
+    // helper methods
     @Nullable
     public JSONObject logInSync(@NonNull String username, @NonNull String password) {
         // construct request data

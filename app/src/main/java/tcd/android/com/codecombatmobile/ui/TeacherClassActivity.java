@@ -5,10 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,14 +46,13 @@ public class TeacherClassActivity extends SearchViewActivity {
     }
 
     private void requestClassList() {
-        // TODO: 20/05/2018 remove this
-        String ownerId = "5b012c6feb0b3c1310d61f09";
-
+        String ownerId = NetworkUtil.mUser.getId();
         NetworkUtil.getInstance(this).requestClassList(ownerId, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 if (response != null) {
                     List<TeacherClass> classes = readClassList(response);
+                    // TODO: 20/05/2018 remove this
                     classes.addAll(new ArrayList<>(classes));
                     classes.addAll(new ArrayList<>(classes));
                     mClasses.addAll(classes);
@@ -70,23 +67,30 @@ public class TeacherClassActivity extends SearchViewActivity {
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject classObj = response.getJSONObject(i);
-                String name = classObj.getString("name");
-                String code = classObj.getString("codeCamel");
-                // language
-                JSONObject aceConfig = classObj.getJSONObject("aceConfig");
-                String language = aceConfig != null ? aceConfig.getString("language") : "python";
-                // number of students
-                JSONArray members = classObj.getJSONArray("members");
-                int studentTotal = members != null ? members.length() : 0;
-                // TODO: 20/05/2018 do something with this
-                int progress = new Random().nextInt(100);
-
-                TeacherClass classroom = new TeacherClass(language, name, code, studentTotal, progress);
+                TeacherClass classroom = readClass(classObj);
                 classrooms.add(classroom);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return classrooms;
+    }
+
+    private TeacherClass readClass(JSONObject classObj) throws JSONException {
+        String name = classObj.getString("name");
+        String code = classObj.getString("codeCamel");
+
+        // language
+        JSONObject aceConfig = classObj.getJSONObject("aceConfig");
+        String language = aceConfig != null ? aceConfig.getString("language") : "python";
+
+        // number of students
+        JSONArray members = classObj.getJSONArray("members");
+        int studentTotal = members != null ? members.length() : 0;
+
+        // TODO: 20/05/2018 do something with this
+        int progress = new Random().nextInt(100);
+
+        return new TeacherClass(language, name, code, studentTotal, progress);
     }
 }

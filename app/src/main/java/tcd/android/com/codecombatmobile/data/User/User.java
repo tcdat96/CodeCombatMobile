@@ -1,5 +1,7 @@
 package tcd.android.com.codecombatmobile.data.User;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -8,6 +10,10 @@ public class User implements Serializable {
 
     public User(String email) {
         mEmail = email;
+    }
+
+    public void setId(@NonNull String id) {
+        mId = id;
     }
 
     public String getId() {
