@@ -13,20 +13,26 @@ import java.util.List;
 public class TeacherClass implements Serializable {
     private String mLanguage;
     private String mClassName;
+    private String mCode;
     private int mProgress;
-    private String mDateCreated;
     private int mStudentTotal;
+    private String mDateCreated;
     private int mPlaytimeTotal;
     private int mLevelTotal;
     private List<ClassStudent> mStudents;
 
-    public TeacherClass(String language, String className, int progress, String dateCreated,
-                        int studentTotal, int playtimeTotal, int levelTotal) {
+    public TeacherClass(String language, String className, String code, int studentTotal, int progress) {
         mLanguage = language;
         mClassName = className;
-        mProgress = progress;
-        mDateCreated = dateCreated;
+        mCode = code;
         mStudentTotal = studentTotal;
+        mProgress = progress;
+    }
+
+    public TeacherClass(String language, String className, String code, int progress, int studentTotal,
+                        String dateCreated, int playtimeTotal, int levelTotal) {
+        this(language, className, code, studentTotal, progress);
+        mDateCreated = dateCreated;
         mPlaytimeTotal = playtimeTotal;
         mLevelTotal = levelTotal;
     }

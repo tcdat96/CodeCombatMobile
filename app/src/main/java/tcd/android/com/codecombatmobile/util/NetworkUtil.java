@@ -9,17 +9,24 @@ import android.util.Log;
 import android.util.LruCache;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.CookieStore;
 import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -55,6 +62,9 @@ public class NetworkUtil {
                         mCache.put(url, bitmap);
                     }
                 });
+
+        CookieManager manager = new CookieManager();
+        CookieHandler.setDefault(manager);
     }
 
     public static synchronized NetworkUtil getInstance(Context context) {
@@ -158,5 +168,18 @@ public class NetworkUtil {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public void requestClassList(String ownerId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+        String path = "/db/classroom?ownerID=" + ownerId;
+        String url = getRequestUrl(path);
+        JsonArrayRequest request = new JsonArrayRequest(GET, url, null, listener,
+                errorListener != null ? errorListener : new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "onErrorResponse: " + error.getLocalizedMessage());
+                    }
+                });
+        getRequestQueue().add(request);
     }
 }

@@ -92,8 +92,8 @@ public class DataUtil {
             int studentTotal = random.nextInt(100);
             int playtimeTotal = random.nextInt(180);
             int levelTotal = random.nextInt(12);
-            TeacherClass newClass = new TeacherClass(languages[idx], classNames[idx], progress, "4/16/2018",
-                    studentTotal, playtimeTotal, levelTotal);
+            TeacherClass newClass = new TeacherClass(languages[idx], classNames[idx], "FunnyNameMore", progress, studentTotal,
+                    "4/16/2018", playtimeTotal, levelTotal);
             newClass.setStudentList(students);
             classes.add(newClass);
         }
