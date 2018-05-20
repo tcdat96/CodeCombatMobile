@@ -8,8 +8,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.LruCache;
 
-import com.android.volley.Header;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
@@ -21,7 +19,13 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
+import static com.android.volley.Request.Method.GET;
+import static com.android.volley.Request.Method.POST;
 
 public class NetworkUtil {
     private static final String TAG = NetworkUtil.class.getSimpleName();
@@ -89,24 +93,16 @@ public class NetworkUtil {
         }
     }
 
-    @Nullable
-    public JSONObject logInSync(@NonNull String username, @NonNull String password) {
-        // construct request data
-        JSONObject jsonReq = new JSONObject();
-        try {
-            jsonReq.put("username", username);
-            jsonReq.put("password", password);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        // post request
-        String reqUrl = getRequestUrl("/auth/login");
+    private RequestFuture<JSONObject> sendRequest(int method, String path, JSONObject jsonRequest) {
+        String reqUrl = getRequestUrl(path);
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, reqUrl, jsonReq, future, future);
+        JsonObjectRequest request = new JsonObjectRequest(method, reqUrl, jsonRequest, future, future);
         getRequestQueue().add(request);
+        return future;
+    }
 
-        // get response
+    @Nullable
+    private JSONObject getResponse(RequestFuture<JSONObject> future) {
         JSONObject response = null;
         try {
             response = future.get();
@@ -121,5 +117,46 @@ public class NetworkUtil {
             }
         }
         return response;
+    }
+
+    @Nullable
+    public JSONObject logInSync(@NonNull String username, @NonNull String password) {
+        // construct request data
+        JSONObject jsonReq = new JSONObject();
+        try {
+            jsonReq.put("username", username);
+            jsonReq.put("password", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestFuture<JSONObject> future = sendRequest(POST, "/auth/login", jsonReq);
+        return getResponse(future);
+    }
+
+    public JSONObject validateEmail(@NonNull String email) {
+        JSONObject result = null;
+        try {
+            String encodedEmail = URLEncoder.encode(email, "UTF-8");
+            String path = String.format(Locale.getDefault(), "/auth/email/%s?_=%d", encodedEmail, System.currentTimeMillis());
+            RequestFuture<JSONObject> future = sendRequest(GET, path, new JSONObject());
+            result = getResponse(future);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public JSONObject validateUsername(@NonNull String username) {
+        JSONObject result = null;
+        try {
+            String encodedUsername = URLEncoder.encode(username, "UTF-8");
+            String path = String.format(Locale.getDefault(), "/auth/name/%s?_=%d", encodedUsername, System.currentTimeMillis());
+            RequestFuture<JSONObject> future = sendRequest(GET, path, new JSONObject());
+            result = getResponse(future);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }
