@@ -1,8 +1,13 @@
 package tcd.android.com.codecombatmobile.util;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.lang.annotation.Retention;
@@ -16,6 +21,9 @@ import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.ClassStudent;
 import tcd.android.com.codecombatmobile.data.StudentClass;
 import tcd.android.com.codecombatmobile.data.TeacherClass;
+import tcd.android.com.codecombatmobile.data.User.Student;
+import tcd.android.com.codecombatmobile.data.User.Teacher;
+import tcd.android.com.codecombatmobile.data.User.User;
 
 /**
  * Created by ADMIN on 22/04/2018.
@@ -24,6 +32,7 @@ import tcd.android.com.codecombatmobile.data.TeacherClass;
 public class DataUtil {
     private static final String TAG = DataUtil.class.getSimpleName();
 
+    // supported languages
     public static final int LANGUAGE_PYTHON = 0, LANGUAGE_JAVASCRIPT = 1;
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({LANGUAGE_PYTHON, LANGUAGE_JAVASCRIPT})
@@ -54,6 +63,50 @@ public class DataUtil {
         }
     }
 
+
+    // save and get data using shared preferences
+    public static void saveUserData(Context context, @NonNull User user) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(context.getString(R.string.pref_user_id_key), user.getId());
+        editor.putString(context.getString(R.string.pref_email_key), user.getEmail());
+        if (user instanceof Teacher) {
+            Teacher teacher = (Teacher) user;
+            editor.putString(context.getString(R.string.pref_user_role_key), Teacher.class.getSimpleName());
+            editor.putString(context.getString(R.string.pref_first_name_key), teacher.getFirstName());
+            editor.putString(context.getString(R.string.pref_last_name_key), teacher.getLastName());
+        } else {
+            Student student = (Student) user;
+            editor.putString(context.getString(R.string.pref_user_role_key), Student.class.getSimpleName());
+            editor.putString(context.getString(R.string.pref_username_key), student.getUsername());
+        }
+        editor.apply();
+    }
+
+    @Nullable
+    public static User getUserData(Context context) {
+        User user = null;
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String uid = sharedPref.getString(context.getString(R.string.pref_user_id_key), "");
+        String email = sharedPref.getString(context.getString(R.string.pref_email_key), "");
+        String role = sharedPref.getString(context.getString(R.string.pref_user_role_key), "");
+        if (role.equalsIgnoreCase(Teacher.class.getSimpleName())) {
+            // if it is teacher
+            String firstName = sharedPref.getString(context.getString(R.string.pref_first_name_key), "");
+            String lastName = sharedPref.getString(context.getString(R.string.pref_last_name_key), "");
+            user = new Teacher(email, firstName, lastName);
+            user.setId(uid);
+        } else if (role.equalsIgnoreCase(Student.class.getSimpleName())) {
+            // or a student
+            String username = sharedPref.getString(context.getString(R.string.pref_username_key), "");
+            user = new Student(email, username);
+            user.setId(uid);
+        }
+        return user;
+    }
+
+
+    // debug helper methods
     @SuppressWarnings("SameParameterValue")
     public static List<StudentClass> getDebugStudentClassList(int total) {
         Random random = new Random();

@@ -7,6 +7,7 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -53,6 +54,7 @@ import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.User.Student;
 import tcd.android.com.codecombatmobile.data.User.Teacher;
 import tcd.android.com.codecombatmobile.data.User.User;
+import tcd.android.com.codecombatmobile.util.DataUtil;
 import tcd.android.com.codecombatmobile.util.NetworkUtil;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -599,7 +601,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             JSONObject result = NetworkUtil.getInstance(LoginActivity.this).logInSync(mUser.getEmail(), mPassword);
             if (result != null) {
-                NetworkUtil.mUser = getUserData(result);
+                User user = getUserData(result);
+                DataUtil.saveUserData(LoginActivity.this, user);
             }
             return result != null;
         }

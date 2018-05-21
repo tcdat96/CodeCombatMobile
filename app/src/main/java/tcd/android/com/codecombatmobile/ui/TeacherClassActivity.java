@@ -18,7 +18,9 @@ import java.util.Random;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.TeacherClass;
+import tcd.android.com.codecombatmobile.data.User.User;
 import tcd.android.com.codecombatmobile.ui.adapter.TeacherClassAdapter;
+import tcd.android.com.codecombatmobile.util.DataUtil;
 import tcd.android.com.codecombatmobile.util.NetworkUtil;
 
 public class TeacherClassActivity extends SearchViewActivity {
@@ -46,20 +48,22 @@ public class TeacherClassActivity extends SearchViewActivity {
     }
 
     private void requestClassList() {
-        String ownerId = NetworkUtil.mUser.getId();
-        NetworkUtil.getInstance(this).requestClassList(ownerId, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                if (response != null) {
-                    List<TeacherClass> classes = readClassList(response);
-                    // TODO: 20/05/2018 remove this
-                    classes.addAll(new ArrayList<>(classes));
-                    classes.addAll(new ArrayList<>(classes));
-                    mClasses.addAll(classes);
-                    mAdapter.notifyDataSetChanged();
+        User user = DataUtil.getUserData(this);
+        if (user != null) {
+            NetworkUtil.getInstance(this).requestClassList(user.getId(), new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    if (response != null) {
+                        List<TeacherClass> classes = readClassList(response);
+                        // TODO: 20/05/2018 remove this
+                        classes.addAll(new ArrayList<>(classes));
+                        classes.addAll(new ArrayList<>(classes));
+                        mClasses.addAll(classes);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
-            }
-        }, null);
+            }, null);
+        }
     }
 
     private List<TeacherClass> readClassList(@NonNull JSONArray response) {
