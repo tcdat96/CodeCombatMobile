@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -29,10 +30,12 @@ import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import tcd.android.com.codecombatmobile.data.User.Student;
 import tcd.android.com.codecombatmobile.data.User.User;
 
 import static com.android.volley.Request.Method.GET;
 import static com.android.volley.Request.Method.POST;
+import static com.android.volley.Request.Method.PUT;
 
 public class NetworkUtil {
     private static final String TAG = NetworkUtil.class.getSimpleName();
@@ -196,6 +199,57 @@ public class NetworkUtil {
             e.printStackTrace();
         }
         return result;
+    }
+
+    @Nullable
+    public JSONObject signUpSync(@NonNull User user, @NonNull String password) {
+        // get user ID
+        String getIdPath = "/auth/whoami?_=" + System.currentTimeMillis();
+        RequestFuture<JSONObject> future = sendRequestSync(GET, getIdPath, new JSONObject());
+        JSONObject idObj = getResponse(future);
+        try {
+            if (idObj == null || TextUtils.isEmpty(idObj.getString("_id"))) {
+                return null;
+            }
+            String uid = idObj.getString("_id");
+            // send basic account information
+            String updateInfoPath = "/db/user/" + uid;
+            JSONObject accInfoJsonReq = getAccountInfoJsonRequest(idObj, user);
+            future = sendRequestSync(PUT, updateInfoPath, accInfoJsonReq);
+            JSONObject accInfoObj = getResponse(future);
+            if (accInfoObj != null) {
+                // sign up with password
+                JSONObject jsonReq = getSignUpJsonRequest(user, password);
+                String signUpPath = String.format("/db/user/%s/signup-with-password", uid);
+                future = sendRequestSync(POST, signUpPath, jsonReq);
+                return getResponse(future);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private JSONObject getAccountInfoJsonRequest(JSONObject idObj, User user) throws JSONException {
+//        idObj = new JSONObject(idObj.toString());
+        idObj.put("birthday", "2000-01-01T00:00:00.000Z");
+        JSONObject generalNewsObj = new JSONObject().put("enabled", true);
+        JSONObject emailsObj = new JSONObject().put("generalNews", generalNewsObj);
+        idObj.put("emails", emailsObj);
+        if (user instanceof Student) {
+            idObj.put("role", "student");
+        }
+        return idObj;
+    }
+
+    private JSONObject getSignUpJsonRequest(User user, String password) throws JSONException {
+        JSONObject jsonReq = new JSONObject();
+        jsonReq.put("email", user.getEmail());
+        jsonReq.put("password", password);
+        if (user instanceof Student) {
+            jsonReq.put("name", ((Student)user).getUsername());
+        }
+        return jsonReq;
     }
 
     public void requestTeacherClassList(String teacherId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {

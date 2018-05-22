@@ -7,7 +7,6 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -163,11 +162,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // debug
         boolean isStudent = true;
-        mEmailView.setText(isStudent ? "student@gmail.com" : "teacher@gmail.com");
-        mPasswordView.setText(isStudent ? "student" : "teacher");
-        mUsernameView.setText(isStudent ? "nttkieu" : "ndhuy");
-        mFirstNameView.setText(isStudent ? "Thuy Kieu" : "Duc Huy");
-        mLastNameView.setText(isStudent ? "Nguyen Thi" : "Nguyen");
+        String studentName = "student1";
+        mEmailView.setText(isStudent ? studentName + "@gmail.com" : "teacher@gmail.com");
+        mPasswordView.setText(isStudent ? studentName : "teacher");
+        mUsernameView.setText(isStudent ? studentName : "ndhuy");
+        mFirstNameView.setText(isStudent ? "" : "Duc Huy");
+        mLastNameView.setText(isStudent ? "" : "Nguyen");
 
         SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in);
         googleSignInButton.setOnClickListener(this);
@@ -548,7 +548,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 showProgress(false);
             } else {
                 if (mUser instanceof Student) {
-                    // TODO: 20/05/2018 sign up as student role
+                    new StudentSignUpTask((Student) mUser, mPassword).execute();
                 } else {
                     // TODO: 20/05/2018 launch more info activity and handle sign up task there
                 }
@@ -574,41 +574,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
-
-    public class UserLoginTask extends AccountRequestTask {
-
-        UserLoginTask(User user, String password) {
-            super(user, password);
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            JSONObject result = NetworkUtil.getInstance(LoginActivity.this).logInSync(mUser.getEmail(), mPassword);
+            JSONObject result = getResponse();
             if (result != null) {
                 User user = getUserData(result);
                 DataUtil.saveUserData(LoginActivity.this, user);
             }
             return result != null;
         }
+
+        protected abstract JSONObject getResponse();
 
         private User getUserData(JSONObject result) {
             User user = null;
@@ -633,10 +607,51 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected void onPostExecute(final Boolean success) {
+            mAuthTask = null;
+            showProgress(false);
+
+            if (success) {
+                finish();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }
+    }
+
+    public class StudentSignUpTask extends AccountRequestTask {
+
+        StudentSignUpTask(Student student, String password) {
+            super(student, password);
+        }
+
+        @Override
+        protected JSONObject getResponse() {
+            return NetworkUtil.getInstance(LoginActivity.this).signUpSync(mUser, mPassword);
+        }
+    }
+
+    public class UserLoginTask extends AccountRequestTask {
+
+        UserLoginTask(User user, String password) {
+            super(user, password);
+        }
+
+        @Override
+        protected JSONObject getResponse() {
+            return NetworkUtil.getInstance(LoginActivity.this).logInSync(mUser.getEmail(), mPassword);
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
             super.onPostExecute(success);
-            if (!success)
+            if (!success) {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
-            mPasswordView.requestFocus();
+                mPasswordView.requestFocus();
+            }
         }
     }
 }
