@@ -5,18 +5,22 @@ package tcd.android.com.codecombatmobile.data;
  */
 
 public class StudentClass {
+    private String mId;
     private String mLanguage;
     private String mClassName;
     private String mTeacher;
     private String mCourseName;
     private int mProgress;
 
-    public StudentClass(String language, String className, String teacher, String courseName, int progress) {
+    public StudentClass(String id, String language, String className, String teacher) {
+        mId = id;
         mLanguage = language;
         mClassName = className;
         mTeacher = teacher;
-        mCourseName = courseName;
-        mProgress = progress;
+    }
+
+    public String getId() {
+        return mId;
     }
 
     public String getLanguage() {
@@ -37,5 +41,13 @@ public class StudentClass {
 
     public int getProgress() {
         return mProgress;
+    }
+
+    public void setCourseName(String courseName) {
+        mCourseName = courseName;
+    }
+
+    public void setProgress(int progress) {
+        mProgress = progress;
     }
 }

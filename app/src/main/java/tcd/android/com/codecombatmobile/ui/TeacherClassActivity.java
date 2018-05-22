@@ -50,7 +50,7 @@ public class TeacherClassActivity extends SearchViewActivity {
     private void requestClassList() {
         User user = DataUtil.getUserData(this);
         if (user != null) {
-            NetworkUtil.getInstance(this).requestClassList(user.getId(), new Response.Listener<JSONArray>() {
+            NetworkUtil.getInstance(this).requestTeacherClassList(user.getId(), new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     if (response != null) {

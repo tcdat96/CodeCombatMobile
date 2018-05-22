@@ -117,9 +117,9 @@ public class DataUtil {
         List<StudentClass> classes = new ArrayList<>();
         for (int i = 0; i < total; i++) {
             int idx = i % classNames.length;
-            int progress = random.nextInt(Integer.MAX_VALUE) % 100;
-            StudentClass newClass = new StudentClass(languages[idx], classNames[idx], teachers[idx],
-                    "Introduction to Computer Science", progress);
+            StudentClass newClass = new StudentClass(String.valueOf(idx), languages[idx], classNames[idx], teachers[idx]);
+            newClass.setCourseName("Introduction to Computer Science");
+            newClass.setProgress(random.nextInt(Integer.MAX_VALUE) % 100);
             classes.add(newClass);
         }
         return classes;

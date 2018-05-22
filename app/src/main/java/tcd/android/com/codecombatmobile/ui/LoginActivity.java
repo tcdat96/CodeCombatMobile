@@ -160,11 +160,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // default options
         toggleSignInOption();
-        mEmailView.setText("teacher@gmail.com");
-        mPasswordView.setText("teacher");
-        mUsernameView.setText("ndhuy");
-        mFirstNameView.setText("Duc Huy");
-        mLastNameView.setText("Nguyen");
+
+        // debug
+        boolean isStudent = true;
+        mEmailView.setText(isStudent ? "student@gmail.com" : "teacher@gmail.com");
+        mPasswordView.setText(isStudent ? "student" : "teacher");
+        mUsernameView.setText(isStudent ? "nttkieu" : "ndhuy");
+        mFirstNameView.setText(isStudent ? "Thuy Kieu" : "Duc Huy");
+        mLastNameView.setText(isStudent ? "Nguyen Thi" : "Nguyen");
 
         SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in);
         googleSignInButton.setOnClickListener(this);
@@ -618,7 +621,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     String lastName = result.getString("lastName");
                     user = new Teacher(email, firstName, lastName);
                 } else {
-                    String username = result.getString("username");
+                    String username = result.getString("name");
                     user = new Student(email, username);
                 }
                 user.setId(id);

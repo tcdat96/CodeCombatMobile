@@ -107,17 +107,27 @@ public class NetworkUtil {
         }
     }
 
-    private RequestFuture<JSONObject> sendRequest(int method, String path, JSONObject jsonRequest) {
+    private RequestFuture<JSONObject> sendRequestSync(int method, String path, JSONObject jsonRequest) {
         String reqUrl = getRequestUrl(path);
+        Log.d(TAG, "sendRequestSync: " + reqUrl);
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(method, reqUrl, jsonRequest, future, future);
         getRequestQueue().add(request);
         return future;
     }
 
+    private RequestFuture<JSONArray> sendRequestSync(int method, String path, JSONArray jsonRequest) {
+        String reqUrl = getRequestUrl(path);
+        Log.d(TAG, "sendRequestSync: " + reqUrl);
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+        JsonArrayRequest request = new JsonArrayRequest(method, reqUrl, jsonRequest, future, future);
+        getRequestQueue().add(request);
+        return future;
+    }
+
     @Nullable
-    private JSONObject getResponse(RequestFuture<JSONObject> future) {
-        JSONObject response = null;
+    private <T> T getResponse(RequestFuture<T> future) {
+        T response = null;
         try {
             response = future.get();
         } catch (InterruptedException | ExecutionException e) {
@@ -133,6 +143,18 @@ public class NetworkUtil {
         return response;
     }
 
+    private void sendRequestAsync(int method, String path, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+        String url = getRequestUrl(path);
+        JsonArrayRequest request = new JsonArrayRequest(method, url, null, listener,
+                errorListener != null ? errorListener : new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "onErrorResponse: " + error.getLocalizedMessage());
+                    }
+                });
+        getRequestQueue().add(request);
+    }
+
 
     // helper methods
     @Nullable
@@ -146,7 +168,7 @@ public class NetworkUtil {
             e.printStackTrace();
         }
 
-        RequestFuture<JSONObject> future = sendRequest(POST, "/auth/login", jsonReq);
+        RequestFuture<JSONObject> future = sendRequestSync(POST, "/auth/login", jsonReq);
         return getResponse(future);
     }
 
@@ -155,7 +177,7 @@ public class NetworkUtil {
         try {
             String encodedEmail = URLEncoder.encode(email, "UTF-8");
             String path = String.format(Locale.getDefault(), "/auth/email/%s?_=%d", encodedEmail, System.currentTimeMillis());
-            RequestFuture<JSONObject> future = sendRequest(GET, path, new JSONObject());
+            RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
             result = getResponse(future);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -168,7 +190,7 @@ public class NetworkUtil {
         try {
             String encodedUsername = URLEncoder.encode(username, "UTF-8");
             String path = String.format(Locale.getDefault(), "/auth/name/%s?_=%d", encodedUsername, System.currentTimeMillis());
-            RequestFuture<JSONObject> future = sendRequest(GET, path, new JSONObject());
+            RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
             result = getResponse(future);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -176,16 +198,51 @@ public class NetworkUtil {
         return result;
     }
 
-    public void requestClassList(String ownerId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
-        String path = "/db/classroom?ownerID=" + ownerId;
-        String url = getRequestUrl(path);
-        JsonArrayRequest request = new JsonArrayRequest(GET, url, null, listener,
-                errorListener != null ? errorListener : new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "onErrorResponse: " + error.getLocalizedMessage());
-                    }
-                });
-        getRequestQueue().add(request);
+    public void requestTeacherClassList(String teacherId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+        String path = "/db/classroom?ownerID=" + teacherId;
+        sendRequestAsync(GET, path, listener, errorListener);
+    }
+
+    public void requestStudentClassList(String studentId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
+        String path = String.format(Locale.getDefault(), "/db/classroom?memberID=%s&_=%d", studentId, System.currentTimeMillis());
+        sendRequestAsync(GET, path, listener, errorListener);
+    }
+
+    public JSONArray requestStudentClassListSync(String studentId) {
+        String path = String.format(Locale.getDefault(), "/db/classroom?memberID=%s&_=%d", studentId, System.currentTimeMillis());
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    public JSONArray requestCoursesSync() {
+        String path = "/db/course";
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    public JSONArray requestCourseInstances(String studentId) {
+        String path = String.format(Locale.getDefault(), "/db/user/%s/course_instances?_=%d", studentId, System.currentTimeMillis());
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    public JSONObject requestNamesSync(@NonNull String userId) {
+        JSONObject result = null;
+        try {
+            JSONObject jsonReq = new JSONObject();
+            jsonReq.put("ids[]", userId);
+            String path = "/db/user/x/names";
+            RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
+            result = getResponse(future);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public JSONArray requestLevelSessions(String instanceId) {
+        String path = "/db/course_instance/" + instanceId + "/my-course-level-sessions?project=state.complete%2Clevel.original%2Cplaytime";
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
     }
 }
