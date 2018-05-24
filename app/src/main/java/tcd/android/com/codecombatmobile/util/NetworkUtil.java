@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.data.User.Student;
+import tcd.android.com.codecombatmobile.data.User.Teacher;
 import tcd.android.com.codecombatmobile.data.User.User;
 
 import static com.android.volley.Request.Method.GET;
@@ -218,6 +219,10 @@ public class NetworkUtil {
             future = sendRequestSync(PUT, updateInfoPath, accInfoJsonReq);
             JSONObject accInfoObj = getResponse(future);
             if (accInfoObj != null) {
+                // trial request
+                if (user instanceof Teacher) {
+                    sendTrialRequest((Teacher)user);
+                }
                 // sign up with password
                 JSONObject jsonReq = getSignUpJsonRequest(user, password);
                 String signUpPath = String.format("/db/user/%s/signup-with-password", uid);
@@ -238,8 +243,31 @@ public class NetworkUtil {
         idObj.put("emails", emailsObj);
         if (user instanceof Student) {
             idObj.put("role", "student");
+        } else {
+            Teacher teacher  = (Teacher) user;
+            idObj.put("role", "teacher");
+            idObj.put("firstName", teacher.getFirstName());
+            idObj.put("lastName", teacher.getLastName());
         }
         return idObj;
+    }
+
+    private JSONObject sendTrialRequest(Teacher teacher) throws JSONException {
+        JSONObject properties = new JSONObject();
+        properties.put("email", teacher.getEmail());
+        properties.put("firstName", teacher.getFirstName());
+        properties.put("lastName", teacher.getLastName());
+        properties.put("organization", teacher.getOrganization());
+        properties.put("country", teacher.getCountry());
+        properties.put("phoneNumber", teacher.getPhoneNumber());
+        properties.put("role", teacher.getRole());
+        properties.put("numStudents", teacher.getEstimatedStudent());
+        JSONObject jsonReq = new JSONObject();
+        jsonReq.put("properties", properties);
+        jsonReq.put("type", "course");
+
+        RequestFuture<JSONObject> future = sendRequestSync(POST, "/db/trial.request", jsonReq);
+        return getResponse(future);
     }
 
     private JSONObject getSignUpJsonRequest(User user, String password) throws JSONException {

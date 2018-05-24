@@ -1,89 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="32dp"
     tools:context=".ui.MoreInfoTeacherActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/pb_login"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
 
-        <TextView
-            style="@style/MoreInfoTitleTextView"
-            android:text="@string/school_name"/>
+    <ScrollView
+        android:id="@+id/sv_request_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="32dp">
 
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/edt_school_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textColor="@android:color/black"
-            android:inputType="text"
-            android:textCursorDrawable="@null"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="vertical">
 
-        <TextView
-            style="@style/MoreInfoTitleTextView"
-            android:text="@string/country"/>
+            <TextView
+                style="@style/MoreInfoTitleTextView"
+                android:text="@string/school_name"/>
 
-        <Spinner
-            android:id="@+id/spinner_country_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"/>
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/edt_school_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="@android:color/black"
+                android:inputType="text"
+                android:textCursorDrawable="@null"
+                android:layout_marginBottom="16dp"/>
 
-        <TextView
-            style="@style/MoreInfoTitleTextView"
-            android:text="@string/phone_number"/>
+            <TextView
+                style="@style/MoreInfoTitleTextView"
+                android:text="@string/country"/>
 
-        <android.support.v7.widget.AppCompatEditText
-            android:id="@+id/edt_phone_number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textColor="@android:color/black"
-            android:inputType="phone"
-            android:textCursorDrawable="@null"
-            android:layout_marginBottom="16dp"/>
+            <Spinner
+                android:id="@+id/spinner_country_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"/>
 
-        <TextView
-            style="@style/MoreInfoTitleTextView"
-            android:text="@string/role"/>
+            <TextView
+                style="@style/MoreInfoTitleTextView"
+                android:text="@string/phone_number"/>
 
-        <Spinner
-            android:id="@+id/spinner_role"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:entries="@array/array_role_list"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"/>
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/edt_phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="@android:color/black"
+                android:inputType="phone"
+                android:textCursorDrawable="@null"
+                android:layout_marginBottom="16dp"/>
 
-        <TextView
-            style="@style/MoreInfoTitleTextView"
-            android:text="@string/estimated_number_student"/>
+            <TextView
+                style="@style/MoreInfoTitleTextView"
+                android:text="@string/role"/>
 
-        <Spinner
-            android:id="@+id/spinner_estimated_students"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:entries="@array/array_estimated_students"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"/>
+            <Spinner
+                android:id="@+id/spinner_role"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:entries="@array/array_role_list"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/create_account"
-            android:textColor="@android:color/white"
-            android:background="@drawable/background_login_button"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="32dp"/>
+            <TextView
+                style="@style/MoreInfoTitleTextView"
+                android:text="@string/estimated_number_student"/>
 
-    </LinearLayout>
+            <Spinner
+                android:id="@+id/spinner_estimated_students"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:entries="@array/array_estimated_students"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"/>
 
-</ScrollView>
+            <Button
+                android:id="@+id/btn_sign_up"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/create_account"
+                android:textColor="@android:color/white"
+                android:background="@drawable/background_login_button"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="32dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

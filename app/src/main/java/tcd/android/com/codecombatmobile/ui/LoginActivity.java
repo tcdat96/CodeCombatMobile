@@ -1,7 +1,5 @@
 package tcd.android.com.codecombatmobile.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
@@ -19,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -53,7 +50,6 @@ import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.User.Student;
 import tcd.android.com.codecombatmobile.data.User.Teacher;
 import tcd.android.com.codecombatmobile.data.User.User;
-import tcd.android.com.codecombatmobile.util.DataUtil;
 import tcd.android.com.codecombatmobile.util.NetworkUtil;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -61,7 +57,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, OnClickListener {
+public class LoginActivity extends AccountRequestActivity implements LoaderCallbacks<Cursor>, OnClickListener {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -69,10 +65,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int RC_GOOGLE_SIGN_IN = 1;
     private static final int RC_FACEBOOK_SIGN_IN = 2;
 
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private AsyncTask mAuthTask = null;
     private GoogleSignInClient mGoogleSignInClient;
 
     // UI references.
@@ -83,8 +75,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private LinearLayout mAccountTypeLayout, mUsernameLayout, mFirstLastNameLayout;
     private EditText mUsernameView, mFirstNameView, mLastNameView;
     private Button mRequestButton;
-    private View mProgressView;
-    private View mLoginFormView;
 
     private EditText mErrorView;
 
@@ -118,10 +108,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void initUiComponents() {
-        mEmailView = findViewById(R.id.email);
+
+        mLoginFormView = findViewById(R.id.sv_request_form);
+        mProgressView = findViewById(R.id.pb_login);
+
+        mEmailView = findViewById(R.id.actv_email);
         populateAutoComplete();
 
-        mPasswordView = findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.edt_password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -135,9 +129,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mRequestButton = findViewById(R.id.btn_account_request);
         mRequestButton.setOnClickListener(this);
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
 
         // sign in or sign up options
         mSignInTextView = findViewById(R.id.tv_sign_in);
@@ -161,10 +152,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         toggleSignInOption();
 
         // debug
-        boolean isStudent = true;
+        boolean isStudent = false;
         String studentName = "student1";
-        mEmailView.setText(isStudent ? studentName + "@gmail.com" : "teacher@gmail.com");
-        mPasswordView.setText(isStudent ? studentName : "teacher");
+        mEmailView.setText(isStudent ? studentName + "@gmail.com" : "teacher1@gmail.com");
+        mPasswordView.setText(isStudent ? studentName : "teacher1");
         mUsernameView.setText(isStudent ? studentName : "ndhuy");
         mFirstNameView.setText(isStudent ? "" : "Duc Huy");
         mLastNameView.setText(isStudent ? "" : "Nguyen");
@@ -400,31 +391,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return password.length() >= 6;
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    private void showProgress(final boolean show) {
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            }
-        });
-
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressView.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
@@ -550,68 +516,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (mUser instanceof Student) {
                     new StudentSignUpTask((Student) mUser, mPassword).execute();
                 } else {
-                    // TODO: 20/05/2018 launch more info activity and handle sign up task there
+                    Intent intent = new Intent(LoginActivity.this, MoreInfoTeacherActivity.class);
+                    intent.putExtra(MoreInfoTeacherActivity.ARG_TEACHER_DATA, mUser);
+                    intent.putExtra(MoreInfoTeacherActivity.ARG_PASSWORD_DATA, mPassword);
+                    startActivity(intent);
                 }
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
-
-    public abstract class AccountRequestTask extends AsyncTask<Void, Void, Boolean> {
-
-        protected User mUser;
-        protected String mPassword;
-
-        AccountRequestTask(User user, String password) {
-            mUser = user;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            JSONObject result = getResponse();
-            if (result != null) {
-                User user = getUserData(result);
-                DataUtil.saveUserData(LoginActivity.this, user);
-            }
-            return result != null;
-        }
-
-        protected abstract JSONObject getResponse();
-
-        private User getUserData(JSONObject result) {
-            User user = null;
-            try {
-                String id = result.getString("_id");
-                String email = result.getString("email");
-                String role = result.getString("role");
-                if ("teacher".equalsIgnoreCase(role)) {
-                    String firstName = result.getString("firstName");
-                    String lastName = result.getString("lastName");
-                    user = new Teacher(email, firstName, lastName);
-                } else {
-                    String username = result.getString("name");
-                    user = new Student(email, username);
-                }
-                user.setId(id);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return user;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
             }
         }
 

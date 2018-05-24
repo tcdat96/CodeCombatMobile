@@ -1,9 +1,14 @@
 package tcd.android.com.codecombatmobile.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,27 +16,48 @@ import java.util.List;
 import java.util.Locale;
 
 import tcd.android.com.codecombatmobile.R;
+import tcd.android.com.codecombatmobile.data.User.Student;
+import tcd.android.com.codecombatmobile.data.User.Teacher;
+import tcd.android.com.codecombatmobile.util.NetworkUtil;
 
-public class MoreInfoTeacherActivity extends AppCompatActivity {
+public class MoreInfoTeacherActivity extends AccountRequestActivity implements View.OnClickListener{
+
+    public static final String ARG_TEACHER_DATA = "argTeacherData";
+    public static final String ARG_PASSWORD_DATA = "argPasswordData";
 
     private Spinner mCountriesSpinner;
+    private Teacher mTeacher;
+    private String mPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_info_teacher);
-
         setTitle(R.string.title_activity_more_info);
+
+        Intent data = getIntent();
+        if (data == null || !data.hasExtra(ARG_TEACHER_DATA)) {
+            finish();
+            return;
+        }
+        mTeacher = (Teacher) data.getSerializableExtra(ARG_TEACHER_DATA);
+        mPassword = data.getStringExtra(ARG_PASSWORD_DATA);
 
         initUiComponents();
     }
 
     private void initUiComponents() {
+        mLoginFormView = findViewById(R.id.sv_request_form);
+        mProgressView = findViewById(R.id.pb_login);
+
         // countries list spinner
         mCountriesSpinner = findViewById(R.id.spinner_country_list);
         List<String> countryList = retrieveCountryList();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, countryList);
         mCountriesSpinner.setAdapter(adapter);
+
+        Button signUpButton = findViewById(R.id.btn_sign_up);
+        signUpButton.setOnClickListener(this);
     }
 
     private List<String> retrieveCountryList() {
@@ -45,5 +71,27 @@ public class MoreInfoTeacherActivity extends AppCompatActivity {
         }
         Collections.sort(countries);
         return countries;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_sign_up:
+                mAuthTask = new TeacherSignUpTask(mTeacher, mPassword);
+                ((TeacherSignUpTask)mAuthTask).execute();
+            break;
+        }
+    }
+
+    public class TeacherSignUpTask extends AccountRequestTask {
+
+        TeacherSignUpTask(Teacher teacher, String password) {
+            super(teacher, password);
+        }
+
+        @Override
+        protected JSONObject getResponse() {
+            return NetworkUtil.getInstance(MoreInfoTeacherActivity.this).signUpSync(mUser, mPassword);
+        }
     }
 }
