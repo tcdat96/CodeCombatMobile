@@ -1,5 +1,6 @@
 package tcd.android.com.codecombatmobile.ui;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +9,11 @@ import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -18,11 +23,13 @@ import tcd.android.com.codecombatmobile.data.TeacherClass;
 import tcd.android.com.codecombatmobile.ui.adapter.ClassStudentAdapter;
 import tcd.android.com.codecombatmobile.ui.widget.DetailCardView;
 import tcd.android.com.codecombatmobile.util.DataUtil;
+import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public class ClassDetailActivity extends AppCompatActivity {
 
     private static final String TAG = ClassDetailActivity.class.getSimpleName();
     public static final String ARG_TEACHER_CLASS_DETAIL = "argTeacherClassDetail";
+    public static final String ARG_COVER_RESOURCE_ID = "argCoverResId";
 
     private TeacherClass mClass;
 
@@ -33,6 +40,10 @@ public class ClassDetailActivity extends AppCompatActivity {
 
         if (getIntent() == null || !getIntent().hasExtra(ARG_TEACHER_CLASS_DETAIL)) {
             Log.e(TAG, "onCreate: There was a problem retrieving teacher class");
+//            finish();
+//            return;
+//        }
+            // TODO: 24/05/2018 remove this line and else statement
             mClass = DataUtil.getDebugTeacherClassList(1).get(0);
         } else
 
@@ -43,12 +54,11 @@ public class ClassDetailActivity extends AppCompatActivity {
     private void initUiComponents() {
         // cover image
         ImageView languageCoverImageView = findViewById(R.id.iv_language_cover);
-        int langType = DataUtil.getLanguageType(mClass.getLanguage());
-        int coverResId = DataUtil.getLanguageCoverRes(langType);
+        int coverResId = DataUtil.getLanguageCoverRes(mClass);
         Glide.with(this).load(coverResId).into(languageCoverImageView);
 
         // language tag
-        boolean isPython = langType == DataUtil.LANGUAGE_PYTHON;
+        boolean isPython = mClass.getLanguage().toLowerCase().equals("python");
         int themeColor = ContextCompat.getColor(this, isPython ? R.color.python_color : R.color.javascript_color);
         TextView languageTextView = findViewById(R.id.tv_programming_language);
         languageTextView.setText(mClass.getLanguage());
@@ -70,6 +80,12 @@ public class ClassDetailActivity extends AppCompatActivity {
         TextView dateCreatedTextView = findViewById(R.id.tv_date_created);
         dateCreatedTextView.setText(mClass.getDateCreated());
 
+        // class code
+        TextView classCodeTextView = findViewById(R.id.tv_class_code);
+        classCodeTextView.setText(mClass.getClassCode());
+
+        expandReservedSpace(classCodeTextView);
+
         initCardRow();
 
         // student list
@@ -78,6 +94,35 @@ public class ClassDetailActivity extends AppCompatActivity {
         studentsListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         ClassStudentAdapter adapter = new ClassStudentAdapter(mClass.getStudents());
         studentsListRecyclerView.setAdapter(adapter);
+
+        // if it has no student yet
+        if (mClass.getStudents().size() == 0) {
+            findViewById(R.id.tv_no_student_message).setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void expandReservedSpace(final View lastView) {
+        final View rootView = findViewById(R.id.cl_root);
+        final Space reservedSpace = findViewById(R.id.space_reserved);
+        lastView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    lastView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    lastView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+
+                float lastViewBottom = lastView.getBottom();
+                float rootBottom = rootView.getBottom();
+                int height = (int) (rootBottom - lastViewBottom);
+                if (height > 0) {
+                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) reservedSpace.getLayoutParams();
+                    params.height = height;
+                    reservedSpace.setLayoutParams(params);
+                }
+            }
+        });
     }
 
     private void initCardRow() {

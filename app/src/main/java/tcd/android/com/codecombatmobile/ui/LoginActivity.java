@@ -154,8 +154,8 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
         // debug
         boolean isStudent = false;
         String studentName = "student1";
-        mEmailView.setText(isStudent ? studentName + "@gmail.com" : "teacher1@gmail.com");
-        mPasswordView.setText(isStudent ? studentName : "teacher1");
+        mEmailView.setText(isStudent ? studentName + "@gmail.com" : "teacher@gmail.com");
+        mPasswordView.setText(isStudent ? studentName : "teacher");
         mUsernameView.setText(isStudent ? studentName : "ndhuy");
         mFirstNameView.setText(isStudent ? "" : "Duc Huy");
         mLastNameView.setText(isStudent ? "" : "Nguyen");

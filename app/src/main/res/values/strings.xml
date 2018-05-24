@@ -79,8 +79,8 @@
     <string name="average_level">avg. level</string>
     <string name="latest_level">Latest level</string>
     <string name="description_icon">icon</string>
-    <string name="students">Students</string>
-
+    <string name="course_progress">Course progress</string>
+    <string name="no_student_message">This class has no students yet.</string>
     <string name="cover_transition_name" translatable="false">coverTrans</string>
 
     <!-- settings -->

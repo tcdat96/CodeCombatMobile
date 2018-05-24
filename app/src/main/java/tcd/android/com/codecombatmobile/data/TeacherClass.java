@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,8 @@ public class TeacherClass implements Serializable {
     private String mDateCreated;
     private int mPlaytimeTotal;
     private int mLevelTotal;
-    private List<ClassStudent> mStudents;
+    @NonNull
+    private List<ClassStudent> mStudents = new ArrayList<>();
 
     public TeacherClass(String language, String className, String code, int studentTotal, int progress) {
         mLanguage = language;
@@ -45,6 +47,10 @@ public class TeacherClass implements Serializable {
         return mClassName;
     }
 
+    public String getClassCode() {
+        return mCode;
+    }
+
     public int getProgress() {
         return mProgress;
     }
@@ -65,7 +71,7 @@ public class TeacherClass implements Serializable {
         return mLevelTotal;
     }
 
-    @Nullable
+    @NonNull
     public List<ClassStudent> getStudents() {
         return mStudents;
     }

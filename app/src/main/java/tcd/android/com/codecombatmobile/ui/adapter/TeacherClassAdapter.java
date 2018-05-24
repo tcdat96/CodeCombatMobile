@@ -79,8 +79,7 @@ public class TeacherClassAdapter extends RecyclerView.Adapter<TeacherClassAdapte
         holder.mProgressBar.setProgressTextColor(themeColor);
 
         // cover background
-        int langType = DataUtil.getLanguageType(teacherClass.getLanguage());
-        int coverResId = DataUtil.getLanguageCoverRes(langType);
+        final int coverResId = DataUtil.getLanguageCoverRes(teacherClass);
         Glide.with(mContext).asBitmap().load(coverResId).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -94,6 +93,7 @@ public class TeacherClassAdapter extends RecyclerView.Adapter<TeacherClassAdapte
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ClassDetailActivity.class);
                 intent.putExtra(ClassDetailActivity.ARG_TEACHER_CLASS_DETAIL, teacherClass);
+                intent.putExtra(ClassDetailActivity.ARG_COVER_RESOURCE_ID, coverResId);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                             (Activity)mContext,

@@ -9,6 +9,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,32 +33,16 @@ import tcd.android.com.codecombatmobile.data.User.User;
 public class DataUtil {
     private static final String TAG = DataUtil.class.getSimpleName();
 
-    // supported languages
-    public static final int LANGUAGE_PYTHON = 0, LANGUAGE_JAVASCRIPT = 1;
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({LANGUAGE_PYTHON, LANGUAGE_JAVASCRIPT})
-    public @interface LanguageType {}
     private static int[] sPythonCovers = new int[] {R.drawable.cover_python_1, R.drawable.cover_py_2};
     private static int[] sJavascriptCovers = new int[] {R.drawable.cover_js_1, R.drawable.cover_js_2, R.drawable.cover_js_3};
-
-    @LanguageType
-    public static int getLanguageType(@NonNull String language) {
-        switch (language.trim().toLowerCase()) {
-            case "python": return LANGUAGE_PYTHON;
-            case "javascript":
-            case "js":
-                return LANGUAGE_JAVASCRIPT;
-            default:
-                throw new IllegalArgumentException("Not supported language");
-        }
-    }
-
     @DrawableRes
-    public static int getLanguageCoverRes(@LanguageType int type) {
-        Random random = new Random();
-        switch (type) {
-            case LANGUAGE_PYTHON: return sPythonCovers[random.nextInt(sPythonCovers.length)];
-            case LANGUAGE_JAVASCRIPT: return sJavascriptCovers[random.nextInt(sJavascriptCovers.length)];
+    public static int getLanguageCoverRes(TeacherClass teacherClass) {
+        int hashCode = Math.abs(teacherClass.getClassCode().hashCode());
+        switch (teacherClass.getLanguage().toLowerCase()) {
+            case "python":
+                return sPythonCovers[hashCode % sPythonCovers.length];
+            case "js": case "javascript":
+                return sJavascriptCovers[hashCode % sJavascriptCovers.length];
             default:
                 throw new IllegalArgumentException("Not supported language");
         }
