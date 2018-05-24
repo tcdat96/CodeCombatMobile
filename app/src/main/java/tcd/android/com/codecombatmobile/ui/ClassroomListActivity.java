@@ -2,12 +2,9 @@ package tcd.android.com.codecombatmobile.ui;
 
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.transition.Explode;
 import android.support.transition.TransitionManager;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,12 +16,11 @@ import android.view.MenuItem;
 import android.view.Window;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.util.DataUtil;
 
 @SuppressLint("Registered")
-public class SearchViewActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public abstract class ClassroomListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    private static final String TAG = SearchViewActivity.class.getSimpleName();
+    private static final String TAG = ClassroomListActivity.class.getSimpleName();
 
     private Toolbar mToolbar;
 

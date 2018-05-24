@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.Syntax;
+package tcd.android.com.codecombatmobile.data.syntax;
 
 import android.support.annotation.IntDef;
 import android.text.Spannable;
@@ -11,7 +11,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-import tcd.android.com.codecombatmobile.data.OperationFactory;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 

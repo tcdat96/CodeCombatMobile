@@ -11,13 +11,12 @@ import android.view.View;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.User.Student;
-import tcd.android.com.codecombatmobile.data.User.Teacher;
-import tcd.android.com.codecombatmobile.data.User.User;
+import tcd.android.com.codecombatmobile.data.user.Student;
+import tcd.android.com.codecombatmobile.data.user.Teacher;
+import tcd.android.com.codecombatmobile.data.user.User;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 
-public class AccountRequestActivity extends AppCompatActivity {
+public abstract class AccountRequestActivity extends AppCompatActivity {
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.

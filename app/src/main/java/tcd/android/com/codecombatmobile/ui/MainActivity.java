@@ -20,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
         Class[] activities = new Class[]{
                 LoginActivity.class,
                 MoreInfoTeacherActivity.class,
-                StudentClassActivity.class,
-                TeacherClassActivity.class,
-                ClassDetailActivity.class,
+                SClassroomListActivity.class,
+                TClassroomListActivity.class,
+                ClassroomDetailActivity.class,
                 CodeEditorActivity.class,
                 SettingsActivity.class,
                 GameActivity.class

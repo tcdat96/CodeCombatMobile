@@ -30,28 +30,28 @@ import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import tcd.android.com.codecombatmobile.data.User.Student;
-import tcd.android.com.codecombatmobile.data.User.Teacher;
-import tcd.android.com.codecombatmobile.data.User.User;
+import tcd.android.com.codecombatmobile.data.user.Student;
+import tcd.android.com.codecombatmobile.data.user.Teacher;
+import tcd.android.com.codecombatmobile.data.user.User;
 
 import static com.android.volley.Request.Method.GET;
 import static com.android.volley.Request.Method.POST;
 import static com.android.volley.Request.Method.PUT;
 
-public class NetworkUtil {
-    private static final String TAG = NetworkUtil.class.getSimpleName();
+public class CCRequestManager {
+    private static final String TAG = CCRequestManager.class.getSimpleName();
     private static final String AVD_EMULATOR_IP_ADDRESS = "10.0.2.2";
     private static final String GENY_MOTION_IP_ADDRESS = "10.0.3.2";
     private static final String READ_DEVICE_IP_ADDRESS = "192.168.0.109";
 
-    private static NetworkUtil mInstance = null;
+    private static CCRequestManager mInstance = null;
     private ImageLoader mImageLoader;
     private RequestQueue mRequestQueue;
     private static Context mContext;
     public static User mUser;
 
     // singleton pattern
-    private NetworkUtil(Context context) {
+    private CCRequestManager(Context context) {
         mContext = context;
         mRequestQueue = getRequestQueue();
         mImageLoader = new ImageLoader(mRequestQueue,
@@ -73,9 +73,9 @@ public class NetworkUtil {
         CookieHandler.setDefault(manager);
     }
 
-    public static synchronized NetworkUtil getInstance(Context context) {
+    public static synchronized CCRequestManager getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new NetworkUtil(context);
+            mInstance = new CCRequestManager(context);
         }
         return mInstance;
     }

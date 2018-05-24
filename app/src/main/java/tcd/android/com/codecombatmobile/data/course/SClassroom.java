@@ -1,10 +1,10 @@
-package tcd.android.com.codecombatmobile.data;
+package tcd.android.com.codecombatmobile.data.course;
 
 /**
  * Created by ADMIN on 30/04/2018.
  */
 
-public class StudentClass {
+public class SClassroom {
     private String mId;
     private String mLanguage;
     private String mClassName;
@@ -12,7 +12,7 @@ public class StudentClass {
     private String mCourseName;
     private int mProgress;
 
-    public StudentClass(String id, String language, String className, String teacher) {
+    public SClassroom(String id, String language, String className, String teacher) {
         mId = id;
         mLanguage = language;
         mClassName = className;

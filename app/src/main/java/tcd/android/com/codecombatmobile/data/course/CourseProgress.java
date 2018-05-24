@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data;
+package tcd.android.com.codecombatmobile.data.course;
 
 import java.io.Serializable;
 
@@ -6,13 +6,13 @@ import java.io.Serializable;
  * Created by ADMIN on 02/05/2018.
  */
 
-public class ClassStudent implements Serializable {
+public class CourseProgress implements Serializable {
     private String mName;
     private String mEmail;
     private int mProgress;
     private String mLatestLevel;
 
-    public ClassStudent(String name, String email, int progress, String latestLevel) {
+    public CourseProgress(String name, String email, int progress, String latestLevel) {
         mName = name;
         mEmail = email;
         mProgress = progress;

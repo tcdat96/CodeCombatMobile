@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.Syntax;
+package tcd.android.com.codecombatmobile.data.syntax;
 
 import android.support.v4.content.ContextCompat;
 import android.text.Spanned;

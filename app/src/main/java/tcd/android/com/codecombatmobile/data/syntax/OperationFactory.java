@@ -1,18 +1,8 @@
-package tcd.android.com.codecombatmobile.data;
+package tcd.android.com.codecombatmobile.data.syntax;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
-
-import tcd.android.com.codecombatmobile.data.Syntax.CodeBlock;
-import tcd.android.com.codecombatmobile.data.Syntax.FlowControl;
-import tcd.android.com.codecombatmobile.data.Syntax.FuncDeclaration;
-import tcd.android.com.codecombatmobile.data.Syntax.VarDeclaration;
-import tcd.android.com.codecombatmobile.data.Syntax.Function;
-import tcd.android.com.codecombatmobile.data.Syntax.Operation;
-import tcd.android.com.codecombatmobile.data.Syntax.Return;
-import tcd.android.com.codecombatmobile.data.Syntax.Value;
-import tcd.android.com.codecombatmobile.data.Syntax.Variable;
 
 /**
  * Created by ADMIN on 25/04/2018.

@@ -11,18 +11,18 @@ import android.widget.ScrollView;
 import java.util.ArrayList;
 import java.util.List;
 
-import tcd.android.com.codecombatmobile.data.Syntax.Operation;
-import tcd.android.com.codecombatmobile.data.OperationFactory;
+import tcd.android.com.codecombatmobile.data.syntax.Operation;
+import tcd.android.com.codecombatmobile.data.syntax.OperationFactory;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
-import tcd.android.com.codecombatmobile.ui.widget.MainButton;
+import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 import tcd.android.com.codecombatmobile.R;
 
-import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_FLOW_CONTROL;
-import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_DECLARATION;
-import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_FUNCTION;
-import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_VALUE;
-import static tcd.android.com.codecombatmobile.data.Syntax.Operation.TYPE_VARIABLE;
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FLOW_CONTROL;
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_DECLARATION;
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FUNCTION;
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_VALUE;
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_VARIABLE;
 
 public class CodeEditorActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -84,7 +84,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
             final Pair<Integer, String> pair = opTypes.get(i);
             final Operation operation = factory.getOperation(pair);
             if (operation != null) {
-                MainButton button = new MainButton(this);
+                SyntaxButton button = new SyntaxButton(this);
                 button.setText(operation.getButtonName());
                 button.setOperation(operation);
                 button.setOnClickListener(new View.OnClickListener() {

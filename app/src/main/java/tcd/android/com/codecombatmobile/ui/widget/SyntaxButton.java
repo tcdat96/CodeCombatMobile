@@ -9,7 +9,7 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 import info.hoang8f.widget.FButton;
-import tcd.android.com.codecombatmobile.data.Syntax.Operation;
+import tcd.android.com.codecombatmobile.data.syntax.Operation;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -18,22 +18,22 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
  * Created by ADMIN on 21/04/2018.
  */
 
-public class MainButton extends FButton {
+public class SyntaxButton extends FButton {
 
     @Nullable
     private Operation mOperation;
 
-    public MainButton(Context context) {
+    public SyntaxButton(Context context) {
         super(context);
         init(null, 0);
     }
 
-    public MainButton(Context context, AttributeSet attrs) {
+    public SyntaxButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public MainButton(Context context, AttributeSet attrs, int defStyle) {
+    public SyntaxButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
     }

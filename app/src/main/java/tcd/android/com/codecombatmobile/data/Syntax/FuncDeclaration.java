@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.Syntax;
+package tcd.android.com.codecombatmobile.data.syntax;
 
 import android.widget.TextView;
 

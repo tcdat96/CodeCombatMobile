@@ -12,18 +12,17 @@ import com.dinuscxj.progressbar.CircleProgressBar;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.ClassStudent;
-import tcd.android.com.codecombatmobile.data.StudentClass;
+import tcd.android.com.codecombatmobile.data.course.CourseProgress;
 
 /**
  * Created by ADMIN on 30/04/2018.
  */
 
-public class ClassStudentAdapter extends RecyclerView.Adapter<ClassStudentAdapter.StudentViewHolder> {
+public class CourseProgressAdapter extends RecyclerView.Adapter<CourseProgressAdapter.StudentViewHolder> {
 
-    private List<ClassStudent> mStudents;
+    private List<CourseProgress> mStudents;
 
-    public ClassStudentAdapter(List<ClassStudent> students) {
+    public CourseProgressAdapter(List<CourseProgress> students) {
         mStudents = students;
     }
 
@@ -37,7 +36,7 @@ public class ClassStudentAdapter extends RecyclerView.Adapter<ClassStudentAdapte
 
     @Override
     public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
-        ClassStudent student = mStudents.get(position);
+        CourseProgress student = mStudents.get(position);
         holder.mNameTextView.setText(student.getName());
         holder.mEmailTextView.setText(student.getEmail());
         holder.mProgressBar.setProgress(student.getProgress());

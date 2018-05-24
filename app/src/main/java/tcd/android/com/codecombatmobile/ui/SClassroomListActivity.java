@@ -2,7 +2,6 @@ package tcd.android.com.codecombatmobile.ui;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,17 +17,17 @@ import java.util.List;
 import java.util.Map;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.Course;
-import tcd.android.com.codecombatmobile.data.StudentClass;
-import tcd.android.com.codecombatmobile.data.User.User;
-import tcd.android.com.codecombatmobile.ui.adapter.StudentClassAdapter;
+import tcd.android.com.codecombatmobile.data.course.Course;
+import tcd.android.com.codecombatmobile.data.course.SClassroom;
+import tcd.android.com.codecombatmobile.data.user.User;
+import tcd.android.com.codecombatmobile.ui.adapter.SClassroomAdapter;
 import tcd.android.com.codecombatmobile.util.DataUtil;
-import tcd.android.com.codecombatmobile.util.NetworkUtil;
+import tcd.android.com.codecombatmobile.util.CCRequestManager;
 
-public class StudentClassActivity extends SearchViewActivity {
+public class SClassroomListActivity extends ClassroomListActivity {
 
-    private List<StudentClass> mClasses = new ArrayList<>();
-    private StudentClassAdapter mAdapter;
+    private List<SClassroom> mClassrooms = new ArrayList<>();
+    private SClassroomAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +40,12 @@ public class StudentClassActivity extends SearchViewActivity {
     }
 
     private void initClassList() {
-        RecyclerView stuClassListRv = findViewById(R.id.rv_student_classes);
-        stuClassListRv.setLayoutManager(new LinearLayoutManager(this));
-        stuClassListRv.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView classroomListRv = findViewById(R.id.rv_student_classes);
+        classroomListRv.setLayoutManager(new LinearLayoutManager(this));
+        classroomListRv.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new StudentClassAdapter(this, mClasses);
-        stuClassListRv.setAdapter(mAdapter);
+        mAdapter = new SClassroomAdapter(this, mClassrooms);
+        classroomListRv.setAdapter(mAdapter);
     }
 
     private void requestClassList() {
@@ -58,33 +57,33 @@ public class StudentClassActivity extends SearchViewActivity {
 
     private class GetStudentClassListTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final NetworkUtil mNetworkUtil;
+        private final CCRequestManager mReqManager;
         private final User mUser;
         private List<Course> mCourses;
 
         GetStudentClassListTask(User user) {
             mUser = user;
-            mNetworkUtil = NetworkUtil.getInstance(StudentClassActivity.this);
+            mReqManager = CCRequestManager.getInstance(SClassroomListActivity.this);
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
                 // get all courses
-                JSONArray courseArr = mNetworkUtil.requestCoursesSync();
+                JSONArray courseArr = mReqManager.requestCoursesSync();
                 if (courseArr == null) {
                     return false;
                 }
                 mCourses = parseCourses(courseArr);
                 // get student's classrooms
-                JSONArray classroomArr = mNetworkUtil.requestStudentClassListSync(mUser.getId());
+                JSONArray classroomArr = mReqManager.requestStudentClassListSync(mUser.getId());
                 if (classroomArr == null) {
                     return false;
                 }
-                List<StudentClass> classrooms = parseClasses(classroomArr);
-                mClasses.addAll(classrooms);
+                List<SClassroom> classrooms = parseClasses(classroomArr);
+                mClassrooms.addAll(classrooms);
                 // get class instances
-                JSONArray instanceArr = mNetworkUtil.requestCourseInstances(mUser.getId());
+                JSONArray instanceArr = mReqManager.requestCourseInstances(mUser.getId());
                 if (instanceArr == null) {
                     return false;
                 }
@@ -109,9 +108,9 @@ public class StudentClassActivity extends SearchViewActivity {
             return courses;
         }
 
-        private List<StudentClass> parseClasses(JSONArray classroomsJsonArr) throws JSONException {
+        private List<SClassroom> parseClasses(JSONArray classroomsJsonArr) throws JSONException {
             int length = classroomsJsonArr.length();
-            List<StudentClass> classrooms = new ArrayList<>(length);
+            List<SClassroom> classrooms = new ArrayList<>(length);
             for (int i = 0; i < length; i++) {
                 JSONObject classObj = classroomsJsonArr.getJSONObject(i);
                 String id = classObj.getString("_id");
@@ -127,14 +126,15 @@ public class StudentClassActivity extends SearchViewActivity {
                 JSONArray courseArr = classObj.getJSONArray("courses");
                 parseCourseLevels(courseArr);
 
-                StudentClass classroom = new StudentClass(id, language, name, teacher);
+                SClassroom classroom = new SClassroom(id, language, name, teacher);
                 classrooms.add(classroom);
             }
             return classrooms;
         }
 
         private String getOwnerName(String ownerId) throws JSONException {
-            NetworkUtil util = NetworkUtil.getInstance(StudentClassActivity.this);
+            // TODO: 24/05/2018 not working
+            CCRequestManager util = CCRequestManager.getInstance(SClassroomListActivity.this);
             JSONObject nameResponse = util.requestNamesSync(ownerId);
             String owner = "";
             if (nameResponse != null) {
@@ -176,7 +176,7 @@ public class StudentClassActivity extends SearchViewActivity {
         private void parseInstances(JSONArray instanceArr) throws JSONException {
             for (int i = 0; i < instanceArr.length(); i++) {
                 JSONObject instObj = instanceArr.getJSONObject(i);
-                StudentClass classroom = getClassroomById(instObj.getString("classroomID"));
+                SClassroom classroom = getClassroomById(instObj.getString("classroomID"));
                 if (classroom != null) {
                     Course course = getCourseById(instObj.getString("courseID"));
                     if (course != null) {
@@ -184,7 +184,7 @@ public class StudentClassActivity extends SearchViewActivity {
                         classroom.setCourseName(course.getName());
                         // progress
                         String instId = instObj.getString("_id");
-                        JSONArray sessions = mNetworkUtil.requestLevelSessions(instId);
+                        JSONArray sessions = mReqManager.requestLevelSessions(instId);
                         if (sessions != null) {
                             classroom.setProgress(sessions.length() * 100 / course.getLevels().size());
                         }
@@ -194,10 +194,10 @@ public class StudentClassActivity extends SearchViewActivity {
         }
 
         @Nullable
-        private StudentClass getClassroomById(String id) {
-            for (int i = 0; i < mClasses.size(); i++) {
-                if (mClasses.get(i).getId().equals(id)) {
-                    return mClasses.get(i);
+        private SClassroom getClassroomById(String id) {
+            for (int i = 0; i < mClassrooms.size(); i++) {
+                if (mClassrooms.get(i).getId().equals(id)) {
+                    return mClassrooms.get(i);
                 }
             }
             return null;
@@ -206,8 +206,8 @@ public class StudentClassActivity extends SearchViewActivity {
         @Override
         protected void onPostExecute(Boolean isSuccessful) {
             if (isSuccessful) {
-                mClasses.addAll(new ArrayList<>(mClasses));
-                mClasses.addAll(new ArrayList<>(mClasses));
+                mClassrooms.addAll(new ArrayList<>(mClassrooms));
+                mClassrooms.addAll(new ArrayList<>(mClassrooms));
                 mAdapter.notifyDataSetChanged();
             }
         }

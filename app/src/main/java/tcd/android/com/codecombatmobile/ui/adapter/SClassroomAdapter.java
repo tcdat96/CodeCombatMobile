@@ -11,24 +11,23 @@ import android.widget.TextView;
 
 import com.dinuscxj.progressbar.CircleProgressBar;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.StudentClass;
+import tcd.android.com.codecombatmobile.data.course.SClassroom;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 /**
  * Created by ADMIN on 30/04/2018.
  */
 
-public class StudentClassAdapter extends RecyclerView.Adapter<StudentClassAdapter.StudentClassViewHolder> {
+public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.StudentClassViewHolder> {
 
     private static int sPythonColor, sJavascriptColor;
 
-    private List<StudentClass> mClasses;
+    private List<SClassroom> mClasses;
 
-    public StudentClassAdapter(Context context, List<StudentClass> classes) {
+    public SClassroomAdapter(Context context, List<SClassroom> classes) {
         mClasses = classes;
         sPythonColor = ContextCompat.getColor(context, R.color.python_color);
         sJavascriptColor = ContextCompat.getColor(context, R.color.javascript_color);
@@ -44,7 +43,7 @@ public class StudentClassAdapter extends RecyclerView.Adapter<StudentClassAdapte
 
     @Override
     public void onBindViewHolder(@NonNull StudentClassViewHolder holder, int position) {
-        StudentClass stuClass = mClasses.get(position);
+        SClassroom stuClass = mClasses.get(position);
         holder.mLanguageTextView.setText(DisplayUtil.capitalize(stuClass.getLanguage()));
         holder.mClassNameTextView.setText(stuClass.getClassName());
         holder.mTeacherTextView.setText(stuClass.getTeacher());

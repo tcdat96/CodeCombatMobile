@@ -47,10 +47,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.User.Student;
-import tcd.android.com.codecombatmobile.data.User.Teacher;
-import tcd.android.com.codecombatmobile.data.User.User;
-import tcd.android.com.codecombatmobile.util.NetworkUtil;
+import tcd.android.com.codecombatmobile.data.user.Student;
+import tcd.android.com.codecombatmobile.data.user.Teacher;
+import tcd.android.com.codecombatmobile.data.user.User;
+import tcd.android.com.codecombatmobile.util.CCRequestManager;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -482,7 +482,7 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
         protected Void doInBackground(Void... voids) {
             try {
                 // validate email
-                JSONObject response = NetworkUtil.getInstance(LoginActivity.this).validateEmail(mUser.getEmail());
+                JSONObject response = CCRequestManager.getInstance(LoginActivity.this).validateEmail(mUser.getEmail());
                 boolean isEmailValid = response != null && !response.getBoolean("exists");
                 if (!isEmailValid) {
                     mErrorView = mEmailView;
@@ -492,7 +492,7 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
                 // validate username
                 if (mUser instanceof Student) {
                     Student student = (Student) mUser;
-                    response = NetworkUtil.getInstance(LoginActivity.this).validateUsername(student.getUsername());
+                    response = CCRequestManager.getInstance(LoginActivity.this).validateUsername(student.getUsername());
                     boolean isUsernameValid = response != null && !response.getBoolean("conflicts");
                     if (!isUsernameValid) {
                         mErrorView = mUsernameView;
@@ -539,7 +539,7 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
 
         @Override
         protected JSONObject getResponse() {
-            return NetworkUtil.getInstance(LoginActivity.this).signUpSync(mUser, mPassword);
+            return CCRequestManager.getInstance(LoginActivity.this).signUpSync(mUser, mPassword);
         }
     }
 
@@ -551,7 +551,7 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
 
         @Override
         protected JSONObject getResponse() {
-            return NetworkUtil.getInstance(LoginActivity.this).logInSync(mUser.getEmail(), mPassword);
+            return CCRequestManager.getInstance(LoginActivity.this).logInSync(mUser.getEmail(), mPassword);
         }
 
         @Override

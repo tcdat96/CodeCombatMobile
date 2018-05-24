@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.Random;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.TeacherClass;
-import tcd.android.com.codecombatmobile.data.User.User;
-import tcd.android.com.codecombatmobile.ui.adapter.TeacherClassAdapter;
+import tcd.android.com.codecombatmobile.data.course.TClassroom;
+import tcd.android.com.codecombatmobile.data.user.User;
+import tcd.android.com.codecombatmobile.ui.adapter.TClassroomAdapter;
 import tcd.android.com.codecombatmobile.util.DataUtil;
-import tcd.android.com.codecombatmobile.util.NetworkUtil;
+import tcd.android.com.codecombatmobile.util.CCRequestManager;
 
-public class TeacherClassActivity extends SearchViewActivity {
+public class TClassroomListActivity extends ClassroomListActivity {
 
-    private List<TeacherClass> mClasses = new ArrayList<>();
-    private TeacherClassAdapter mAdapter;
+    private List<TClassroom> mClassrooms = new ArrayList<>();
+    private TClassroomAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,22 +43,22 @@ public class TeacherClassActivity extends SearchViewActivity {
         teacherClassListRv.setLayoutManager(new LinearLayoutManager(this));
         teacherClassListRv.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new TeacherClassAdapter(this, mClasses);
+        mAdapter = new TClassroomAdapter(this, mClassrooms);
         teacherClassListRv.setAdapter(mAdapter);
     }
 
     private void requestClassList() {
         User user = DataUtil.getUserData(this);
         if (user != null) {
-            NetworkUtil.getInstance(this).requestTeacherClassList(user.getId(), new Response.Listener<JSONArray>() {
+            CCRequestManager.getInstance(this).requestTeacherClassList(user.getId(), new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     if (response != null) {
-                        List<TeacherClass> classes = readClassList(response);
+                        List<TClassroom> classrooms = readClassroomList(response);
                         // TODO: 20/05/2018 remove this
-                        classes.addAll(new ArrayList<>(classes));
-                        classes.addAll(new ArrayList<>(classes));
-                        mClasses.addAll(classes);
+                        classrooms.addAll(new ArrayList<>(classrooms));
+                        classrooms.addAll(new ArrayList<>(classrooms));
+                        mClassrooms.addAll(classrooms);
                         mAdapter.notifyDataSetChanged();
                     }
                 }
@@ -66,12 +66,12 @@ public class TeacherClassActivity extends SearchViewActivity {
         }
     }
 
-    private List<TeacherClass> readClassList(@NonNull JSONArray response) {
-        List<TeacherClass> classrooms = new ArrayList<>(response.length());
+    private List<TClassroom> readClassroomList(@NonNull JSONArray response) {
+        List<TClassroom> classrooms = new ArrayList<>(response.length());
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject classObj = response.getJSONObject(i);
-                TeacherClass classroom = readClass(classObj);
+                TClassroom classroom = readClassroom(classObj);
                 classrooms.add(classroom);
             }
         } catch (JSONException e) {
@@ -80,7 +80,7 @@ public class TeacherClassActivity extends SearchViewActivity {
         return classrooms;
     }
 
-    private TeacherClass readClass(JSONObject classObj) throws JSONException {
+    private TClassroom readClassroom(JSONObject classObj) throws JSONException {
         String name = classObj.getString("name");
         String code = classObj.getString("codeCamel");
 
@@ -95,6 +95,6 @@ public class TeacherClassActivity extends SearchViewActivity {
         // TODO: 20/05/2018 do something with this
         int progress = new Random().nextInt(100);
 
-        return new TeacherClass(language, name, code, studentTotal, progress);
+        return new TClassroom(language, name, code, studentTotal, progress);
     }
 }

@@ -1,30 +1,24 @@
 package tcd.android.com.codecombatmobile.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.util.Log;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.ClassStudent;
-import tcd.android.com.codecombatmobile.data.StudentClass;
-import tcd.android.com.codecombatmobile.data.TeacherClass;
-import tcd.android.com.codecombatmobile.data.User.Student;
-import tcd.android.com.codecombatmobile.data.User.Teacher;
-import tcd.android.com.codecombatmobile.data.User.User;
+import tcd.android.com.codecombatmobile.data.course.CourseProgress;
+import tcd.android.com.codecombatmobile.data.course.SClassroom;
+import tcd.android.com.codecombatmobile.data.course.TClassroom;
+import tcd.android.com.codecombatmobile.data.user.Student;
+import tcd.android.com.codecombatmobile.data.user.Teacher;
+import tcd.android.com.codecombatmobile.data.user.User;
 
 /**
  * Created by ADMIN on 22/04/2018.
@@ -36,7 +30,7 @@ public class DataUtil {
     private static int[] sPythonCovers = new int[] {R.drawable.cover_python_1, R.drawable.cover_py_2};
     private static int[] sJavascriptCovers = new int[] {R.drawable.cover_js_1, R.drawable.cover_js_2, R.drawable.cover_js_3};
     @DrawableRes
-    public static int getLanguageCoverRes(TeacherClass teacherClass) {
+    public static int getLanguageCoverRes(TClassroom teacherClass) {
         int hashCode = Math.abs(teacherClass.getClassCode().hashCode());
         switch (teacherClass.getLanguage().toLowerCase()) {
             case "python":
@@ -93,16 +87,16 @@ public class DataUtil {
 
     // debug helper methods
     @SuppressWarnings("SameParameterValue")
-    public static List<StudentClass> getDebugStudentClassList(int total) {
+    public static List<SClassroom> getDebugSClassroomList(int total) {
         Random random = new Random();
         String[] languages = new String[] {"python", "javascript", "python"};
         String[] classNames = new String[] {"Python Introduction", "Python Syntax", "Introduction to Python"};
         String[] teachers = new String[] {"Michael Keaton", "Alex Garland", "Emma Stone"};
 
-        List<StudentClass> classes = new ArrayList<>();
+        List<SClassroom> classes = new ArrayList<>();
         for (int i = 0; i < total; i++) {
             int idx = i % classNames.length;
-            StudentClass newClass = new StudentClass(String.valueOf(idx), languages[idx], classNames[idx], teachers[idx]);
+            SClassroom newClass = new SClassroom(String.valueOf(idx), languages[idx], classNames[idx], teachers[idx]);
             newClass.setCourseName("Introduction to Computer Science");
             newClass.setProgress(random.nextInt(Integer.MAX_VALUE) % 100);
             classes.add(newClass);
@@ -111,26 +105,26 @@ public class DataUtil {
     }
 
     @SuppressWarnings("SameParameterValue")
-    public static List<TeacherClass> getDebugTeacherClassList(int total) {
+    public static List<TClassroom> getDebugTClassroomList(int total) {
         Random random = new Random();
         String[] languages = new String[] {"python", "javascript", "python"};
         String[] classNames = new String[] {"Python Introduction", "Python Syntax", "Introduction to Python"};
-        List<ClassStudent> students = new ArrayList<>(Arrays.asList(
-                new ClassStudent("Thai Dat", "tcdat96@gmail.com", 59, "Introduction to Computer Science: Level20"),
-                new ClassStudent("Cao Dung", "caodung@gmail.com", 76, "Introduction to Computer Science: Level20"),
-                new ClassStudent("dc vh", "dungchoviechoc@gmail.com", 23, "Introduction to Computer Science: Level20")
+        List<CourseProgress> students = new ArrayList<>(Arrays.asList(
+                new CourseProgress("Thai Dat", "tcdat96@gmail.com", 59, "Introduction to Computer Science: Level20"),
+                new CourseProgress("Cao Dung", "caodung@gmail.com", 76, "Introduction to Computer Science: Level20"),
+                new CourseProgress("dc vh", "dungchoviechoc@gmail.com", 23, "Introduction to Computer Science: Level20")
         ));
         students.addAll(new ArrayList<>(students));
         students.addAll(new ArrayList<>(students));
 
-        List<TeacherClass> classes = new ArrayList<>();
+        List<TClassroom> classes = new ArrayList<>();
         for (int i = 0; i < total; i++) {
             int idx = i % classNames.length;
             int progress = random.nextInt(Integer.MAX_VALUE) % 100;
             int studentTotal = random.nextInt(100);
             int playtimeTotal = random.nextInt(180);
             int levelTotal = random.nextInt(12);
-            TeacherClass newClass = new TeacherClass(languages[idx], classNames[idx], "FunnyNameMore", progress, studentTotal,
+            TClassroom newClass = new TClassroom(languages[idx], classNames[idx], "FunnyNameMore", progress, studentTotal,
                     "4/16/2018", playtimeTotal, levelTotal);
             newClass.setStudentList(students);
             classes.add(newClass);

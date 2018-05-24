@@ -28,12 +28,12 @@
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"/>
         <activity
-            android:name=".ui.StudentClassActivity"
+            android:name=".ui.SClassroomListActivity"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".ui.TeacherClassActivity"
+            android:name=".ui.TClassroomListActivity"
             android:theme="@style/NoActionBar" />
-        <activity android:name=".ui.ClassDetailActivity" />
+        <activity android:name=".ui.ClassroomDetailActivity" />
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings" />

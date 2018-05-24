@@ -2,7 +2,6 @@ package tcd.android.com.codecombatmobile.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,9 +15,8 @@ import java.util.List;
 import java.util.Locale;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.User.Student;
-import tcd.android.com.codecombatmobile.data.User.Teacher;
-import tcd.android.com.codecombatmobile.util.NetworkUtil;
+import tcd.android.com.codecombatmobile.data.user.Teacher;
+import tcd.android.com.codecombatmobile.util.CCRequestManager;
 
 public class MoreInfoTeacherActivity extends AccountRequestActivity implements View.OnClickListener{
 
@@ -91,7 +89,7 @@ public class MoreInfoTeacherActivity extends AccountRequestActivity implements V
 
         @Override
         protected JSONObject getResponse() {
-            return NetworkUtil.getInstance(MoreInfoTeacherActivity.this).signUpSync(mUser, mPassword);
+            return CCRequestManager.getInstance(MoreInfoTeacherActivity.this).signUpSync(mUser, mPassword);
         }
     }
 }

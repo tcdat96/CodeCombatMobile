@@ -26,10 +26,8 @@ import com.dinuscxj.progressbar.CircleProgressBar;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.StudentClass;
-import tcd.android.com.codecombatmobile.data.TeacherClass;
-import tcd.android.com.codecombatmobile.ui.ClassDetailActivity;
-import tcd.android.com.codecombatmobile.ui.TeacherClassActivity;
+import tcd.android.com.codecombatmobile.data.course.TClassroom;
+import tcd.android.com.codecombatmobile.ui.ClassroomDetailActivity;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
@@ -37,14 +35,14 @@ import tcd.android.com.codecombatmobile.util.DisplayUtil;
  * Created by ADMIN on 30/04/2018.
  */
 
-public class TeacherClassAdapter extends RecyclerView.Adapter<TeacherClassAdapter.TeacherClassViewHolder> {
+public class TClassroomAdapter extends RecyclerView.Adapter<TClassroomAdapter.TeacherClassViewHolder> {
 
     private static int sPythonColor, sJavascriptColor;
 
     private Context mContext;
-    private List<TeacherClass> mClasses;
+    private List<TClassroom> mClasses;
 
-    public TeacherClassAdapter(Context context, List<TeacherClass> classes) {
+    public TClassroomAdapter(Context context, List<TClassroom> classes) {
         mContext = context;
         mClasses = classes;
         sPythonColor = ContextCompat.getColor(context, R.color.python_color);
@@ -61,7 +59,7 @@ public class TeacherClassAdapter extends RecyclerView.Adapter<TeacherClassAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final TeacherClassViewHolder holder, int position) {
-        final TeacherClass teacherClass = mClasses.get(position);
+        final TClassroom teacherClass = mClasses.get(position);
         holder.mProgressBar.setProgress(teacherClass.getProgress());
         holder.mClassNameTextView.setText(teacherClass.getClassName());
         holder.mLanguageTextView.setText(DisplayUtil.capitalize(teacherClass.getLanguage()));
@@ -91,9 +89,9 @@ public class TeacherClassAdapter extends RecyclerView.Adapter<TeacherClassAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ClassDetailActivity.class);
-                intent.putExtra(ClassDetailActivity.ARG_TEACHER_CLASS_DETAIL, teacherClass);
-                intent.putExtra(ClassDetailActivity.ARG_COVER_RESOURCE_ID, coverResId);
+                Intent intent = new Intent(mContext, ClassroomDetailActivity.class);
+                intent.putExtra(ClassroomDetailActivity.ARG_TEACHER_CLASS_DETAIL, teacherClass);
+                intent.putExtra(ClassroomDetailActivity.ARG_COVER_RESOURCE_ID, coverResId);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                             (Activity)mContext,

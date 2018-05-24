@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.Syntax;
+package tcd.android.com.codecombatmobile.data.syntax;
 
 import android.support.annotation.NonNull;
 import android.text.SpannableString;

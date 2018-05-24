@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.User;
+package tcd.android.com.codecombatmobile.data.user;
 
 public class Student extends User {
     private String mUsername;

@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.Syntax;
+package tcd.android.com.codecombatmobile.data.syntax;
 
 public class FlowControl extends CodeBlock {
     public FlowControl(String name) {

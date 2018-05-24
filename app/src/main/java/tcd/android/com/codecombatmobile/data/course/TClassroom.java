@@ -1,7 +1,6 @@
-package tcd.android.com.codecombatmobile.data;
+package tcd.android.com.codecombatmobile.data.course;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.List;
  * Created by ADMIN on 30/04/2018.
  */
 
-public class TeacherClass implements Serializable {
+public class TClassroom implements Serializable {
     private String mLanguage;
     private String mClassName;
     private String mCode;
@@ -21,9 +20,9 @@ public class TeacherClass implements Serializable {
     private int mPlaytimeTotal;
     private int mLevelTotal;
     @NonNull
-    private List<ClassStudent> mStudents = new ArrayList<>();
+    private List<CourseProgress> mStudents = new ArrayList<>();
 
-    public TeacherClass(String language, String className, String code, int studentTotal, int progress) {
+    public TClassroom(String language, String className, String code, int studentTotal, int progress) {
         mLanguage = language;
         mClassName = className;
         mCode = code;
@@ -31,8 +30,8 @@ public class TeacherClass implements Serializable {
         mProgress = progress;
     }
 
-    public TeacherClass(String language, String className, String code, int progress, int studentTotal,
-                        String dateCreated, int playtimeTotal, int levelTotal) {
+    public TClassroom(String language, String className, String code, int progress, int studentTotal,
+                      String dateCreated, int playtimeTotal, int levelTotal) {
         this(language, className, code, studentTotal, progress);
         mDateCreated = dateCreated;
         mPlaytimeTotal = playtimeTotal;
@@ -72,11 +71,11 @@ public class TeacherClass implements Serializable {
     }
 
     @NonNull
-    public List<ClassStudent> getStudents() {
+    public List<CourseProgress> getStudents() {
         return mStudents;
     }
 
-    public void setStudentList(@NonNull List<ClassStudent> studentList) {
+    public void setStudentList(@NonNull List<CourseProgress> studentList) {
         mStudents = studentList;
     }
 }

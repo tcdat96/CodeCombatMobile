@@ -19,19 +19,18 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.TeacherClass;
-import tcd.android.com.codecombatmobile.ui.adapter.ClassStudentAdapter;
+import tcd.android.com.codecombatmobile.data.course.TClassroom;
+import tcd.android.com.codecombatmobile.ui.adapter.CourseProgressAdapter;
 import tcd.android.com.codecombatmobile.ui.widget.DetailCardView;
 import tcd.android.com.codecombatmobile.util.DataUtil;
-import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
-public class ClassDetailActivity extends AppCompatActivity {
+public class ClassroomDetailActivity extends AppCompatActivity {
 
-    private static final String TAG = ClassDetailActivity.class.getSimpleName();
+    private static final String TAG = ClassroomDetailActivity.class.getSimpleName();
     public static final String ARG_TEACHER_CLASS_DETAIL = "argTeacherClassDetail";
     public static final String ARG_COVER_RESOURCE_ID = "argCoverResId";
 
-    private TeacherClass mClass;
+    private TClassroom mClassroom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,45 +43,45 @@ public class ClassDetailActivity extends AppCompatActivity {
 //            return;
 //        }
             // TODO: 24/05/2018 remove this line and else statement
-            mClass = DataUtil.getDebugTeacherClassList(1).get(0);
+            mClassroom = DataUtil.getDebugTClassroomList(1).get(0);
         } else
 
-        mClass = (TeacherClass) getIntent().getSerializableExtra(ARG_TEACHER_CLASS_DETAIL);
+        mClassroom = (TClassroom) getIntent().getSerializableExtra(ARG_TEACHER_CLASS_DETAIL);
         initUiComponents();
     }
 
     private void initUiComponents() {
         // cover image
         ImageView languageCoverImageView = findViewById(R.id.iv_language_cover);
-        int coverResId = DataUtil.getLanguageCoverRes(mClass);
+        int coverResId = DataUtil.getLanguageCoverRes(mClassroom);
         Glide.with(this).load(coverResId).into(languageCoverImageView);
 
         // language tag
-        boolean isPython = mClass.getLanguage().toLowerCase().equals("python");
-        int themeColor = ContextCompat.getColor(this, isPython ? R.color.python_color : R.color.javascript_color);
+        boolean isPython = mClassroom.getLanguage().toLowerCase().equals("python");
+        int langColor = ContextCompat.getColor(this, isPython ? R.color.python_color : R.color.javascript_color);
         TextView languageTextView = findViewById(R.id.tv_programming_language);
-        languageTextView.setText(mClass.getLanguage());
+        languageTextView.setText(mClassroom.getLanguage());
         languageTextView.setBackgroundResource(
                 isPython ? R.drawable.background_language_python : R.drawable.background_language_javascript);
-        languageTextView.setTextColor(themeColor);
+        languageTextView.setTextColor(langColor);
 
         // class name
         TextView classNameTextView = findViewById(R.id.tv_class_name);
-        classNameTextView.setText(mClass.getClassName());
+        classNameTextView.setText(mClassroom.getClassName());
 
         // total number of students
         TextView studentTotalTextView = findViewById(R.id.tv_student_total);
-        int studentTotal = mClass.getStudentTotal();
+        int studentTotal = mClassroom.getStudentTotal();
         String studentTotalStr = getResources().getQuantityString(R.plurals.student_total, studentTotal, studentTotal);
         studentTotalTextView.setText(studentTotalStr);
 
         // date created
         TextView dateCreatedTextView = findViewById(R.id.tv_date_created);
-        dateCreatedTextView.setText(mClass.getDateCreated());
+        dateCreatedTextView.setText(mClassroom.getDateCreated());
 
         // class code
         TextView classCodeTextView = findViewById(R.id.tv_class_code);
-        classCodeTextView.setText(mClass.getClassCode());
+        classCodeTextView.setText(mClassroom.getClassCode());
 
         expandReservedSpace(classCodeTextView);
 
@@ -92,11 +91,11 @@ public class ClassDetailActivity extends AppCompatActivity {
         RecyclerView studentsListRecyclerView = findViewById(R.id.rv_student_list);
         studentsListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         studentsListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        ClassStudentAdapter adapter = new ClassStudentAdapter(mClass.getStudents());
+        CourseProgressAdapter adapter = new CourseProgressAdapter(mClassroom.getStudents());
         studentsListRecyclerView.setAdapter(adapter);
 
         // if it has no student yet
-        if (mClass.getStudents().size() == 0) {
+        if (mClassroom.getStudents().size() == 0) {
             findViewById(R.id.tv_no_student_message).setVisibility(View.VISIBLE);
         }
     }
@@ -135,8 +134,8 @@ public class ClassDetailActivity extends AppCompatActivity {
                 R.string.latest_level, R.string.average_level, R.string.average_play_time
         };
         int[] values = new int[] {
-                mClass.getLevelTotal(), mClass.getPlaytimeTotal(), mClass.getProgress(),
-                mClass.getLevelTotal(), mClass.getPlaytimeTotal(), mClass.getProgress()
+                mClassroom.getLevelTotal(), mClassroom.getPlaytimeTotal(), mClassroom.getProgress(),
+                mClassroom.getLevelTotal(), mClassroom.getPlaytimeTotal(), mClassroom.getProgress()
         };
 
         GridLayout container = findViewById(R.id.gl_card_container);

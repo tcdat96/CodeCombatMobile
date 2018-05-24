@@ -5,7 +5,7 @@
     android:id="@+id/cl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tcd.android.com.codecombatmobile.ui.ClassDetailActivity">
+    tools:context="tcd.android.com.codecombatmobile.ui.ClassroomDetailActivity">
 
     <ScrollView
         android:layout_width="0dp"

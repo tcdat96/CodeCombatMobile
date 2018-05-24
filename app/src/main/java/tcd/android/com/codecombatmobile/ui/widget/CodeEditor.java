@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.Syntax.Operation;
+import tcd.android.com.codecombatmobile.data.syntax.Operation;
 
 /**
  * Created by ADMIN on 21/04/2018.
