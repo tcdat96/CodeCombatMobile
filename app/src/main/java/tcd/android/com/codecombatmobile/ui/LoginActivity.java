@@ -295,7 +295,7 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
             return;
         }
 
-        // Reset errors.
+        // Reset errors
         if (mErrorView != null) {
             mErrorView.setError(null);
         }

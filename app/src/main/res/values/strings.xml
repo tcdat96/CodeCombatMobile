@@ -59,6 +59,7 @@
         <item>501–1000</item>
         <item>1000+</item>
     </string-array>
+    <string name="error_invalid_phone_number">This phone number is too short</string>
     <string name="create_account">Create account</string>
 
     <!--teacher classes-->
