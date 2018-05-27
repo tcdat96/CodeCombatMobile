@@ -42,7 +42,8 @@ public class CCRequestManager {
     private static final String TAG = CCRequestManager.class.getSimpleName();
     private static final String AVD_EMULATOR_IP_ADDRESS = "10.0.2.2";
     private static final String GENY_MOTION_IP_ADDRESS = "10.0.3.2";
-    private static final String READ_DEVICE_IP_ADDRESS = "192.168.0.109";
+    private static final String READ_DEVICE_IP_ADDRESS = "127.0.0.1";
+//    private static final String READ_DEVICE_IP_ADDRESS = "192.168.0.109";
 
     private static CCRequestManager mInstance = null;
     private ImageLoader mImageLoader;

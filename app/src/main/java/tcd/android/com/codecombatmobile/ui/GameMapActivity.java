@@ -2,6 +2,7 @@ package tcd.android.com.codecombatmobile.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -50,8 +51,12 @@ public class GameMapActivity extends AppCompatActivity {
 
         initUiComponents();
 
+        // retrieve map from server
         mAuthTask = new GetMapTask();
         mAuthTask.execute();
+
+        // for user to be able to change the volume of the proper stream
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     private void initUiComponents() {
@@ -74,6 +79,7 @@ public class GameMapActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mAuthTask.cancel(true);
+        mMapView.stop();
     }
 
     private class GetMapTask extends AsyncTask<Void, Void, Void> {

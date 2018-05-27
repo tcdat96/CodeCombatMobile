@@ -9,8 +9,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RawRes;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -45,12 +49,15 @@ public class GameMapView extends SurfaceView implements Runnable {
 
     private Point mScreenSize;
     private Bitmap mMapBackground;
+
     @NonNull
     private List<Level> mLevels = new ArrayList<>();
     @NonNull
     private List<RectF> mLevelsPosition = new ArrayList<>();
     private Bitmap mLevelBannerBitmap;
     private Position mCurLevelPos = null;
+
+    private SoundPool mSoundPool;
 
     public GameMapView(Context context) {
         super(context);
@@ -67,20 +74,54 @@ public class GameMapView extends SurfaceView implements Runnable {
         init(context);
     }
 
-    private void init(Context context) {
+    private void init(final Context context) {
         mHolder = getHolder();
+        mScreenSize = DisplayUtil.getScreenSize(context);
 
+        // paint
         mPaint = new Paint();
         mIncompleteLevelPaint = new Paint();
         mIncompleteLevelPaint.setColor(ContextCompat.getColor(context, R.color.incomplete_level_color));
         mCompleteLevelPaint = new Paint();
         mCompleteLevelPaint.setColor(ContextCompat.getColor(context, R.color.complete_level_color));
 
-        mScreenSize = DisplayUtil.getScreenSize(context);
-
+        // current level banner
         mLevelBannerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.level_banner_started);
         float ratio = (float) mLevelBannerBitmap.getWidth() / mLevelBannerBitmap.getHeight();
         mLevelBannerBitmap = Bitmap.createScaledBitmap(mLevelBannerBitmap, LEVEL_BANNER_WIDTH, (int) (LEVEL_BANNER_WIDTH / ratio), false);
+
+        // init sound pool
+        initSoundPool();
+
+        // play ambient dungeon sound
+        playSound(R.raw.sound_ambient_dungeon);
+    }
+
+    private void initSoundPool() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes attrs = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+            mSoundPool = new SoundPool.Builder()
+                    .setMaxStreams(10)
+                    .setAudioAttributes(attrs)
+                    .build();
+        } else {
+            mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        }
+    }
+
+    private void playSound(@RawRes final int rawResId) {
+        final int soundId = mSoundPool.load(getContext(), rawResId, 1);
+        mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                if (sampleId == soundId) {
+                    mSoundPool.play(soundId, 1, 1, 0, -1 /* loop forever */, 1);
+                }
+            }
+        });
     }
 
     public void setMapBackground(Bitmap mapBgr) {
@@ -229,5 +270,9 @@ public class GameMapView extends SurfaceView implements Runnable {
         mIsRunning = true;
         mGameThread = new Thread(this);
         mGameThread.start();
+    }
+
+    public void stop() {
+        mSoundPool.release();
     }
 }
