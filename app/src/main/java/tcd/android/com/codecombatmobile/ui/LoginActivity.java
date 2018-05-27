@@ -152,8 +152,8 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
         toggleSignInOption();
 
         // debug
-        boolean isStudent = false;
-        String studentName = "student1";
+        boolean isStudent = true;
+        String studentName = "student";
         mEmailView.setText(isStudent ? studentName + "@gmail.com" : "teacher@gmail.com");
         mPasswordView.setText(isStudent ? studentName : "teacher");
         mUsernameView.setText(isStudent ? studentName : "ndhuy");

@@ -25,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
                 ClassroomDetailActivity.class,
                 CodeEditorActivity.class,
                 SettingsActivity.class,
-                GameActivity.class
+                GameActivity.class,
+                GameMapActivity.class
         };
         for (final Class activity : activities) {
             Button button = new Button(this);

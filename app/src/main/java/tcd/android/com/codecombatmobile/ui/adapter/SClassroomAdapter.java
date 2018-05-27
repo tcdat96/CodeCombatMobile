@@ -1,6 +1,7 @@
 package tcd.android.com.codecombatmobile.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
+import tcd.android.com.codecombatmobile.ui.GameMapActivity;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 /**
@@ -25,10 +27,12 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.St
 
     private static int sPythonColor, sJavascriptColor;
 
-    private List<SClassroom> mClasses;
+    private Context mContext;
+    private List<SClassroom> mClassrooms;
 
-    public SClassroomAdapter(Context context, List<SClassroom> classes) {
-        mClasses = classes;
+    public SClassroomAdapter(Context context, List<SClassroom> classrooms) {
+        mContext = context;
+        mClassrooms = classrooms;
         sPythonColor = ContextCompat.getColor(context, R.color.python_color);
         sJavascriptColor = ContextCompat.getColor(context, R.color.javascript_color);
     }
@@ -43,14 +47,15 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.St
 
     @Override
     public void onBindViewHolder(@NonNull StudentClassViewHolder holder, int position) {
-        SClassroom stuClass = mClasses.get(position);
-        holder.mLanguageTextView.setText(DisplayUtil.capitalize(stuClass.getLanguage()));
-        holder.mClassNameTextView.setText(stuClass.getClassName());
-        holder.mTeacherTextView.setText(stuClass.getTeacher());
-        holder.mCourseNameTextView.setText(stuClass.getCourseName());
-        holder.mProgressBar.setProgress(stuClass.getProgress());
+        final SClassroom classroom = mClassrooms.get(position);
+        holder.mLanguageTextView.setText(DisplayUtil.capitalize(classroom.getLanguage()));
+        holder.mClassNameTextView.setText(classroom.getClassName());
+        holder.mTeacherTextView.setText(classroom.getTeacher());
+        holder.mCourseNameTextView.setText(classroom.getCourseName());
+        holder.mProgressBar.setProgress(classroom.getProgress());
 
-        boolean isPython = stuClass.getLanguage().equals("python");
+        // language color
+        boolean isPython = classroom.getLanguage().equals("python");
         int themeColor = isPython ? sPythonColor : sJavascriptColor;
         holder.mLanguageTextView.setBackgroundResource(
                 isPython ? R.drawable.background_language_python : R.drawable.background_language_javascript);
@@ -58,11 +63,21 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.St
         holder.mProgressBar.setProgressStartColor(themeColor);
         holder.mProgressBar.setProgressEndColor(themeColor);
         holder.mProgressBar.setProgressTextColor(themeColor);
+
+        // on click
+        holder.mProgressBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, GameMapActivity.class);
+                intent.putExtra(GameMapActivity.ARG_STUDENT_CLASSROOM, classroom);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return mClasses.size();
+        return mClassrooms.size();
     }
 
     class StudentClassViewHolder extends RecyclerView.ViewHolder {

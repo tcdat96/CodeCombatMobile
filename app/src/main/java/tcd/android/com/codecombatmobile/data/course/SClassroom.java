@@ -1,15 +1,21 @@
 package tcd.android.com.codecombatmobile.data.course;
 
+import android.support.annotation.NonNull;
+
+import java.io.Serializable;
+
 /**
  * Created by ADMIN on 30/04/2018.
  */
 
-public class SClassroom {
+public class SClassroom implements Serializable {
     private String mId;
     private String mLanguage;
     private String mClassName;
     private String mTeacher;
     private String mCourseName;
+    private String mCampaignId;
+    private String mInstanceId;
     private int mProgress;
 
     public SClassroom(String id, String language, String className, String teacher) {
@@ -39,6 +45,14 @@ public class SClassroom {
         return mCourseName;
     }
 
+    public String getCampaignId() {
+        return mCampaignId;
+    }
+
+    public String getInstanceId() {
+        return mInstanceId;
+    }
+
     public int getProgress() {
         return mProgress;
     }
@@ -49,5 +63,13 @@ public class SClassroom {
 
     public void setProgress(int progress) {
         mProgress = progress;
+    }
+
+    public void setCampaignId(@NonNull String campaignId) {
+        mCampaignId = campaignId;
+    }
+
+    public void setInstanceId(@NonNull String instanceId) {
+        mInstanceId = instanceId;
     }
 }

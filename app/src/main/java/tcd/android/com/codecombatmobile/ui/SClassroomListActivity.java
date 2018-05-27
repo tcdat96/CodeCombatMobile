@@ -83,7 +83,7 @@ public class SClassroomListActivity extends ClassroomListActivity {
                 List<SClassroom> classrooms = parseClasses(classroomArr);
                 mClassrooms.addAll(classrooms);
                 // get class instances
-                JSONArray instanceArr = mReqManager.requestCourseInstances(mUser.getId());
+                JSONArray instanceArr = mReqManager.requestCourseInstancesSync(mUser.getId());
                 if (instanceArr == null) {
                     return false;
                 }
@@ -98,12 +98,14 @@ public class SClassroomListActivity extends ClassroomListActivity {
             int length = coursesJsonArr.length();
             List<Course> courses = new ArrayList<>(length);
             for (int i = 0; i < length; i++) {
-                JSONObject course = coursesJsonArr.getJSONObject(i);
-                String id = course.getString("_id");
-                String name = course.getString("name");
-                String description = course.getString("description");
+                JSONObject courseObj = coursesJsonArr.getJSONObject(i);
+                String id = courseObj.getString("_id");
+                String name = courseObj.getString("name");
+                String description = courseObj.getString("description");
+                String campaignId = courseObj.getString("campaignID");
 
-                courses.add(new Course(id, name, description));
+                Course newCourse = new Course(id, name, description, campaignId);
+                courses.add(newCourse);
             }
             return courses;
         }
@@ -178,13 +180,14 @@ public class SClassroomListActivity extends ClassroomListActivity {
                 JSONObject instObj = instanceArr.getJSONObject(i);
                 SClassroom classroom = getClassroomById(instObj.getString("classroomID"));
                 if (classroom != null) {
+                    classroom.setInstanceId(instObj.getString("_id"));
                     Course course = getCourseById(instObj.getString("courseID"));
                     if (course != null) {
-                        // course name
                         classroom.setCourseName(course.getName());
+                        classroom.setCampaignId(course.getCampaignId());
                         // progress
                         String instId = instObj.getString("_id");
-                        JSONArray sessions = mReqManager.requestLevelSessions(instId);
+                        JSONArray sessions = mReqManager.requestLevelSessionsSync(instId);
                         if (sessions != null) {
                             classroom.setProgress(sessions.length() * 100 / course.getLevels().size());
                         }

@@ -26,7 +26,7 @@
             android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.LoginActivity"
-            android:label="@string/title_activity_login"/>
+            android:label="@string/title_activity_login" />
         <activity
             android:name=".ui.SClassroomListActivity"
             android:theme="@style/NoActionBar" />
@@ -38,9 +38,14 @@
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".ui.MoreInfoTeacherActivity" />
-        <activity android:name=".ui.GameActivity"
-            android:theme="@style/GameTheme"
-            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".ui.GameActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/GameTheme" />
+        <activity
+            android:name=".ui.GameMapActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/GameTheme" />
     </application>
 
 </manifest>

@@ -8,12 +8,14 @@ public class Course {
     private String mId;
     private String mName;
     private String mDescription;
+    private String mCampaignId;
     private Map<String, String> mLevels;
 
-    public Course(String id, String name, String description) {
-        this.mId = id;
-        this.mName = name;
-        this.mDescription = description;
+    public Course(String id, String name, String description, String campaignId) {
+        mId = id;
+        mName = name;
+        mDescription = description;
+        mCampaignId = campaignId;
     }
 
     public String getId() {
@@ -26,6 +28,10 @@ public class Course {
 
     public String getDescription() {
         return mDescription;
+    }
+
+    public String getCampaignId() {
+        return mCampaignId;
     }
 
     public Map<String, String> getLevels() {

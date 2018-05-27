@@ -107,4 +107,7 @@
     <string name="instruction">Instruction</string>
     <string name="hints">Hints</string>
     <string name="run">Run</string>
+
+    <!--game level map-->
+    <string name="play">Play</string>
 </resources>

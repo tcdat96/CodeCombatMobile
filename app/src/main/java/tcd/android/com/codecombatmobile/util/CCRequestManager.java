@@ -48,7 +48,6 @@ public class CCRequestManager {
     private ImageLoader mImageLoader;
     private RequestQueue mRequestQueue;
     private static Context mContext;
-    public static User mUser;
 
     // singleton pattern
     private CCRequestManager(Context context) {
@@ -93,6 +92,10 @@ public class CCRequestManager {
         String protocol = "http://";
         String domainName = getIpAddress() + ":3000";
         return protocol + domainName + path;
+    }
+
+    public String getFileUrl(String path) {
+        return getRequestUrl("/file/" + path);
     }
 
     private String getIpAddress() {
@@ -285,11 +288,6 @@ public class CCRequestManager {
         sendRequestAsync(GET, path, listener, errorListener);
     }
 
-    public void requestStudentClassList(String studentId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
-        String path = String.format(Locale.getDefault(), "/db/classroom?memberID=%s&_=%d", studentId, System.currentTimeMillis());
-        sendRequestAsync(GET, path, listener, errorListener);
-    }
-
     public JSONArray requestStudentClassListSync(String studentId) {
         String path = String.format(Locale.getDefault(), "/db/classroom?memberID=%s&_=%d", studentId, System.currentTimeMillis());
         RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
@@ -302,7 +300,7 @@ public class CCRequestManager {
         return getResponse(future);
     }
 
-    public JSONArray requestCourseInstances(String studentId) {
+    public JSONArray requestCourseInstancesSync(String studentId) {
         String path = String.format(Locale.getDefault(), "/db/user/%s/course_instances?_=%d", studentId, System.currentTimeMillis());
         RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
         return getResponse(future);
@@ -322,9 +320,15 @@ public class CCRequestManager {
         return result;
     }
 
-    public JSONArray requestLevelSessions(String instanceId) {
+    public JSONArray requestLevelSessionsSync(String instanceId) {
         String path = "/db/course_instance/" + instanceId + "/my-course-level-sessions?project=state.complete%2Clevel.original%2Cplaytime";
         RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    public JSONObject requestCampaignSync(String campaignId) {
+        String path = "/db/campaign/" + campaignId;
+        RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
         return getResponse(future);
     }
 }
