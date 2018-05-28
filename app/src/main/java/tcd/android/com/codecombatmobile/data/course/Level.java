@@ -1,17 +1,21 @@
 package tcd.android.com.codecombatmobile.data.course;
 
-public class Level {
+import java.io.Serializable;
+
+public class Level implements Serializable {
     private String mId;
     private String mName;
     private String mDescription;
+    private String mSlug;
     private String[] mConcepts;
     private Position mPosition;
     private boolean mIsComplete;
 
-    public Level(String id, String name, String description, String[] concepts, Position position) {
+    public Level(String id, String name, String description, String slug, String[] concepts, Position position) {
         mId = id;
         mName = name;
         mDescription = description;
+        mSlug = slug;
         mConcepts = concepts;
         mPosition = position;
     }
@@ -26,6 +30,10 @@ public class Level {
 
     public String getDescription() {
         return mDescription;
+    }
+
+    public String getSlug() {
+        return mSlug;
     }
 
     public String[] getConcepts() {

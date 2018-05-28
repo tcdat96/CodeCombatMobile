@@ -2,15 +2,19 @@ package tcd.android.com.codecombatmobile.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.course.CourseProgress;
@@ -82,6 +86,20 @@ public class DataUtil {
             user.setId(uid);
         }
         return user;
+    }
+
+
+    // misc
+    @Nullable
+    public static Bitmap getImageSync(Context context, String url) {
+        try {
+            return Glide.with(context).asBitmap().load(url).submit().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

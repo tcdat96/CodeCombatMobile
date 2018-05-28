@@ -107,6 +107,7 @@
     <string name="instruction">Instruction</string>
     <string name="hints">Hints</string>
     <string name="run">Run</string>
+    <string name="error_get_level_message">Sorry, there seems to be a problem. Please try again later.</string>
 
     <!--game level map-->
     <string name="play">Play</string>

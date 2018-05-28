@@ -133,6 +133,7 @@ public class GameMapActivity extends AppCompatActivity {
             String id = levelObj.getString("original");
             String name = levelObj.getString("name");
             String description = levelObj.getString("description");
+            String slug = levelObj.getString("slug");
             // concepts
             JSONArray conceptArr = levelObj.getJSONArray("concepts");
             String[] concepts = new String[conceptArr.length()];
@@ -145,7 +146,7 @@ public class GameMapActivity extends AppCompatActivity {
             float y = (float) posObj.getDouble("y");
             Position position = new Position(x, y);
 
-            return new Level(id, name, description, concepts, position);
+            return new Level(id, name, description, slug, concepts, position);
         }
 
         @Override

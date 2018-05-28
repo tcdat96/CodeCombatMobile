@@ -240,7 +240,7 @@ public class GameMapView extends SurfaceView implements Runnable {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_level_info);
 
-        Level level = mLevels.get(position);
+        final Level level = mLevels.get(position);
         ((TextView)dialog.findViewById(R.id.tv_level_name)).setText(level.getName());
         ((TextView)dialog.findViewById(R.id.tv_level_description)).setText(level.getDescription());
         dialog.findViewById(R.id.btn_play).setOnClickListener(new OnClickListener() {
@@ -248,6 +248,7 @@ public class GameMapView extends SurfaceView implements Runnable {
             public void onClick(View v) {
                 dialog.dismiss();
                 Intent intent = new Intent(context, GameActivity.class);
+                intent.putExtra(GameActivity.ARG_LEVEL_DATA, level);
                 context.startActivity(intent);
             }
         });

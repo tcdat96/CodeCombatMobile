@@ -1,6 +1,8 @@
 package tcd.android.com.codecombatmobile.data.course;
 
-public class Position {
+import java.io.Serializable;
+
+public class Position implements Serializable {
     public float x;
     public float y;
 

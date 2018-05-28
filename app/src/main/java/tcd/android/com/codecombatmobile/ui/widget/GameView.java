@@ -1,7 +1,6 @@
 package tcd.android.com.codecombatmobile.ui.widget;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,12 +9,18 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tcd.android.com.codecombatmobile.R;
+import tcd.android.com.codecombatmobile.data.Thang;
+import tcd.android.com.codecombatmobile.data.ThangType;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public class GameView extends SurfaceView implements Runnable {
@@ -49,6 +54,11 @@ public class GameView extends SurfaceView implements Runnable {
     private Rect mFrameToDraw = new Rect(0, 0, mFrameWidth, mFrameHeight);
     private RectF mWhereToDraw = new RectF(mPositionX, 0, mPositionX + mFrameWidth, mFrameHeight);
 
+    @NonNull
+    private List<Thang> mThangs = new ArrayList<>();
+    @NonNull
+    private List<ThangType> mThangTypes = new ArrayList<>();
+
     public GameView(Context context) {
         super(context);
         init(context);
@@ -68,21 +78,29 @@ public class GameView extends SurfaceView implements Runnable {
         mHolder = getHolder();
         mPaint = new Paint();
 
-        Resources resources = getResources();
         mScreenSize = DisplayUtil.getScreenSize(context);
 
-        // level background
-        mLevelBackground = BitmapFactory.decodeResource(resources, R.drawable.background_game_level);
-        float scale = (float)mLevelBackground.getWidth() / mLevelBackground.getHeight();
-        int height = (int) (mScreenSize.y * 0.81f);
-        int width = (int) (height * scale);
-        mLevelBackground = Bitmap.createScaledBitmap(mLevelBackground, width, height, false);
-
-        mHolder.setFixedSize(width, height);
-
         // load character size
-        mBitmap = BitmapFactory.decodeResource(resources, R.drawable.sprite_sheet_bob);
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sprite_sheet_bob);
         mBitmap = Bitmap.createScaledBitmap(mBitmap, mFrameWidth * mFrameTotal, mFrameHeight, false);
+    }
+
+    public void setThangs(@NonNull List<Thang> thangs, @NonNull List<ThangType> thangTypes) {
+        mThangs = thangs;
+        mThangTypes = thangTypes;
+
+        // level background
+        for (ThangType thangType : thangTypes) {
+            if (thangType.getKind().equals("Floor")) {
+                mLevelBackground = thangType.getBitmap();
+                float scale = (float) mLevelBackground.getWidth() / mLevelBackground.getHeight();
+                int height = (int) (mScreenSize.y * 0.81f);
+                int width = (int) (height * scale);
+                mLevelBackground = Bitmap.createScaledBitmap(mLevelBackground, width, height, false);
+
+                mHolder.setFixedSize(width, height);
+            }
+        }
     }
 
     @Override
@@ -116,7 +134,9 @@ public class GameView extends SurfaceView implements Runnable {
 
             // background
             mCanvas.drawColor(Color.parseColor("#211C10"));
-            mCanvas.drawBitmap(mLevelBackground, 0, 0, mPaint);
+            if (mLevelBackground != null) {
+                mCanvas.drawBitmap(mLevelBackground, 0, 0, mPaint);
+            }
 
             // fps text
             mPaint.setColor(Color.argb(255,  249, 129, 0));
