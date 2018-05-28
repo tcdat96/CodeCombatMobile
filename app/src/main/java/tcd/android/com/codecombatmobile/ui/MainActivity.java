@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
                 ClassroomDetailActivity.class,
                 CodeEditorActivity.class,
                 SettingsActivity.class,
-                GameActivity.class,
+                GameLevelActivity.class,
                 GameMapActivity.class
         };
         for (final Class activity : activities) {

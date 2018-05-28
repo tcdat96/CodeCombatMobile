@@ -21,8 +21,9 @@ import tcd.android.com.codecombatmobile.data.course.Course;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
 import tcd.android.com.codecombatmobile.data.user.User;
 import tcd.android.com.codecombatmobile.ui.adapter.SClassroomAdapter;
-import tcd.android.com.codecombatmobile.util.DataUtil;
+import tcd.android.com.codecombatmobile.util.CCDataUtil;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
+import tcd.android.com.codecombatmobile.util.DataUtil;
 
 public class SClassroomListActivity extends ClassroomListActivity {
 
@@ -74,7 +75,7 @@ public class SClassroomListActivity extends ClassroomListActivity {
                 if (courseArr == null) {
                     return false;
                 }
-                mCourses = parseCourses(courseArr);
+                mCourses = CCDataUtil.parseCourses(courseArr);
                 // get student's classrooms
                 JSONArray classroomArr = mReqManager.requestStudentClassListSync(mUser.getId());
                 if (classroomArr == null) {
@@ -92,22 +93,6 @@ public class SClassroomListActivity extends ClassroomListActivity {
                 e.printStackTrace();
             }
             return true;
-        }
-
-        private List<Course> parseCourses(JSONArray coursesJsonArr) throws JSONException {
-            int length = coursesJsonArr.length();
-            List<Course> courses = new ArrayList<>(length);
-            for (int i = 0; i < length; i++) {
-                JSONObject courseObj = coursesJsonArr.getJSONObject(i);
-                String id = courseObj.getString("_id");
-                String name = courseObj.getString("name");
-                String description = courseObj.getString("description");
-                String campaignId = courseObj.getString("campaignID");
-
-                Course newCourse = new Course(id, name, description, campaignId);
-                courses.add(newCourse);
-            }
-            return courses;
         }
 
         private List<SClassroom> parseClasses(JSONArray classroomsJsonArr) throws JSONException {
@@ -209,8 +194,6 @@ public class SClassroomListActivity extends ClassroomListActivity {
         @Override
         protected void onPostExecute(Boolean isSuccessful) {
             if (isSuccessful) {
-                mClassrooms.addAll(new ArrayList<>(mClassrooms));
-                mClassrooms.addAll(new ArrayList<>(mClassrooms));
                 mAdapter.notifyDataSetChanged();
             }
         }

@@ -22,20 +22,20 @@ import java.util.List;
 import java.util.Set;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.Thang;
-import tcd.android.com.codecombatmobile.data.ThangType;
+import tcd.android.com.codecombatmobile.data.thang.Thang;
+import tcd.android.com.codecombatmobile.data.thang.ThangType;
 import tcd.android.com.codecombatmobile.data.course.Level;
-import tcd.android.com.codecombatmobile.ui.widget.GameView;
+import tcd.android.com.codecombatmobile.ui.widget.GameLevelView;
 import tcd.android.com.codecombatmobile.ui.widget.ProgressBar;
 import tcd.android.com.codecombatmobile.util.CCDataUtil;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener{
+public class GameLevelActivity extends AppCompatActivity implements View.OnClickListener{
 
     public static final String ARG_LEVEL_DATA = "argLevelData";
 
-    private GameView mGameView;
+    private GameLevelView mGameLevelView;
     private ProgressBar mTimeControlBar, mHpBar;
 
     private GetThangsTask mAsyncTask;
@@ -65,7 +65,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initUiComponents() {
-        mGameView = findViewById(R.id.game_view);
+        mGameLevelView = findViewById(R.id.game_view);
 
         mTimeControlBar = findViewById(R.id.pb_time_control);
         mTimeControlBar.setProgress(0.45f);
@@ -86,7 +86,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         for (int buttonId : buttonIds) {
             Button button = findViewById(buttonId);
-            button.setOnClickListener(GameActivity.this);
+            button.setOnClickListener(GameLevelActivity.this);
             button.setBackgroundDrawable(drawable);
         }
     }
@@ -94,13 +94,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        mGameView.pause();
+        mGameLevelView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mGameView.resume();
+        mGameLevelView.resume();
     }
 
     @Override
@@ -126,7 +126,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private class GetThangsTask extends AsyncTask<Void, Void, Boolean> {
 
-        private CCRequestManager mManager = CCRequestManager.getInstance(GameActivity.this);
+        private CCRequestManager mManager = CCRequestManager.getInstance(GameLevelActivity.this);
 
         @Override
         protected Boolean doInBackground(Void... voids) {
@@ -157,7 +157,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         // get image (if exists)
                         if (thangType.getImagePath() != null) {
                             String url = mManager.getFileUrl(thangType.getImagePath());
-                            thangType.setBitmap(DataUtil.getImageSync(GameActivity.this, url));
+                            thangType.setBitmap(DataUtil.getImageSync(GameLevelActivity.this, url));
                         }
                         mThangTypes.add(thangType);
                     }
@@ -173,9 +173,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(success);
             
             if (success) {
-                mGameView.setThangs(mThangs, mThangTypes);
+                mGameLevelView.setThangs(mThangs, mThangTypes);
             } else {
-                Toast.makeText(GameActivity.this, R.string.error_get_level_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(GameLevelActivity.this, R.string.error_get_level_message, Toast.LENGTH_SHORT).show();
             }
         }
 

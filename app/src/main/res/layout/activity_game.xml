@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <tcd.android.com.codecombatmobile.ui.widget.GameView
+        <tcd.android.com.codecombatmobile.ui.widget.GameLevelView
             android:id="@+id/game_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

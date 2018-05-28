@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data;
+package tcd.android.com.codecombatmobile.data.thang;
 
 import android.graphics.Bitmap;
 

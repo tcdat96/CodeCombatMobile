@@ -108,7 +108,7 @@ public class GameMapActivity extends AppCompatActivity {
                         String key = (String) keys.next();
                         if (levelsObj.get(key) instanceof JSONObject) {
                             JSONObject levelObj = (JSONObject) levelsObj.get(key);
-                            Level level = readLevel(levelObj);
+                            Level level = CCDataUtil.getLevel(levelObj);
                             mLevels.add(level);
                         }
                     }
@@ -127,26 +127,6 @@ public class GameMapActivity extends AppCompatActivity {
                 }
             }
             return null;
-        }
-
-        private Level readLevel(JSONObject levelObj) throws JSONException {
-            String id = levelObj.getString("original");
-            String name = levelObj.getString("name");
-            String description = levelObj.getString("description");
-            String slug = levelObj.getString("slug");
-            // concepts
-            JSONArray conceptArr = levelObj.getJSONArray("concepts");
-            String[] concepts = new String[conceptArr.length()];
-            for (int i = 0; i < conceptArr.length(); i++) {
-                concepts[i] = conceptArr.getString(i);
-            }
-            // position
-            JSONObject posObj = levelObj.getJSONObject("position");
-            float x = (float) posObj.getDouble("x");
-            float y = (float) posObj.getDouble("y");
-            Position position = new Position(x, y);
-
-            return new Level(id, name, description, slug, concepts, position);
         }
 
         @Override

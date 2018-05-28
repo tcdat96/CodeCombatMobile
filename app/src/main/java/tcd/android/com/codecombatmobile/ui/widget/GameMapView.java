@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.course.Level;
 import tcd.android.com.codecombatmobile.data.course.Position;
-import tcd.android.com.codecombatmobile.ui.GameActivity;
+import tcd.android.com.codecombatmobile.ui.GameLevelActivity;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public class GameMapView extends SurfaceView implements Runnable {
@@ -247,8 +247,8 @@ public class GameMapView extends SurfaceView implements Runnable {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Intent intent = new Intent(context, GameActivity.class);
-                intent.putExtra(GameActivity.ARG_LEVEL_DATA, level);
+                Intent intent = new Intent(context, GameLevelActivity.class);
+                intent.putExtra(GameLevelActivity.ARG_LEVEL_DATA, level);
                 context.startActivity(intent);
             }
         });

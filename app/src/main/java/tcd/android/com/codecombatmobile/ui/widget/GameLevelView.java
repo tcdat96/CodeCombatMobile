@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.Thang;
-import tcd.android.com.codecombatmobile.data.ThangType;
+import tcd.android.com.codecombatmobile.data.thang.Thang;
+import tcd.android.com.codecombatmobile.data.thang.ThangType;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
-public class GameView extends SurfaceView implements Runnable {
-    private static final String TAG = GameView.class.getSimpleName();
+public class GameLevelView extends SurfaceView implements Runnable {
+    private static final String TAG = GameLevelView.class.getSimpleName();
 
     @Nullable
     private Thread mGameThread = null;
@@ -59,17 +59,17 @@ public class GameView extends SurfaceView implements Runnable {
     @NonNull
     private List<ThangType> mThangTypes = new ArrayList<>();
 
-    public GameView(Context context) {
+    public GameLevelView(Context context) {
         super(context);
         init(context);
     }
 
-    public GameView(Context context, AttributeSet attrs) {
+    public GameLevelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public GameView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public GameLevelView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
