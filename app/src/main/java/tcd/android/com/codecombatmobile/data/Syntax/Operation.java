@@ -39,6 +39,7 @@ public abstract class Operation {
     @SyntaxType
     private int mSyntaxType = TYPE_VALUE;
     protected Spannable mSpannable;
+    protected boolean mReturnsValue = false;
 
     protected List<Operation> mChildren;
     protected Operation mContainer;
@@ -59,6 +60,10 @@ public abstract class Operation {
 
     public Operation getContainer() {
         return mContainer;
+    }
+
+    public boolean returnsValue() {
+        return mReturnsValue;
     }
 
     public void setOnClickListener(CodeEditor codeEditor) {

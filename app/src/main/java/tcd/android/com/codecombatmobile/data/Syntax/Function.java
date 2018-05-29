@@ -11,6 +11,7 @@ public class Function extends Operation {
     public Function(String name, int paramTotal) {
         super(name, TYPE_FUNCTION);
 
+        mReturnsValue = true;
         mSpannable = new SpannableString(name.substring(0, name.length() - 2));
         setSpannableColor();
 
@@ -21,7 +22,7 @@ public class Function extends Operation {
 
     @Override
     protected boolean isNewOpValid(int index, Operation op) {
-        return op instanceof Variable || op instanceof Value || op instanceof Function;
+        return op.returnsValue();
     }
 
     @Override

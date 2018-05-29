@@ -16,6 +16,8 @@ public class SimpleExpression extends Operation {
     public SimpleExpression() {
         super("Expression", TYPE_OPERATOR);
         mLhs = new Blank();
+
+        mReturnsValue = true;
     }
 
     @Override

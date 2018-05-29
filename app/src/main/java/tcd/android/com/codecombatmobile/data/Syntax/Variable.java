@@ -14,6 +14,8 @@ public class Variable extends Operation {
         super(name, TYPE_VARIABLE);
         mSpannable = new SpannableString(name);
         setSpannableColor();
+
+        mReturnsValue = true;
     }
 
     @Override

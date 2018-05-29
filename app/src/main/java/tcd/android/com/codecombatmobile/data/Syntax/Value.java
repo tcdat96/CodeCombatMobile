@@ -12,6 +12,8 @@ public class Value extends Operation {
     public Value(String value) {
         super(value, TYPE_VALUE);
         mSpannable = new SpannableString(value);
+
+        mReturnsValue = true;
     }
 
     @Override

@@ -17,7 +17,7 @@ public class Return extends Operation {
 
     @Override
     protected boolean isNewOpValid(int index, Operation op) {
-        return op instanceof Variable || op instanceof Value || op instanceof Function;
+        return op.returnsValue();
     }
 
     @Override

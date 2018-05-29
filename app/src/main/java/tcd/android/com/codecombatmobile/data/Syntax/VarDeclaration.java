@@ -21,9 +21,9 @@ public class VarDeclaration extends Operation {
     @Override
     protected boolean isNewOpValid(int index, Operation op) {
         switch (index) {
-            case 0: return op instanceof Variable;
+            case 0: return op instanceof Value;             // TODO: 29/05/2018 must be a string
             case 1: return op instanceof Assignment;
-            case 2: return op instanceof SimpleExpression;
+            case 2: return op.returnsValue();
         }
         return super.isNewOpValid(index, op);
     }

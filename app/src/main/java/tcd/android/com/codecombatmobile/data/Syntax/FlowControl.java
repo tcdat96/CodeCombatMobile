@@ -8,7 +8,7 @@ public class FlowControl extends CodeBlock {
     @Override
     protected boolean isNewOpValid(int index, Operation op) {
         if (index == 0) {
-            return op instanceof Value || op instanceof Function || op instanceof Variable;
+            return op.returnsValue();
         }
         return true;
     }
