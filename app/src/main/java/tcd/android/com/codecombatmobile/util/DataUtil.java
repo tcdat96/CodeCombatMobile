@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.style.CharacterStyle;
 
 import com.bumptech.glide.Glide;
 
@@ -31,15 +33,17 @@ import tcd.android.com.codecombatmobile.data.user.User;
 public class DataUtil {
     private static final String TAG = DataUtil.class.getSimpleName();
 
-    private static int[] sPythonCovers = new int[] {R.drawable.cover_python_1, R.drawable.cover_py_2};
-    private static int[] sJavascriptCovers = new int[] {R.drawable.cover_js_1, R.drawable.cover_js_2, R.drawable.cover_js_3};
+    private static int[] sPythonCovers = new int[]{R.drawable.cover_python_1, R.drawable.cover_py_2};
+    private static int[] sJavascriptCovers = new int[]{R.drawable.cover_js_1, R.drawable.cover_js_2, R.drawable.cover_js_3};
+
     @DrawableRes
     public static int getLanguageCoverRes(TClassroom teacherClass) {
         int hashCode = Math.abs(teacherClass.getClassCode().hashCode());
         switch (teacherClass.getLanguage().toLowerCase()) {
             case "python":
                 return sPythonCovers[hashCode % sPythonCovers.length];
-            case "js": case "javascript":
+            case "js":
+            case "javascript":
                 return sJavascriptCovers[hashCode % sJavascriptCovers.length];
             default:
                 throw new IllegalArgumentException("Not supported language");
@@ -102,14 +106,23 @@ public class DataUtil {
         return null;
     }
 
+    public static void removeAllSpans(Spannable spannable) {
+        Object spansToRemove[] = spannable.getSpans(0, spannable.length(), Object.class);
+        for (Object span : spansToRemove) {
+            if (span instanceof CharacterStyle) {
+                spannable.removeSpan(span);
+            }
+        }
+    }
+
 
     // debug helper methods
     @SuppressWarnings("SameParameterValue")
     public static List<SClassroom> getDebugSClassroomList(int total) {
         Random random = new Random();
-        String[] languages = new String[] {"python", "javascript", "python"};
-        String[] classNames = new String[] {"Python Introduction", "Python Syntax", "Introduction to Python"};
-        String[] teachers = new String[] {"Michael Keaton", "Alex Garland", "Emma Stone"};
+        String[] languages = new String[]{"python", "javascript", "python"};
+        String[] classNames = new String[]{"Python Introduction", "Python Syntax", "Introduction to Python"};
+        String[] teachers = new String[]{"Michael Keaton", "Alex Garland", "Emma Stone"};
 
         List<SClassroom> classes = new ArrayList<>();
         for (int i = 0; i < total; i++) {
@@ -125,8 +138,8 @@ public class DataUtil {
     @SuppressWarnings("SameParameterValue")
     public static List<TClassroom> getDebugTClassroomList(int total) {
         Random random = new Random();
-        String[] languages = new String[] {"python", "javascript", "python"};
-        String[] classNames = new String[] {"Python Introduction", "Python Syntax", "Introduction to Python"};
+        String[] languages = new String[]{"python", "javascript", "python"};
+        String[] classNames = new String[]{"Python Introduction", "Python Syntax", "Introduction to Python"};
         List<CourseProgress> students = new ArrayList<>(Arrays.asList(
                 new CourseProgress("Thai Dat", "tcdat96@gmail.com", 59, "Introduction to Computer Science: Level20"),
                 new CourseProgress("Cao Dung", "caodung@gmail.com", 76, "Introduction to Computer Science: Level20"),

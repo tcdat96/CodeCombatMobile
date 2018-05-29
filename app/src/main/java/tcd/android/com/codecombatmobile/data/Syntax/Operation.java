@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
+import tcd.android.com.codecombatmobile.util.DataUtil;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 /**
@@ -72,6 +73,7 @@ public abstract class Operation {
     public void setOnClickListener(CodeEditor codeEditor) {
 
         if (mSpannable != null) {
+            DataUtil.removeAllSpans(mSpannable);
             ClickableElement element = new ClickableElement(codeEditor, this);
             mSpannable.setSpan(element, 0, mSpannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             setSpannableColor();
@@ -86,6 +88,12 @@ public abstract class Operation {
     public boolean replaceOperation(Operation oldOp, Operation newOp) {
         int index = mChildren.indexOf(oldOp);
         if (index >= 0) {
+            if (newOp instanceof Operator && !(oldOp instanceof Operator)) {
+                Expression expression = new Expression(oldOp);
+                expression.add(1, (Operator) newOp);
+                mChildren.set(index, expression);
+                return true;
+            }
             if (isNewOpValid(index, newOp)) {
                 mChildren.set(index, newOp);
                 return true;
