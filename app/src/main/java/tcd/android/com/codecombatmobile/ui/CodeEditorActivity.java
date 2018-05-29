@@ -18,9 +18,11 @@ import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 import tcd.android.com.codecombatmobile.R;
 
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_ASSIGNMENT;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FLOW_CONTROL;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_DECLARATION;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FUNCTION;
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_OPERATOR;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_VALUE;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_VARIABLE;
 
@@ -72,6 +74,11 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_VALUE, "True"));
         opTypes.add(new Pair<>(TYPE_VALUE, "False"));
         opTypes.add(new Pair<>(TYPE_VALUE, "null"));
+        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "="));
+        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "+="));
+        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "-="));
+        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "*="));
+        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "/="));
         final OperationFactory factory = new OperationFactory();
 
         LinearLayout columnLayout = new LinearLayout(this);

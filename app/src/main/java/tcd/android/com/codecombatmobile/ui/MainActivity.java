@@ -41,6 +41,6 @@ public class MainActivity extends AppCompatActivity {
             rootContainer.addView(button);
         }
 
-//        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        startActivity(new Intent(MainActivity.this, CodeEditorActivity.class));
     }
 }

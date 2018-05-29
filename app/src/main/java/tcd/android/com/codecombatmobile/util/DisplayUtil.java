@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import tcd.android.com.codecombatmobile.data.syntax.Operation;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_ASSIGNMENT;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_BLANK;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FLOW_CONTROL;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_DECLARATION;
@@ -53,6 +54,7 @@ public class DisplayUtil {
                 return Color.parseColor("#2AE48A");
             case TYPE_VALUE:
                 return Color.parseColor("#F9A825");
+            case TYPE_ASSIGNMENT:
             case TYPE_OPERATOR:
                 return Color.parseColor("#F86AFF");
             case TYPE_BLANK:

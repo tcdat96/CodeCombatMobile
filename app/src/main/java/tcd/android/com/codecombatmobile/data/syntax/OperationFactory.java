@@ -50,8 +50,10 @@ public class OperationFactory {
                 break;
             case Operation.TYPE_VALUE:
                 return new Value(name);
+            case Operation.TYPE_ASSIGNMENT:
+                return new Assignment(name);
             case Operation.TYPE_OPERATOR:
-                break;
+                return new Operator(name);
             default:
                 throw new IllegalArgumentException("Unknown syntax type");
         }

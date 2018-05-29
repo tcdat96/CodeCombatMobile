@@ -1,6 +1,7 @@
 package tcd.android.com.codecombatmobile.data.syntax;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -28,9 +29,10 @@ public abstract class Operation {
             TYPE_FUNCTION = 3,
             TYPE_METHOD = 4,
             TYPE_VALUE = 5,
-            TYPE_OPERATOR = 6,
-            TYPE_BLANK = 7;
-    @IntDef({TYPE_FLOW_CONTROL, TYPE_DECLARATION, TYPE_VARIABLE, TYPE_FUNCTION, TYPE_METHOD, TYPE_VALUE, TYPE_OPERATOR, TYPE_BLANK})
+            TYPE_ASSIGNMENT = 6,
+            TYPE_OPERATOR = 7,
+            TYPE_BLANK = 8;
+    @IntDef({TYPE_FLOW_CONTROL, TYPE_DECLARATION, TYPE_VARIABLE, TYPE_FUNCTION, TYPE_METHOD, TYPE_VALUE, TYPE_ASSIGNMENT, TYPE_OPERATOR, TYPE_BLANK})
     @Retention(RetentionPolicy.SOURCE)
     public @interface SyntaxType {}
     private static OperationFactory mOperationFactory = new OperationFactory();
@@ -41,7 +43,8 @@ public abstract class Operation {
     protected Spannable mSpannable;
     protected boolean mReturnsValue = false;
 
-    protected List<Operation> mChildren;
+    @NonNull
+    protected List<Operation> mChildren = new ArrayList<>();
     protected Operation mContainer;
 
     public Operation(String name, @SyntaxType int syntaxType) {
@@ -97,7 +100,7 @@ public abstract class Operation {
 
     public void removeOperation(Operation op) {
         int index = mChildren.indexOf(op);
-        if (index > 0) {
+        if (index >= 0) {
             if (mChildren.get(index) instanceof Blank) {
                 // TODO: 28/04/2018 remove container
             } else {
