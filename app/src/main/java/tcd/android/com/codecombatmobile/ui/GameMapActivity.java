@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.course.Level;
-import tcd.android.com.codecombatmobile.data.course.Position;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
 import tcd.android.com.codecombatmobile.ui.widget.GameMapView;
 import tcd.android.com.codecombatmobile.util.CCDataUtil;
@@ -79,7 +78,12 @@ public class GameMapActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mAuthTask.cancel(true);
-        mMapView.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mMapView.destroy();
     }
 
     private class GetMapTask extends AsyncTask<Void, Void, Void> {

@@ -107,7 +107,7 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
     protected void onStop() {
         super.onStop();
         mAsyncTask.cancel(true);
-//        mMapView.stop();
+//        mGameLevelView.destroy();
     }
 
     @Override

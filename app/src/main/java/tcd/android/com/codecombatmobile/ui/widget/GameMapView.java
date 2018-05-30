@@ -258,6 +258,7 @@ public class GameMapView extends SurfaceView implements Runnable {
 
     public void pause() {
         mIsRunning = false;
+        mSoundPool.autoPause();
         try {
             if (mGameThread != null) {
                 mGameThread.join();
@@ -269,11 +270,12 @@ public class GameMapView extends SurfaceView implements Runnable {
 
     public void resume() {
         mIsRunning = true;
+        mSoundPool.autoResume();
         mGameThread = new Thread(this);
         mGameThread.start();
     }
 
-    public void stop() {
+    public void destroy() {
         mSoundPool.release();
     }
 }
