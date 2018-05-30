@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -86,7 +87,7 @@ public class GameMapActivity extends AppCompatActivity {
         mMapView.destroy();
     }
 
-    private class GetMapTask extends AsyncTask<Void, Void, Void> {
+    private class GetMapTask extends AsyncTask<Void, Void, Boolean> {
 
         private Bitmap mBackground;
         @NonNull
@@ -94,7 +95,7 @@ public class GameMapActivity extends AppCompatActivity {
         private List<String> mLevelSessions;
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
             CCRequestManager manager = CCRequestManager.getInstance(GameMapActivity.this);
             JSONObject campaignObj = manager.requestCampaignSync(mClassroom.getCampaignId());
             if (campaignObj != null) {
@@ -104,6 +105,9 @@ public class GameMapActivity extends AppCompatActivity {
                     String path = bgrUrls.getJSONObject(0).getString("image");
                     String bgrUrl = manager.getFileUrl(path);
                     mBackground = Glide.with(GameMapActivity.this).asBitmap().load(bgrUrl).submit().get();
+                    if (mBackground == null) {
+                        return false;
+                    }
 
                     // map levels
                     JSONObject levelsObj = campaignObj.getJSONObject("levels");
@@ -116,12 +120,16 @@ public class GameMapActivity extends AppCompatActivity {
                             mLevels.add(level);
                         }
                     }
+                    if (mLevels.size() == 0) {
+                        return false;
+                    }
 
                     // level sessions
                     JSONArray sessionsObj = manager.requestLevelSessionsSync(mClassroom.getInstanceId());
                     if (sessionsObj != null) {
                         mLevelSessions = CCDataUtil.getLevelSessions(sessionsObj);
                     }
+                    return mLevelSessions != null;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -130,17 +138,24 @@ public class GameMapActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            return null;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            mMapView.setMapBackground(mBackground);
-            mMapView.setLevels(mLevels);
-            mMapView.setLevelSessions(mLevelSessions);
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
 
-            findViewById(R.id.pb_game_map).setVisibility(View.GONE);
-            mMapView.setVisibility(View.VISIBLE);
+            if (success) {
+                mMapView.setMapBackground(mBackground);
+                mMapView.setLevels(mLevels);
+                mMapView.setLevelSessions(mLevelSessions);
+
+                findViewById(R.id.pb_game_map).setVisibility(View.GONE);
+                mMapView.setVisibility(View.VISIBLE);
+            } else {
+                finish();
+                Toast.makeText(getApplicationContext(), R.string.error_get_level_message, Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override

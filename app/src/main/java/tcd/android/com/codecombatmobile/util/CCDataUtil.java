@@ -92,6 +92,7 @@ public class CCDataUtil {
         return new Level(id, name, description, slug, concepts, position);
     }
 
+    @NonNull
     public static List<String> getLevelSessions(@NonNull JSONArray sessionArr) throws JSONException {
         List<String> sessions = new ArrayList<>();
         for (int i = 0; i < sessionArr.length(); i++) {

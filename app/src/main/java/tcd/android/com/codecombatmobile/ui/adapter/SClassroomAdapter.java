@@ -52,9 +52,11 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.SC
             @Override
             public void onClick(View v) {
                 SClassroom classroom = mClassrooms.get(holder.getAdapterPosition());
-                Intent intent = new Intent(mContext, GameMapActivity.class);
-                intent.putExtra(GameMapActivity.ARG_STUDENT_CLASSROOM, classroom);
-                mContext.startActivity(intent);
+                if (classroom.getCourseName() != null) {
+                    Intent intent = new Intent(mContext, GameMapActivity.class);
+                    intent.putExtra(GameMapActivity.ARG_STUDENT_CLASSROOM, classroom);
+                    mContext.startActivity(intent);
+                }
             }
         });
     }
