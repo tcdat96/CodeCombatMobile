@@ -3,6 +3,7 @@ package tcd.android.com.codecombatmobile.data.syntax;
 import android.text.SpannableString;
 import android.widget.TextView;
 
+// TODO: 30/05/2018 this class (and FuncDeclaration) should be refactored ASAP
 public abstract class CodeBlock extends Operation {
 
     private int mHeaderTotal;
@@ -39,8 +40,8 @@ public abstract class CodeBlock extends Operation {
         int index = mChildren.indexOf(op);
         if (index >= 0) {
             if (op instanceof Blank) {
-                if (index == 0) {
-                    // TODO: 06/05/2018 remove container
+                if (index < mHeaderTotal) {
+                    removeFromContainer();
                 } else if (index < mChildren.size() - 1) {
                     mChildren.remove(index);
                 }

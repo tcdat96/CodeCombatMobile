@@ -49,7 +49,7 @@ public class Expression extends Operation {
                     mChildren.remove(index);
                     mChildren.remove(index - 1);
                 } else {
-                    // TODO: 29/05/2018 remove container
+                    removeFromContainer();
                 }
             } else {
                 mChildren.set(index, new Blank());

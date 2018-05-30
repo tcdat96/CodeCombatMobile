@@ -54,6 +54,7 @@ public class CodeEditor extends LinearLayout {
 
     public void addOperation(@NonNull Operation newOp) {
         newOp.setOnClickListener(this);
+
         if (mSelectedOperation == null) {
             mOperations.add(newOp);
         } else {

@@ -39,12 +39,9 @@ public class ClassroomDetailActivity extends AppCompatActivity {
 
         if (getIntent() == null || !getIntent().hasExtra(ARG_TEACHER_CLASS_DETAIL)) {
             Log.e(TAG, "onCreate: There was a problem retrieving teacher class");
-//            finish();
-//            return;
-//        }
-            // TODO: 24/05/2018 remove this line and else statement
-            mClassroom = DataUtil.getDebugTClassroomList(1).get(0);
-        } else
+            finish();
+            return;
+        }
 
         mClassroom = (TClassroom) getIntent().getSerializableExtra(ARG_TEACHER_CLASS_DETAIL);
         initUiComponents();

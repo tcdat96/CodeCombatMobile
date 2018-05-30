@@ -36,7 +36,6 @@ public abstract class Operation {
     @IntDef({TYPE_FLOW_CONTROL, TYPE_DECLARATION, TYPE_VARIABLE, TYPE_FUNCTION, TYPE_METHOD, TYPE_VALUE, TYPE_ASSIGNMENT, TYPE_OPERATOR, TYPE_BLANK})
     @Retention(RetentionPolicy.SOURCE)
     public @interface SyntaxType {}
-    private static OperationFactory mOperationFactory = new OperationFactory();
 
     protected String mName;
     @SyntaxType
@@ -46,6 +45,7 @@ public abstract class Operation {
 
     @NonNull
     protected List<Operation> mChildren = new ArrayList<>();
+    private CodeEditor mCodeEditor;
     protected Operation mContainer;
 
     public Operation(String name, @SyntaxType int syntaxType) {
@@ -71,6 +71,7 @@ public abstract class Operation {
     }
 
     public void setOnClickListener(CodeEditor codeEditor) {
+        mCodeEditor = codeEditor;
 
         if (mSpannable != null) {
             DataUtil.removeAllSpans(mSpannable);
@@ -110,10 +111,20 @@ public abstract class Operation {
         int index = mChildren.indexOf(op);
         if (index >= 0) {
             if (mChildren.get(index) instanceof Blank) {
-                // TODO: 28/04/2018 remove container
+                removeFromContainer();
             } else {
                 mChildren.set(index, new Blank());
+                setOnClickListener(mCodeEditor);
             }
+        }
+    }
+
+    protected void removeFromContainer() {
+        if (mContainer != null) {
+            mContainer.removeOperation(this);
+        } else {
+            mCodeEditor.setSelectedOperation(this);
+            mCodeEditor.removeOperation();
         }
     }
 
