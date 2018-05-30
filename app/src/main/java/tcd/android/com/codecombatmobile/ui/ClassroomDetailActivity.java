@@ -28,7 +28,6 @@ public class ClassroomDetailActivity extends AppCompatActivity {
 
     private static final String TAG = ClassroomDetailActivity.class.getSimpleName();
     public static final String ARG_TEACHER_CLASS_DETAIL = "argTeacherClassDetail";
-    public static final String ARG_COVER_RESOURCE_ID = "argCoverResId";
 
     private TClassroom mClassroom;
 

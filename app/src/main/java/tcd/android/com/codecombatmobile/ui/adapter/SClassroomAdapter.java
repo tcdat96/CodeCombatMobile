@@ -23,7 +23,7 @@ import tcd.android.com.codecombatmobile.util.DisplayUtil;
  * Created by ADMIN on 30/04/2018.
  */
 
-public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.StudentClassViewHolder> {
+public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.SClassroomViewHolder> {
 
     private static int sPythonColor, sJavascriptColor;
 
@@ -39,14 +39,29 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.St
 
     @NonNull
     @Override
-    public StudentClassViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+    public SClassroomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_student_class_row, parent, false);
-        return new StudentClassViewHolder(view);
+        final SClassroomViewHolder holder = new SClassroomViewHolder(itemView);
+        setOnItemClickListener(itemView, holder);
+        return holder;
     }
 
+    private void setOnItemClickListener(View itemView, final SClassroomViewHolder holder) {
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SClassroom classroom = mClassrooms.get(holder.getAdapterPosition());
+                Intent intent = new Intent(mContext, GameMapActivity.class);
+                intent.putExtra(GameMapActivity.ARG_STUDENT_CLASSROOM, classroom);
+                mContext.startActivity(intent);
+            }
+        });
+    }
+
+
     @Override
-    public void onBindViewHolder(@NonNull StudentClassViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull SClassroomViewHolder holder, int position) {
         final SClassroom classroom = mClassrooms.get(position);
         holder.mLanguageTextView.setText(DisplayUtil.capitalize(classroom.getLanguage()));
         holder.mClassNameTextView.setText(classroom.getClassName());
@@ -63,16 +78,6 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.St
         holder.mProgressBar.setProgressStartColor(themeColor);
         holder.mProgressBar.setProgressEndColor(themeColor);
         holder.mProgressBar.setProgressTextColor(themeColor);
-
-        // on click
-        holder.mProgressBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, GameMapActivity.class);
-                intent.putExtra(GameMapActivity.ARG_STUDENT_CLASSROOM, classroom);
-                mContext.startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -80,14 +85,14 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.St
         return mClassrooms.size();
     }
 
-    class StudentClassViewHolder extends RecyclerView.ViewHolder {
+    class SClassroomViewHolder extends RecyclerView.ViewHolder {
         private TextView mLanguageTextView;
         private TextView mClassNameTextView;
         private TextView mTeacherTextView;
         private TextView mCourseNameTextView;
         private CircleProgressBar mProgressBar;
 
-        StudentClassViewHolder(View itemView) {
+        SClassroomViewHolder(View itemView) {
             super(itemView);
             mLanguageTextView = itemView.findViewById(R.id.tv_programming_language);
             mClassNameTextView = itemView.findViewById(R.id.tv_class_name);

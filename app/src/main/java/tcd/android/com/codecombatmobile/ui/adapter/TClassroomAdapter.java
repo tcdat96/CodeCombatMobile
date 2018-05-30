@@ -35,63 +35,37 @@ import tcd.android.com.codecombatmobile.util.DisplayUtil;
  * Created by ADMIN on 30/04/2018.
  */
 
-public class TClassroomAdapter extends RecyclerView.Adapter<TClassroomAdapter.TeacherClassViewHolder> {
+public class TClassroomAdapter extends RecyclerView.Adapter<TClassroomAdapter.TClassroomViewHolder> {
 
     private static int sPythonColor, sJavascriptColor;
 
     private Context mContext;
-    private List<TClassroom> mClasses;
+    private List<TClassroom> mClassrooms;
 
     public TClassroomAdapter(Context context, List<TClassroom> classes) {
         mContext = context;
-        mClasses = classes;
+        mClassrooms = classes;
         sPythonColor = ContextCompat.getColor(context, R.color.python_color);
         sJavascriptColor = ContextCompat.getColor(context, R.color.javascript_color);
     }
 
     @NonNull
     @Override
-    public TeacherClassViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+    public TClassroomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_teacher_class_row, parent, false);
-        return new TeacherClassViewHolder(view);
+        TClassroomViewHolder holder = new TClassroomViewHolder(itemView);
+        setOnItemClickListener(itemView, holder);
+        return holder;
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull final TeacherClassViewHolder holder, int position) {
-        final TClassroom teacherClass = mClasses.get(position);
-        holder.mProgressBar.setProgress(teacherClass.getProgress());
-        holder.mClassNameTextView.setText(teacherClass.getClassName());
-        holder.mLanguageTextView.setText(DisplayUtil.capitalize(teacherClass.getLanguage()));
-
-        // total number of students
-        int studentTotal = teacherClass.getStudentTotal();
-        String studentTotalStr = mContext.getResources().getQuantityString(R.plurals.student_total, studentTotal, studentTotal);
-        holder.mStudentTotalTextView.setText(studentTotalStr);
-
-        // progress color theme
-        boolean isPython = teacherClass.getLanguage().equals("python");
-        int themeColor = isPython ? sPythonColor : sJavascriptColor;
-        holder.mProgressBar.setProgressStartColor(themeColor);
-        holder.mProgressBar.setProgressEndColor(themeColor);
-        holder.mProgressBar.setProgressTextColor(themeColor);
-
-        // cover background
-        final int coverResId = DataUtil.getLanguageCoverRes(teacherClass);
-        Glide.with(mContext).asBitmap().load(coverResId).into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                Bitmap darkenBitmap = DisplayUtil.darkenBitmap(resource);
-                holder.mCoverImageView.setImageBitmap(darkenBitmap);
-            }
-        });
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+    private void setOnItemClickListener(View itemView, final TClassroomViewHolder holder) {
+        itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TClassroom classroom = mClassrooms.get(holder.getAdapterPosition());
                 Intent intent = new Intent(mContext, ClassroomDetailActivity.class);
-                intent.putExtra(ClassroomDetailActivity.ARG_TEACHER_CLASS_DETAIL, teacherClass);
-                intent.putExtra(ClassroomDetailActivity.ARG_COVER_RESOURCE_ID, coverResId);
+                intent.putExtra(ClassroomDetailActivity.ARG_TEACHER_CLASS_DETAIL, classroom);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                             (Activity)mContext,
@@ -106,11 +80,41 @@ public class TClassroomAdapter extends RecyclerView.Adapter<TClassroomAdapter.Te
     }
 
     @Override
-    public int getItemCount() {
-        return mClasses.size();
+    public void onBindViewHolder(@NonNull final TClassroomViewHolder holder, int position) {
+        final TClassroom classroom = mClassrooms.get(position);
+        holder.mProgressBar.setProgress(classroom.getProgress());
+        holder.mClassNameTextView.setText(classroom.getClassName());
+        holder.mLanguageTextView.setText(DisplayUtil.capitalize(classroom.getLanguage()));
+
+        // total number of students
+        int studentTotal = classroom.getStudentTotal();
+        String studentTotalStr = mContext.getResources().getQuantityString(R.plurals.student_total, studentTotal, studentTotal);
+        holder.mStudentTotalTextView.setText(studentTotalStr);
+
+        // progress color theme
+        boolean isPython = classroom.getLanguage().equals("python");
+        int themeColor = isPython ? sPythonColor : sJavascriptColor;
+        holder.mProgressBar.setProgressStartColor(themeColor);
+        holder.mProgressBar.setProgressEndColor(themeColor);
+        holder.mProgressBar.setProgressTextColor(themeColor);
+
+        // cover background
+        final int coverResId = DataUtil.getLanguageCoverRes(classroom);
+        Glide.with(mContext).asBitmap().load(coverResId).into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                Bitmap darkenBitmap = DisplayUtil.darkenBitmap(resource);
+                holder.mCoverImageView.setImageBitmap(darkenBitmap);
+            }
+        });
     }
 
-    class TeacherClassViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public int getItemCount() {
+        return mClassrooms.size();
+    }
+
+    class TClassroomViewHolder extends RecyclerView.ViewHolder {
         private CardView mContainer;
         private ImageView mCoverImageView;
         private TextView mLanguageTextView;
@@ -118,7 +122,7 @@ public class TClassroomAdapter extends RecyclerView.Adapter<TClassroomAdapter.Te
         private TextView mStudentTotalTextView;
         private CircleProgressBar mProgressBar;
 
-        TeacherClassViewHolder(View itemView) {
+        TClassroomViewHolder(View itemView) {
             super(itemView);
             mContainer = itemView.findViewById(R.id.cv_container);
             mCoverImageView = itemView.findViewById(R.id.iv_language_cover);
