@@ -176,7 +176,7 @@ public class CCDataUtil {
         } else if (thangTypeObj.has("prerenderedSpriteSheetData")) {
             JSONObject prerenderedData = thangTypeObj.getJSONArray("prerenderedSpriteSheetData").getJSONObject(0);
             if (prerenderedData.has("image")) {
-                String image = thangTypeObj.getString("image");
+                String image = prerenderedData.getString("image");
                 thangType.setImage(image);
             }
         }
