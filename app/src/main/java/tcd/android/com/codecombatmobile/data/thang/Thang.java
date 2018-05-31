@@ -3,13 +3,19 @@ package tcd.android.com.codecombatmobile.data.thang;
 import tcd.android.com.codecombatmobile.data.course.Position;
 
 public class Thang {
+    private String mId;
     private String mThangType;
     private Position mPosition;
     private float mWidth, mHeight;
     private float mRotation;
 
-    public Thang(String thangType, Position position) {
+    public Thang(String id, String thangType, Position position) {
+        mId = id;
         mThangType = thangType;
+        mPosition = position;
+    }
+
+    public void setPosition(Position position) {
         mPosition = position;
     }
 
@@ -23,6 +29,10 @@ public class Thang {
 
     public void setRotation(float rotation) {
         mRotation = rotation;
+    }
+
+    public String getId() {
+        return mId;
     }
 
     public String getThangType() {

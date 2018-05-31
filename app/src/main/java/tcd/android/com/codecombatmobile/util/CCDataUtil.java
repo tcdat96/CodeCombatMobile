@@ -114,32 +114,39 @@ public class CCDataUtil {
         List<Thang> thangs = new ArrayList<>(thangArr.length());
         for (int i = 0; i < thangArr.length(); i++) {
             JSONObject thangObj = thangArr.getJSONObject(i);
+            String id = thangObj.getString("id");
             String thangType = thangObj.getString("thangType");
+            Thang thang = new Thang(id, thangType, null);
 
-            JSONArray compArr = thangObj.getJSONArray("components");
-            JSONObject configObj = compArr.getJSONObject(1).getJSONObject("config");
-            // position
-            JSONObject posObj = configObj.getJSONObject("pos");
-            float x = (float)posObj.getDouble("x");
-            float y = (float)posObj.getDouble("y");
-            Position pos = new Position(x, y);
-
-            Thang thang = new Thang(thangType, pos);
-
-            // width
-            if (configObj.has("width")) {
-                int width = configObj.getInt("width");
-                thang.setWidth(width);
-            }
-            // height
-            if (configObj.has("height")) {
-                int height = configObj.getInt("height");
-                thang.setHeight(height);
-            }
-            // rotation
-            if (configObj.has("rotation")) {
-                float rotation = (float) configObj.getDouble("rotation");
-                thang.setRotation(rotation);
+            JSONArray componentArr = thangObj.getJSONArray("components");
+            for (int j = 0; j < componentArr.length(); j++) {
+                JSONObject componentObj = componentArr.getJSONObject(j);
+                if (!componentObj.has("config")) {
+                    continue;
+                }
+                JSONObject configObj = componentObj.getJSONObject("config");
+                // position
+                if (configObj.has("pos")) {
+                    JSONObject posObj = configObj.getJSONObject("pos");
+                    float x = (float) posObj.getDouble("x");
+                    float y = (float) posObj.getDouble("y");
+                    thang.setPosition(new Position(x, y));
+                }
+                // width
+                if (configObj.has("width")) {
+                    int width = configObj.getInt("width");
+                    thang.setWidth(width);
+                }
+                // height
+                if (configObj.has("height")) {
+                    int height = configObj.getInt("height");
+                    thang.setHeight(height);
+                }
+                // rotation
+                if (configObj.has("rotation")) {
+                    float rotation = (float) configObj.getDouble("rotation");
+                    thang.setRotation(rotation);
+                }
             }
 
             thangs.add(thang);
@@ -179,6 +186,26 @@ public class CCDataUtil {
             if (prerenderedData.has("image")) {
                 String image = prerenderedData.getString("image");
                 thangType.setImage(image);
+            }
+        }
+
+        // width and height
+        JSONArray componentArr = thangTypeObj.getJSONArray("components");
+        for (int j = 0; j < componentArr.length(); j++) {
+            JSONObject componentObj = componentArr.getJSONObject(j);
+            if (!componentObj.has("config")) {
+                continue;
+            }
+            JSONObject configObj = componentObj.getJSONObject("config");
+            // width
+            if (configObj.has("width")) {
+                int width = configObj.getInt("width");
+                thangType.setWidth(width);
+            }
+            // height
+            if (configObj.has("height")) {
+                int height = configObj.getInt("height");
+                thangType.setHeight(height);
             }
         }
 

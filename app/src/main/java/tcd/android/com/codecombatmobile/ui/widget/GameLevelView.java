@@ -11,7 +11,9 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -19,8 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
+import tcd.android.com.codecombatmobile.data.course.Position;
 import tcd.android.com.codecombatmobile.data.thang.Thang;
 import tcd.android.com.codecombatmobile.data.thang.ThangType;
+import tcd.android.com.codecombatmobile.util.CCDataUtil;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public class GameLevelView extends SurfaceView implements Runnable {
@@ -33,6 +37,7 @@ public class GameLevelView extends SurfaceView implements Runnable {
     private SurfaceHolder mHolder;
     private Canvas mCanvas;
     private Paint mPaint;
+    private Paint mTextPaint, mTextBgrPaint;
 
     private int mFps = 60;
     private long mTimeThisFrame;
@@ -78,6 +83,12 @@ public class GameLevelView extends SurfaceView implements Runnable {
         mHolder = getHolder();
         mPaint = new Paint();
 
+        mTextPaint = new Paint();
+        mTextPaint.setTextSize(30);
+        mTextPaint.setColor(Color.WHITE);
+        mTextBgrPaint = new Paint();
+        mTextBgrPaint.setColor(Color.DKGRAY);
+
         mScreenSize = DisplayUtil.getScreenSize(context);
 
         // load character size
@@ -89,17 +100,49 @@ public class GameLevelView extends SurfaceView implements Runnable {
         mThangs = thangs;
         mThangTypes = thangTypes;
 
+        int widthPixel = 1, heightPixel= 1;
+        float bgrWidth = 1, bgrHeight = 1;
         // level background
         for (ThangType thangType : thangTypes) {
             if (thangType.getKind().equals("Floor")) {
                 mLevelBackground = thangType.getBitmap();
+                if (mLevelBackground == null) {
+                    return;
+                }
                 float scale = (float) mLevelBackground.getWidth() / mLevelBackground.getHeight();
-                int height = (int) (mScreenSize.y * 0.81f);
-                int width = (int) (height * scale);
-                mLevelBackground = Bitmap.createScaledBitmap(mLevelBackground, width, height, false);
+                heightPixel = (int) (mScreenSize.y * 0.81f);
+                widthPixel = (int) (heightPixel * scale);
+                mLevelBackground = Bitmap.createScaledBitmap(mLevelBackground, widthPixel, heightPixel, false);
 
-                mHolder.setFixedSize(width, height);
+                mHolder.setFixedSize(widthPixel, heightPixel);
+
+                // find background size
+                for (Thang thang : mThangs) {
+                    if (thang.getThangType().equals(thangType.getOriginal())) {
+                        bgrHeight = thang.getHeight() != 0 ? thang.getHeight() : thangType.getHeight();
+                        bgrWidth = thang.getWidth() != 0 ? thang.getWidth() : thangType.getWidth();
+                        break;
+                    }
+                }
+
+                break;
             }
+        }
+
+        // readjust thang info
+        for (Thang thang : mThangs) {
+            // position
+            Position position = thang.getPosition();
+            position.x = position.x / bgrWidth * widthPixel;
+            position.y = (bgrHeight - position.y) / bgrHeight * heightPixel;
+
+            // rotation (from radian to degree)
+            float degree = (float) (thang.getRotation() / Math.PI * 180);
+            // TODO: 31/05/2018 temporary workaround, remove when actually implement rendering
+            if (thang.getId().startsWith("Spike Walls")) {
+                degree += 90;
+            }
+            thang.setRotation(degree);
         }
     }
 
@@ -138,6 +181,24 @@ public class GameLevelView extends SurfaceView implements Runnable {
                 mCanvas.drawBitmap(mLevelBackground, 0, 0, mPaint);
             }
 
+            // thangs name
+            for (Thang thang : mThangs) {
+                int x = (int) thang.getPosition().x;
+                int y = (int) thang.getPosition().y;
+                String name = getThangName(thang.getId());
+                if (!name.equals("")) {
+                    int width = (int) (mTextPaint.measureText(name) / 2);
+                    int height = (int) (mTextPaint.getTextSize() / 2);
+                    int margin = 5;
+
+                    mCanvas.save();
+                    mCanvas.rotate(-thang.getRotation(), x, y);
+                    mCanvas.drawRect(x - width - margin, y - height - margin, x + width + margin, y + height + margin, mTextBgrPaint);
+                    mCanvas.drawText(name, x - width, y + height, mTextPaint);
+                    mCanvas.restore();
+                }
+            }
+
             // fps text
             mPaint.setColor(Color.argb(255,  249, 129, 0));
             mPaint.setTextSize(45);
@@ -150,6 +211,18 @@ public class GameLevelView extends SurfaceView implements Runnable {
 
             mHolder.unlockCanvasAndPost(mCanvas);
         }
+    }
+
+    @NonNull
+    private String getThangName(@NonNull String id) {
+        if (id.endsWith("Background")) {
+            return "";
+        } else if (id.startsWith("Movement Stone")) {
+            return id.substring(9);
+        } else if (id.startsWith("Hero")) {
+            return "Hero";
+        }
+        return id;
     }
 
     public void getCurrentFrame() {

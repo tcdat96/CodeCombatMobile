@@ -7,16 +7,25 @@ public class ThangType {
     private String mKind;
     private String mRaw;
     private String mImagePath;
+    private int mWidth, mHeight;
 
     private Bitmap mBitmap;
 
     public ThangType(String original, String kind) {
-        this.mOriginal = original;
-        this.mKind = kind;
+        mOriginal = original;
+        mKind = kind;
     }
 
     public void setImage(String imagePath) {
-        this.mImagePath = imagePath;
+        mImagePath = imagePath;
+    }
+
+    public void setWidth(int width) {
+        mWidth = width;
+    }
+
+    public void setHeight(int height) {
+        mHeight = height;
     }
 
     public void setBitmap(Bitmap bitmap) {
@@ -37,6 +46,14 @@ public class ThangType {
 
     public String getImagePath() {
         return mImagePath;
+    }
+
+    public int getWidth() {
+        return mWidth;
+    }
+
+    public int getHeight() {
+        return mHeight;
     }
 
     public Bitmap getBitmap() {

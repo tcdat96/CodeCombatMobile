@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -219,9 +220,11 @@ public class GameMapView extends SurfaceView implements Runnable {
                     mLastClickTime = System.currentTimeMillis();
                     float x = event.getX();
                     float y = event.getRawY();
+                    Log.d(TAG, "onTouchEvent: ");
                     // TODO: 27/05/2018 fix the coordinate precision issue
                     for (int i = 0; i < mLevelsPosition.size(); i++) {
                         if (mLevelsPosition.get(i).contains(x, y)) {
+                            Log.d(TAG, "onTouchEvent: " + i);
                             showLevelInfoDialog(i);
                             break;
                         }
