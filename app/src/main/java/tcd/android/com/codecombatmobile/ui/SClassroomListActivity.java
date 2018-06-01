@@ -172,9 +172,14 @@ public class SClassroomListActivity extends ClassroomListActivity {
                         classroom.setCampaignId(course.getCampaignId());
                         // progress
                         String instId = instObj.getString("_id");
-                        JSONArray sessions = mReqManager.requestLevelSessionsSync(instId);
-                        if (sessions != null) {
-                            classroom.setProgress(sessions.length() * 100 / course.getLevels().size());
+                        JSONArray sessionArr = mReqManager.requestLevelSessionsSync(instId);
+                        if (sessionArr != null) {
+                            Map<String, Boolean> sessions = CCDataUtil.getLevelSessions(sessionArr);
+                            int completedLevelCount = 0;
+                            for (boolean isComplete : sessions.values()) {
+                                completedLevelCount += isComplete ? 1 : 0;
+                            }
+                            classroom.setProgress(completedLevelCount * 100 / course.getLevels().size());
                         }
                     }
                 }
