@@ -287,7 +287,8 @@ public class GameMapView extends SurfaceView implements Runnable {
             public void onClick(View v) {
                 dialog.dismiss();
                 Intent intent = new Intent(context, GameLevelActivity.class);
-                intent.putExtra(GameLevelActivity.ARG_LEVEL_DATA, level);
+                String levelId = level.getName().toLowerCase().replace(" ", "-");       // TODO: 02/06/2018 temporary workaround
+                intent.putExtra(GameLevelActivity.ARG_LEVEL_ID, levelId);
                 context.startActivity(intent);
             }
         });

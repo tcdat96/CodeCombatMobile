@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -33,13 +34,13 @@ import tcd.android.com.codecombatmobile.util.DataUtil;
 
 public class GameLevelActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static final String ARG_LEVEL_DATA = "argLevelData";
+    public static final String ARG_LEVEL_ID = "argLevelId";
 
     private GameLevelView mGameLevelView;
     private ProgressBar mTimeControlBar, mHpBar;
 
     private GetThangsTask mAsyncTask;
-    private Level mLevel;
+    String mLevelId = null;
     @NonNull
     private List<Thang> mThangs = new ArrayList<>();
     @NonNull
@@ -52,11 +53,11 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
 
         // get level data
         Intent data = getIntent();
-        if (data == null || !data.hasExtra(ARG_LEVEL_DATA)) {
+        mLevelId = data != null && data.hasExtra(ARG_LEVEL_ID) ? data.getStringExtra(ARG_LEVEL_ID) : null;
+        if (mLevelId == null) {
             finish();
             return;
         }
-        mLevel = (Level) data.getSerializableExtra(ARG_LEVEL_DATA);
 
         initUiComponents();
 
@@ -132,8 +133,7 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
         protected Boolean doInBackground(Void... voids) {
             try {
                 // get level
-                String slug = mLevel.getName().toLowerCase().replace(" ", "-");
-                JSONObject levelObj = mManager.requestLevelDataSync(slug);
+                JSONObject levelObj = mManager.requestLevelDataSync(mLevelId);
                 if (levelObj == null) {
                     return false;
                 }
