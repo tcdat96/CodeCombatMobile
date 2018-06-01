@@ -105,14 +105,14 @@ public class GameLevelView extends SurfaceView implements Runnable {
         // level background
         for (ThangType thangType : thangTypes) {
             if (thangType.getKind().equals("Floor")) {
-                mLevelBackground = thangType.getBitmap();
-                if (mLevelBackground == null) {
+                Bitmap originalBgr = thangType.getBitmap();
+                if (originalBgr == null) {
                     return;
                 }
-                float scale = (float) mLevelBackground.getWidth() / mLevelBackground.getHeight();
+                float scale = (float) originalBgr.getWidth() / originalBgr.getHeight();
                 heightPixel = (int) (mScreenSize.y * 0.81f);
                 widthPixel = (int) (heightPixel * scale);
-                mLevelBackground = Bitmap.createScaledBitmap(mLevelBackground, widthPixel, heightPixel, false);
+                mLevelBackground = Bitmap.createScaledBitmap(originalBgr, widthPixel, heightPixel, false);
 
                 mHolder.setFixedSize(widthPixel, heightPixel);
 
