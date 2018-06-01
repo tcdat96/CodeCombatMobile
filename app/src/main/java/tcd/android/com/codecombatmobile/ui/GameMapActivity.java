@@ -17,8 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.R;
@@ -92,7 +95,7 @@ public class GameMapActivity extends AppCompatActivity {
         private Bitmap mBackground;
         @NonNull
         private List<Level> mLevels = new ArrayList<>();
-        private List<String> mLevelSessions;
+        private Map<String, Boolean> mLevelSessions;
 
         @Override
         protected Boolean doInBackground(Void... voids) {
@@ -123,6 +126,14 @@ public class GameMapActivity extends AppCompatActivity {
                     if (mLevels.size() == 0) {
                         return false;
                     }
+
+                    // sort levels
+                    Collections.sort(mLevels, new Comparator<Level>() {
+                        @Override
+                        public int compare(Level lv1, Level lv2) {
+                            return lv1.getCampaignIndex() - lv2.getCampaignIndex();
+                        }
+                    });
 
                     // level sessions
                     JSONArray sessionsObj = manager.requestLevelSessionsSync(mClassroom.getInstanceId());

@@ -34,7 +34,8 @@
     <!--game map-->
     <color name="map_background_color">#44362D</color>
     <color name="complete_level_color">#00A651</color>
-    <color name="incomplete_level_color">#96928F</color>
+    <color name="incomplete_level_color">#F5AA31</color>
+    <color name="locked_level_color">#96928F</color>
     <color name="current_level_color">#F5AA31</color>
     <color name="level_name_color">#E8D957</color>
 </resources>

@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
@@ -46,7 +47,8 @@ public class GameMapView extends SurfaceView implements Runnable {
 
     private SurfaceHolder mHolder;
     private Canvas mCanvas;
-    private Paint mPaint, mIncompleteLevelPaint, mCompleteLevelPaint;
+    private Paint mPaint;
+    private Paint mIncompleteLevelPaint, mCompleteLevelPaint, mLockedLevelPaint;
 
     private Point mScreenSize;
     private Bitmap mMapBackground;
@@ -81,6 +83,8 @@ public class GameMapView extends SurfaceView implements Runnable {
 
         // paint
         mPaint = new Paint();
+        mLockedLevelPaint = new Paint();
+        mLockedLevelPaint.setColor(ContextCompat.getColor(context, R.color.locked_level_color));
         mIncompleteLevelPaint = new Paint();
         mIncompleteLevelPaint.setColor(ContextCompat.getColor(context, R.color.incomplete_level_color));
         mCompleteLevelPaint = new Paint();
@@ -162,15 +166,34 @@ public class GameMapView extends SurfaceView implements Runnable {
         }
     }
 
-    public void setLevelSessions(List<String> sessions) {
-        int lastIdx = sessions.size() - 1;
-        for (int i = 0; i < lastIdx; i++) {
-            mLevels.get(i).setComplete(true);
+    public void setLevelSessions(Map<String, Boolean> sessions) {
+        // get the unlocked level with largest campaign index
+        int curLevelIndex = 0;
+        int curLevelCampaignIndex = -1;
+        for (Map.Entry<String, Boolean> session : sessions.entrySet()) {
+            for (int i = 0; i < mLevels.size(); i++) {
+                Level level = mLevels.get(i);
+                if (session.getKey().equals(level.getOriginal())) {
+                    if (level.getCampaignIndex() > curLevelCampaignIndex) {
+                        curLevelCampaignIndex = level.getCampaignIndex();
+                        curLevelIndex = i;
+                    }
+                    level.setLevelState(session.getValue() ? Level.STATE_COMPLETE : Level.STATE_INCOMPLETE);
+                    break;
+                }
+            }
+        }
+
+        // update playable levels
+        for (int i = 0; i < curLevelIndex; i++) {
+            Level level = mLevels.get(i);
+            if (level.getLevelState() == Level.STATE_LOCKED) {
+                level.setLevelState(Level.STATE_INCOMPLETE);
+            }
         }
 
         // the last item is the current level
-        Level lastLevel = mLevels.get(lastIdx);
-        lastLevel.setComplete(false);
+        Level lastLevel = mLevels.get(curLevelIndex);
         mCurLevelPos = new Position(lastLevel.getPosition());
         mCurLevelPos.x -= mLevelBannerBitmap.getWidth() / 2;
         mCurLevelPos.y -= mLevelBannerBitmap.getHeight();
@@ -194,7 +217,7 @@ public class GameMapView extends SurfaceView implements Runnable {
 
             // levels
             for (int i = 0; i < mLevels.size(); i++) {
-                mCanvas.drawOval(mLevelsPosition.get(i), mLevels.get(i).isComplete() ? mCompleteLevelPaint : mIncompleteLevelPaint);
+                mCanvas.drawOval(mLevelsPosition.get(i), getLevelStatePaint(mLevels.get(i).getLevelState()));
             }
 
             // mark current level
@@ -204,6 +227,19 @@ public class GameMapView extends SurfaceView implements Runnable {
 
             mHolder.unlockCanvasAndPost(mCanvas);
         }
+    }
+
+    @NonNull
+    private Paint getLevelStatePaint(@Level.LevelState int state) {
+        switch (state) {
+            case Level.STATE_COMPLETE:
+                return mCompleteLevelPaint;
+            case Level.STATE_INCOMPLETE:
+                return mIncompleteLevelPaint;
+            case Level.STATE_LOCKED:
+                return mLockedLevelPaint;
+        }
+        return mLockedLevelPaint;
     }
 
     private boolean isPressed = false;

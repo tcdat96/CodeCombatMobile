@@ -132,7 +132,8 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
         protected Boolean doInBackground(Void... voids) {
             try {
                 // get level
-                JSONObject levelObj = mManager.requestLevelDataSync(mLevel.getSlug());
+                String slug = mLevel.getName().toLowerCase().replace(" ", "-");
+                JSONObject levelObj = mManager.requestLevelDataSync(slug);
                 if (levelObj == null) {
                     return false;
                 }

@@ -7,8 +7,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -76,34 +78,24 @@ public class CCDataUtil {
         String id = levelObj.getString("original");
         String name = levelObj.getString("name");
         String description = levelObj.getString("description");
-        String slug = levelObj.getString("slug");
-        // concepts
-        JSONArray conceptArr = levelObj.getJSONArray("concepts");
-        String[] concepts = new String[conceptArr.length()];
-        for (int i = 0; i < conceptArr.length(); i++) {
-            concepts[i] = conceptArr.getString(i);
-        }
+        int campaignIndex = levelObj.getInt("campaignIndex");
         // position
         JSONObject posObj = levelObj.getJSONObject("position");
         float x = (float) posObj.getDouble("x");
         float y = (float) posObj.getDouble("y");
         Position position = new Position(x, y);
 
-        return new Level(id, name, description, slug, concepts, position);
+        return new Level(id, name, description, campaignIndex, position);
     }
 
     @NonNull
-    public static List<String> getLevelSessions(@NonNull JSONArray sessionArr) throws JSONException {
-        List<String> sessions = new ArrayList<>();
+    public static Map<String, Boolean> getLevelSessions(@NonNull JSONArray sessionArr) throws JSONException {
+        Map<String, Boolean>  sessions = new HashMap<>();
         for (int i = 0; i < sessionArr.length(); i++) {
             JSONObject sessionObj = sessionArr.getJSONObject(i);
             String original = sessionObj.getJSONObject("level").getString("original");
-            sessions.add(original);
-
             boolean isComplete = sessionObj.getJSONObject("state").getBoolean("complete");
-            if (!isComplete) {
-                break;
-            }
+            sessions.put(original, isComplete);
         }
         return sessions;
     }

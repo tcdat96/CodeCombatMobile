@@ -1,27 +1,34 @@
 package tcd.android.com.codecombatmobile.data.course;
 
+import android.support.annotation.IntDef;
+
 import java.io.Serializable;
 
 public class Level implements Serializable {
-    private String mId;
+    private String mOriginal;
     private String mName;
     private String mDescription;
-    private String mSlug;
-    private String[] mConcepts;
+    private int mCampaignIndex;
     private Position mPosition;
-    private boolean mIsComplete;
 
-    public Level(String id, String name, String description, String slug, String[] concepts, Position position) {
-        mId = id;
+    public static final int STATE_COMPLETE = 0;
+    public static final int STATE_INCOMPLETE = 1;
+    public static final int STATE_LOCKED = 2;
+    @IntDef ({STATE_COMPLETE, STATE_INCOMPLETE, STATE_LOCKED})
+    public @interface LevelState {}
+    @LevelState
+    private int mLevelState = STATE_LOCKED;
+
+    public Level(String original, String name, String description, int campaignIndex, Position position) {
+        mOriginal = original;
         mName = name;
         mDescription = description;
-        mSlug = slug;
-        mConcepts = concepts;
+        mCampaignIndex = campaignIndex;
         mPosition = position;
     }
 
-    public String getId() {
-        return mId;
+    public String getOriginal() {
+        return mOriginal;
     }
 
     public String getName() {
@@ -32,24 +39,21 @@ public class Level implements Serializable {
         return mDescription;
     }
 
-    public String getSlug() {
-        return mSlug;
-    }
-
-    public String[] getConcepts() {
-        return mConcepts;
+    public int getCampaignIndex() {
+        return mCampaignIndex;
     }
 
     public Position getPosition() {
         return mPosition;
     }
 
-    public boolean isComplete() {
-        return mIsComplete;
+    @LevelState
+    public int getLevelState() {
+        return mLevelState;
     }
 
-    public void setComplete(boolean isComplete) {
-        mIsComplete = isComplete;
+    public void setLevelState(@LevelState int state) {
+        mLevelState = state;
     }
 
 }
