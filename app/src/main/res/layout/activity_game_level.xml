@@ -139,10 +139,10 @@
                 android:layout_marginBottom="8dp"/>
 
             <Button
-                android:id="@+id/btn_instruction"
+                android:id="@+id/btn_goals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/instruction"
+                android:text="@string/goals"
                 android:layout_marginBottom="8dp"/>
 
             <Button

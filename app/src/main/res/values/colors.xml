@@ -38,4 +38,5 @@
     <color name="locked_level_color">#96928F</color>
     <color name="current_level_color">#F5AA31</color>
     <color name="level_name_color">#E8D957</color>
+    <color name="incomplete_state_color">#ff5900</color>
 </resources>

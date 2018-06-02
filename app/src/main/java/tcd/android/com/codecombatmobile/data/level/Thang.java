@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.thang;
+package tcd.android.com.codecombatmobile.data.level;
 
 import tcd.android.com.codecombatmobile.data.course.Position;
 

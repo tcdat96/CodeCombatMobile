@@ -1,17 +1,23 @@
 package tcd.android.com.codecombatmobile.ui;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -23,14 +29,16 @@ import java.util.List;
 import java.util.Set;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.thang.Thang;
-import tcd.android.com.codecombatmobile.data.thang.ThangType;
-import tcd.android.com.codecombatmobile.data.course.Level;
+import tcd.android.com.codecombatmobile.data.level.Goal;
+import tcd.android.com.codecombatmobile.data.level.Thang;
+import tcd.android.com.codecombatmobile.data.level.ThangType;
 import tcd.android.com.codecombatmobile.ui.widget.GameLevelView;
 import tcd.android.com.codecombatmobile.ui.widget.ProgressBar;
 import tcd.android.com.codecombatmobile.util.CCDataUtil;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
 import tcd.android.com.codecombatmobile.util.DataUtil;
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class GameLevelActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -41,15 +49,14 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
 
     private GetThangsTask mAsyncTask;
     String mLevelId = null;
+
     @NonNull
-    private List<Thang> mThangs = new ArrayList<>();
-    @NonNull
-    private List<ThangType> mThangTypes = new ArrayList<>();
+    private List<Goal> mGoals = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+        setContentView(R.layout.activity_game_level);
 
         // get level data
         Intent data = getIntent();
@@ -72,15 +79,21 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
         mTimeControlBar.setProgress(0.45f);
         mHpBar = findViewById(R.id.pb_hp);
 
+        // buttons
+        findViewById(R.id.btn_map).setOnClickListener(this);
+        findViewById(R.id.btn_goals).setOnClickListener(this);
+        findViewById(R.id.btn_hints).setOnClickListener(this);
+        findViewById(R.id.btn_run).setOnClickListener(this);
+
         setButtonBackgrounds();
     }
 
     private void setButtonBackgrounds() {
-        final int[] buttonIds = new int[] {R.id.btn_map, R.id.btn_instruction, R.id.btn_hints, R.id.btn_run};
+        final int[] buttonIds = new int[] {R.id.btn_map, R.id.btn_goals, R.id.btn_hints, R.id.btn_run};
 
         // prepare button background
         final Button mapButton = findViewById(R.id.btn_map);
-        mapButton.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mapButton.measure(WRAP_CONTENT, WRAP_CONTENT);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.background_game_button);
         bitmap = Bitmap.createScaledBitmap(bitmap, mapButton.getMeasuredWidth(), mapButton.getMeasuredHeight(), false);
         BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
@@ -116,7 +129,8 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
         switch (v.getId()) {
             case R.id.btn_map:
                 break;
-            case R.id.btn_instruction:
+            case R.id.btn_goals:
+                showGoalsDialog();
                 break;
             case R.id.btn_hints:
                 break;
@@ -125,9 +139,60 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    private void showGoalsDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_goals_info);
+
+        // show all goals
+        LinearLayout goalContainerLayout = dialog.findViewById(R.id.ll_goal_container);
+        boolean isAllCompleted = true;
+        for (Goal goal : mGoals) {
+            TextView goalTextView = getGoalTextView(goal);
+            goalContainerLayout.addView(goalTextView);
+
+            if (!goal.isCompleted()) {
+                isAllCompleted = false;
+            }
+        }
+
+        // goal state
+        TextView stateTextView = dialog.findViewById(R.id.tv_goal_state);
+        if (isAllCompleted) {
+            stateTextView.setTextColor(ContextCompat.getColor(this, R.color.complete_level_color));
+            stateTextView.setText(R.string.success);
+        } else {
+            stateTextView.setTextColor(ContextCompat.getColor(this, R.color.incomplete_state_color));
+            stateTextView.setText(R.string.incomplete);
+        }
+
+        dialog.show();
+    }
+
+    private TextView getGoalTextView(Goal goal) {
+        TextView goalTv = new TextView(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        params.setMargins(0, 16, 0, 0);
+        goalTv.setLayoutParams(params);
+
+        TextViewCompat.setTextAppearance(goalTv, R.style.TextAppearance_AppCompat_Medium);
+        goalTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+
+        int color = goal.isCompleted() ? ContextCompat.getColor(this, R.color.complete_level_color) : Color.BLACK;
+        goalTv.setTextColor(color);
+
+        goalTv.setText(goal.getName());
+
+        return goalTv;
+    }
+
     private class GetThangsTask extends AsyncTask<Void, Void, Boolean> {
 
         private CCRequestManager mManager = CCRequestManager.getInstance(GameLevelActivity.this);
+        @NonNull
+        private List<Thang> mThangs = new ArrayList<>();
+        @NonNull
+        private List<ThangType> mThangTypes = new ArrayList<>();
 
         @Override
         protected Boolean doInBackground(Void... voids) {
@@ -137,6 +202,10 @@ public class GameLevelActivity extends AppCompatActivity implements View.OnClick
                 if (levelObj == null) {
                     return false;
                 }
+
+                // get goals
+                JSONArray goalArr = levelObj.getJSONArray("goals");
+                mGoals = CCDataUtil.parseGoalArr(goalArr);
 
                 // get thang list from level object
                 JSONArray thangArr = levelObj.getJSONArray("thangs");

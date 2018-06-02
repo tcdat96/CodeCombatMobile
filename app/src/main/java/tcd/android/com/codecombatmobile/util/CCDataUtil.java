@@ -16,10 +16,11 @@ import java.util.Set;
 
 import tcd.android.com.codecombatmobile.data.course.Course;
 import tcd.android.com.codecombatmobile.data.course.Level;
-import tcd.android.com.codecombatmobile.data.course.TClassroom;
-import tcd.android.com.codecombatmobile.data.thang.Thang;
-import tcd.android.com.codecombatmobile.data.thang.ThangType;
 import tcd.android.com.codecombatmobile.data.course.Position;
+import tcd.android.com.codecombatmobile.data.course.TClassroom;
+import tcd.android.com.codecombatmobile.data.level.Goal;
+import tcd.android.com.codecombatmobile.data.level.Thang;
+import tcd.android.com.codecombatmobile.data.level.ThangType;
 
 public class CCDataUtil {
 
@@ -101,6 +102,30 @@ public class CCDataUtil {
     }
 
     // game level
+    @NonNull
+    public static List<Goal> parseGoalArr(@NonNull JSONArray goalArr) throws JSONException {
+        List<Goal> goals = new ArrayList<>(goalArr.length());
+        for (int i = 0; i < goalArr.length(); i++) {
+            JSONObject goalObj = goalArr.getJSONObject(i);
+
+            String name = goalObj.getString("name");
+            Goal goal = new Goal(name);
+
+            // collect thangs
+            if (goalObj.has("collectThangs")) {
+                JSONArray targetArr = goalObj.getJSONObject("collectThangs").getJSONArray("targets");
+                List<String> targets = new ArrayList<>(targetArr.length());
+                for (int j = 0; j < targetArr.length(); j++) {
+                    targets.add(targetArr.getString(j));
+                }
+                goal.setCollectThangs(targets);
+            }
+
+            goals.add(goal);
+        }
+        return goals;
+    }
+
     @NonNull
     public static List<Thang> parseThangArr(@NonNull JSONArray thangArr) throws JSONException {
         List<Thang> thangs = new ArrayList<>(thangArr.length());

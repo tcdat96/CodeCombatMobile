@@ -11,9 +11,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -22,9 +20,8 @@ import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.course.Position;
-import tcd.android.com.codecombatmobile.data.thang.Thang;
-import tcd.android.com.codecombatmobile.data.thang.ThangType;
-import tcd.android.com.codecombatmobile.util.CCDataUtil;
+import tcd.android.com.codecombatmobile.data.level.Thang;
+import tcd.android.com.codecombatmobile.data.level.ThangType;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public class GameLevelView extends SurfaceView implements Runnable {
