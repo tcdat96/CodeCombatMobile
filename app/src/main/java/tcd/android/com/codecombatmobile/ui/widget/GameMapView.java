@@ -39,7 +39,7 @@ import tcd.android.com.codecombatmobile.util.DisplayUtil;
 public class GameMapView extends SurfaceView implements Runnable {
     private static final String TAG = GameMapView.class.getSimpleName();
     private static final int LEVEL_BANNER_WIDTH = 50;
-    private static final long VALID_CLICK_TIME_DIFFERENCE = TimeUnit.SECONDS.toMillis(2);
+    private static final long VALID_CLICK_TIME_DIFFERENCE = TimeUnit.SECONDS.toMillis(1);
 
     @Nullable
     private Thread mGameThread = null;
@@ -261,7 +261,9 @@ public class GameMapView extends SurfaceView implements Runnable {
                     for (int i = 0; i < mLevelsPosition.size(); i++) {
                         if (mLevelsPosition.get(i).contains(x, y)) {
                             Log.d(TAG, "onTouchEvent: " + i);
-                            showLevelInfoDialog(i);
+                            if (mLevels.get(i).getLevelState() != Level.STATE_LOCKED) {
+                                showLevelInfoDialog(i);
+                            }
                             break;
                         }
                     }
