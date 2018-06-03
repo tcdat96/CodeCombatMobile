@@ -15,8 +15,8 @@ import java.util.Random;
 import java.util.Set;
 
 import tcd.android.com.codecombatmobile.data.course.Course;
-import tcd.android.com.codecombatmobile.data.course.Level;
-import tcd.android.com.codecombatmobile.data.course.Position;
+import tcd.android.com.codecombatmobile.data.level.Level;
+import tcd.android.com.codecombatmobile.data.Position;
 import tcd.android.com.codecombatmobile.data.course.TClassroom;
 import tcd.android.com.codecombatmobile.data.level.Goal;
 import tcd.android.com.codecombatmobile.data.level.Thang;
@@ -74,19 +74,27 @@ public class CCDataUtil {
         return courses;
     }
 
+    public static boolean isPrimaryLevel(JSONObject levelObj) throws JSONException {
+        return !levelObj.has("assessment")
+                && (!levelObj.has("practice") || !levelObj.getBoolean("practice"))
+                && !levelObj.getString("type").equals("course-ladder");
+    }
+
     // game map
     public static Level getLevel(JSONObject levelObj) throws JSONException {
         String id = levelObj.getString("original");
         String name = levelObj.getString("name");
         String description = levelObj.getString("description");
         int campaignIndex = levelObj.getInt("campaignIndex");
+        // practice
+        boolean isPrimary = isPrimaryLevel(levelObj);
         // position
         JSONObject posObj = levelObj.getJSONObject("position");
         float x = (float) posObj.getDouble("x");
         float y = (float) posObj.getDouble("y");
         Position position = new Position(x, y);
 
-        return new Level(id, name, description, campaignIndex, position);
+        return new Level(id, name, description, campaignIndex, isPrimary, position);
     }
 
     @NonNull

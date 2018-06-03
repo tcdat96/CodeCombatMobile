@@ -1,6 +1,6 @@
 package tcd.android.com.codecombatmobile.data.level;
 
-import tcd.android.com.codecombatmobile.data.course.Position;
+import tcd.android.com.codecombatmobile.data.Position;
 
 public class Thang {
     private String mId;

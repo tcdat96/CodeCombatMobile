@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.course;
+package tcd.android.com.codecombatmobile.data;
 
 import java.io.Serializable;
 

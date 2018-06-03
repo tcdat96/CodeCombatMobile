@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.course.Level;
+import tcd.android.com.codecombatmobile.data.level.Level;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
 import tcd.android.com.codecombatmobile.ui.widget.GameMapView;
 import tcd.android.com.codecombatmobile.util.CCDataUtil;

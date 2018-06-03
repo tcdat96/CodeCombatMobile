@@ -108,7 +108,7 @@ public class SClassroomListActivity extends ClassroomListActivity {
                 // get owner's name
                 String ownerId = classObj.getString("ownerID");
 //                String teacher = getOwnerName(ownerId);
-                String teacher = "Michael Keaton";
+                String teacher = "";
                 // course's levels
                 JSONArray courseArr = classObj.getJSONArray("courses");
                 parseCourseLevels(courseArr);
@@ -138,14 +138,16 @@ public class SClassroomListActivity extends ClassroomListActivity {
                 JSONObject courseObj = courseArr.getJSONObject(i);
                 String id = courseObj.getString("_id");
                 Course course = getCourseById(id);
-                if (course != null && course.getLevels() == null) {
+                if (course != null && course.getLevelTypes() == null) {
                     JSONArray levelArr = courseObj.getJSONArray("levels");
-                    Map<String, String> levels = new HashMap<>();
+                    Map<String, Boolean> levels = new HashMap<>();
                     for (int j = 0; j < levelArr.length(); j++) {
                         JSONObject levelObj = levelArr.getJSONObject(j);
-                        levels.put(levelObj.getString("original"), levelObj.getString("name"));
+                        String original = levelObj.getString("original");
+                        boolean isPrimaryLevel = CCDataUtil.isPrimaryLevel(levelObj);
+                        levels.put(original, isPrimaryLevel);
                     }
-                    course.setLevels(levels);
+                    course.setLevelTypes(levels);
                 }
             }
         }
@@ -174,12 +176,27 @@ public class SClassroomListActivity extends ClassroomListActivity {
                         String instId = instObj.getString("_id");
                         JSONArray sessionArr = mReqManager.requestLevelSessionsSync(instId);
                         if (sessionArr != null) {
-                            Map<String, Boolean> sessions = CCDataUtil.getLevelSessions(sessionArr);
-                            int completedLevelCount = 0;
-                            for (boolean isComplete : sessions.values()) {
-                                completedLevelCount += isComplete ? 1 : 0;
+                            // count primary levels
+                            Map<String, Boolean> levels = course.getLevelTypes();
+                            if (levels == null) {
+                                continue;
                             }
-                            classroom.setProgress(completedLevelCount * 100 / course.getLevels().size());
+                            int levelCount = 0;
+                            for (Boolean isPrimary : levels.values()) {
+                                levelCount += isPrimary ? 1 : 0;
+                            }
+                            // count completed primary levels
+                            int completedLevelCount = 0;
+                            Map<String, Boolean> sessions = CCDataUtil.getLevelSessions(sessionArr);
+                            for (Map.Entry<String, Boolean> session : sessions.entrySet()) {
+                                boolean isPrimary = levels.get(session.getKey());
+                                boolean isCompleted = session.getValue();
+                                if (isPrimary && isCompleted) {
+                                    completedLevelCount++;
+                                }
+                            }
+
+                            classroom.setProgress(completedLevelCount * 100 / levelCount);
                         }
                     }
                 }

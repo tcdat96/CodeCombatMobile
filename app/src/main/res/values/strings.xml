@@ -62,7 +62,11 @@
     <string name="error_invalid_phone_number">This phone number is too short</string>
     <string name="create_account">Create account</string>
 
-    <!--teacher classes-->
+    <!--student class list-->
+    <string name="not_available">Not available</string>
+    <string name="no_course_message">This classroom has no courses yet.</string>
+
+    <!--teacher class list-->
     <string name="class_list_activity_title">Current classes</string>
     <plurals name="student_total">
         <item quantity="one">%1$d student</item>
@@ -81,7 +85,7 @@
     <string name="latest_level">Latest level</string>
     <string name="description_icon">icon</string>
     <string name="course_progress">Course progress</string>
-    <string name="no_student_message">This class has no students yet.</string>
+    <string name="no_student_message">This classroom has no students yet.</string>
     <string name="cover_transition_name" translatable="false">coverTrans</string>
 
     <!-- settings -->

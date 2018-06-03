@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.course.Level;
-import tcd.android.com.codecombatmobile.data.course.Position;
+import tcd.android.com.codecombatmobile.data.level.Level;
+import tcd.android.com.codecombatmobile.data.Position;
 import tcd.android.com.codecombatmobile.ui.GameLevelActivity;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 

@@ -1,14 +1,17 @@
-package tcd.android.com.codecombatmobile.data.course;
+package tcd.android.com.codecombatmobile.data.level;
 
 import android.support.annotation.IntDef;
 
 import java.io.Serializable;
+
+import tcd.android.com.codecombatmobile.data.Position;
 
 public class Level implements Serializable {
     private String mOriginal;
     private String mName;
     private String mDescription;
     private int mCampaignIndex;
+    private boolean mIsPrimary;
     private Position mPosition;
 
     public static final int STATE_COMPLETE = 0;
@@ -19,11 +22,12 @@ public class Level implements Serializable {
     @LevelState
     private int mLevelState = STATE_LOCKED;
 
-    public Level(String original, String name, String description, int campaignIndex, Position position) {
+    public Level(String original, String name, String description, int campaignIndex, boolean isPrimary, Position position) {
         mOriginal = original;
         mName = name;
         mDescription = description;
         mCampaignIndex = campaignIndex;
+        mIsPrimary = isPrimary;
         mPosition = position;
     }
 
@@ -41,6 +45,10 @@ public class Level implements Serializable {
 
     public int getCampaignIndex() {
         return mCampaignIndex;
+    }
+
+    public boolean isPrimary() {
+        return mIsPrimary;
     }
 
     public Position getPosition() {

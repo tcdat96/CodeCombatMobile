@@ -1,6 +1,7 @@
 package tcd.android.com.codecombatmobile.data.course;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Map;
 
@@ -9,7 +10,10 @@ public class Course {
     private String mName;
     private String mDescription;
     private String mCampaignId;
-    private Map<String, String> mLevels;
+
+    // String for level ID and boolean for level type (true for primary and false for challenge or practice level)
+    @Nullable
+    private Map<String, Boolean> mLevelTypes;
 
     public Course(String id, String name, String description, String campaignId) {
         mId = id;
@@ -34,11 +38,12 @@ public class Course {
         return mCampaignId;
     }
 
-    public Map<String, String> getLevels() {
-        return mLevels;
+    @Nullable
+    public Map<String, Boolean> getLevelTypes() {
+        return mLevelTypes;
     }
 
-    public void setLevels(@NonNull Map<String, String> levels) {
-        mLevels = levels;
+    public void setLevelTypes(@NonNull Map<String, Boolean> levelType) {
+        mLevelTypes = levelType;
     }
 }

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.course.Position;
+import tcd.android.com.codecombatmobile.data.Position;
 import tcd.android.com.codecombatmobile.data.level.Thang;
 import tcd.android.com.codecombatmobile.data.level.ThangType;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;

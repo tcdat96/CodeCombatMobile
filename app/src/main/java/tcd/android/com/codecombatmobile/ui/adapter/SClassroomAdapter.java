@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,9 +68,15 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.SC
         final SClassroom classroom = mClassrooms.get(position);
         holder.mLanguageTextView.setText(DisplayUtil.capitalize(classroom.getLanguage()));
         holder.mClassNameTextView.setText(classroom.getClassName());
-        holder.mTeacherTextView.setText(classroom.getTeacher());
-        holder.mCourseNameTextView.setText(classroom.getCourseName());
         holder.mProgressBar.setProgress(classroom.getProgress());
+
+        // teacher name
+        String teacher = !TextUtils.isEmpty(classroom.getTeacher()) ? classroom.getTeacher() : mContext.getString(R.string.not_available);
+        holder.mTeacherTextView.setText(teacher);
+
+        // course name
+        String courseName = !TextUtils.isEmpty(classroom.getCourseName()) ? classroom.getCourseName() : mContext.getString(R.string.no_course_message);
+        holder.mCourseNameTextView.setText(courseName);
 
         // language color
         boolean isPython = classroom.getLanguage().equals("python");
