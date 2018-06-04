@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
                 CodeEditorActivity.class,
                 SettingsActivity.class,
                 GameLevelActivity.class,
-                GameMapActivity.class
+                GameMapActivity.class,
+                LevelWebViewActivity.class
         };
         for (final Class activity : activities) {
             Button button = new Button(this);
@@ -41,6 +42,6 @@ public class MainActivity extends AppCompatActivity {
             rootContainer.addView(button);
         }
 
-//        startActivity(new Intent(MainActivity.this, CodeEditorActivity.class));
+//        startActivity(new Intent(MainActivity.this, LevelWebViewActivity.class));
     }
 }

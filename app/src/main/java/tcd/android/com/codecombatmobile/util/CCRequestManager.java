@@ -71,8 +71,10 @@ public class CCRequestManager {
                     }
                 });
 
-        CookieManager manager = new CookieManager();
-        CookieHandler.setDefault(manager);
+//        CookieManager manager = new CookieManager();
+//        CookieHandler.setDefault(manager);
+
+        CookieUtil.getCookieUtil(context).initCookieHandler();
     }
 
     public static synchronized CCRequestManager getInstance(Context context) {
@@ -91,7 +93,7 @@ public class CCRequestManager {
 
 
     // fundamental methods
-    private String getRequestUrl(String path) {
+    public String getRequestUrl(String path) {
         String protocol = "http://";
         String domainName = getIpAddress() + ":3000";
         return protocol + domainName + path;
