@@ -22,18 +22,27 @@ public class Expression extends Operation {
     @Override
     public boolean replaceOperation(Operation oldOp, Operation newOp) {
         int index = mChildren.indexOf(oldOp);
-        if (index >= 0) {
-            if (newOp instanceof Operator && !(oldOp instanceof Operator)) {
+        if (index >= 0 && isNewOpValid(index, newOp)) {
+            if (newOp instanceof Operator && oldOp.returnsValue()) {
                 mChildren.set(index, oldOp);
                 add(index + 1, (Operator) newOp);
                 return true;
-            }
-            if (isNewOpValid(index, newOp)) {
+            } else {
                 mChildren.set(index, newOp);
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isNewOpValid(int index, Operation op) {
+        Operation oldOp = mChildren.get(index);
+        if (op instanceof Operator) {
+            return oldOp.returnsValue() || oldOp instanceof Operator;
+        } else {
+            return !(oldOp instanceof Operator) && op.returnsValue();
+        }
     }
 
     @Override
@@ -54,15 +63,6 @@ public class Expression extends Operation {
             } else {
                 mChildren.set(index, new Blank());
             }
-        }
-    }
-
-    @Override
-    protected boolean isNewOpValid(int index, Operation op) {
-        if (mChildren.get(index) instanceof Operator) {
-            return op instanceof Operator;
-        } else {
-            return op.returnsValue();
         }
     }
 

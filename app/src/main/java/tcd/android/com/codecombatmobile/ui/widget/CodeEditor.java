@@ -3,6 +3,7 @@ package tcd.android.com.codecombatmobile.ui.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.TextViewCompat;
 import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.syntax.Operation;
+import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
 
 /**
  * Created by ADMIN on 21/04/2018.
@@ -24,6 +26,12 @@ public class CodeEditor extends LinearLayout {
 
     private List<Operation> mOperations = new ArrayList<>();
     private Operation mSelectedOperation;
+
+    public interface OnOperationChangedListener {
+        void onOperationChangedListener(@Nullable Operation operation);
+    }
+    @Nullable
+    private OnOperationChangedListener mOnOperationChangedListener = null;
 
     public CodeEditor(Context context) {
         super(context);
@@ -45,11 +53,26 @@ public class CodeEditor extends LinearLayout {
         setOrientation(VERTICAL);
     }
 
+    public void setOnOperationChangedListener(OnOperationChangedListener listener) {
+        mOnOperationChangedListener = listener;
+    }
+
     public void clear() {
         removeAllViews();
-        mSelectedOperation = null;
+        setSelectedOperation(null);
         mOperations.clear();
         display();
+    }
+
+    public void setSelectedOperation(Operation operation) {
+        mSelectedOperation = operation;
+        if (mOnOperationChangedListener != null) {
+            mOnOperationChangedListener.onOperationChangedListener(operation);
+        }
+    }
+
+    public Operation getSelectedOperation() {
+        return mSelectedOperation;
     }
 
     public void addOperation(@NonNull Operation newOp) {
@@ -66,8 +89,7 @@ public class CodeEditor extends LinearLayout {
                 boolean result = container.replaceOperation(mSelectedOperation, newOp);
                 if (result) {
                     container.setOnClickListener(this);
-                    // TODO: 25/04/2018 reconsider this
-                    mSelectedOperation = null;
+                    setSelectedOperation(null);
                 } else {
                     Toast.makeText(getContext(), R.string.cannot_insert_error, Toast.LENGTH_SHORT).show();
                     return;
@@ -89,16 +111,8 @@ public class CodeEditor extends LinearLayout {
             container.removeOperation(mSelectedOperation);
             container.setOnClickListener(this);
         }
-        mSelectedOperation = null;
+        setSelectedOperation(null);
         display();
-    }
-
-    public void setSelectedOperation(Operation operation) {
-        mSelectedOperation = operation;
-    }
-
-    public Operation getSelectedOperation() {
-        return mSelectedOperation;
     }
 
     public void display() {

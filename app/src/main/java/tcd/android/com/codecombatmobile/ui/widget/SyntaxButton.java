@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import info.hoang8f.widget.FButton;
@@ -22,6 +23,7 @@ public class SyntaxButton extends FButton {
 
     @Nullable
     private Operation mOperation;
+    private boolean mEnabled = true;
 
     public SyntaxButton(Context context) {
         super(context);
@@ -60,12 +62,38 @@ public class SyntaxButton extends FButton {
 
     public void setOperation(@NonNull Operation operation) {
         mOperation = operation;
+        setButtonColorInternal();
+    }
 
-        int color = operation.getColor();
+    private void setButtonColorInternal() {
+        int color = mEnabled && mOperation != null ? mOperation.getColor() : Color.GRAY;
         setTextColor(color);
         setShadowColor(color);
     }
 
     @Nullable
     public Operation getOperation() { return mOperation; }
+
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (mEnabled != enabled) {
+            mEnabled = enabled;
+            setButtonColorInternal();
+        }
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable final OnClickListener listener) {
+        OnClickListener modifiedListener = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mEnabled) {
+                    if (listener != null) {
+                        listener.onClick(v);
+                    }
+                }
+            }
+        };
+        super.setOnClickListener(modifiedListener);
+    }
 }

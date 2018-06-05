@@ -44,7 +44,7 @@ public abstract class Operation {
     protected boolean mReturnsValue = false;
 
     @NonNull
-    protected List<Operation> mChildren = new ArrayList<>();
+    protected List<Operation> mChildren;
     private CodeEditor mCodeEditor;
     protected Operation mContainer;
 
@@ -86,15 +86,13 @@ public abstract class Operation {
         }
     }
 
+    public int findOperation(Operation operation) {
+        return mChildren.indexOf(operation);
+    }
+
     public boolean replaceOperation(Operation oldOp, Operation newOp) {
         int index = mChildren.indexOf(oldOp);
         if (index >= 0) {
-            if (newOp instanceof Operator && !(oldOp instanceof Operator)) {
-                Expression expression = new Expression(oldOp);
-                expression.add(1, (Operator) newOp);
-                mChildren.set(index, expression);
-                return true;
-            }
             if (isNewOpValid(index, newOp)) {
                 mChildren.set(index, newOp);
                 return true;
@@ -103,7 +101,7 @@ public abstract class Operation {
         return false;
     }
 
-    protected boolean isNewOpValid(int index, Operation op) {
+    public boolean isNewOpValid(int index, Operation op) {
         return mChildren.get(index).getClass().equals(op.getClass());
     }
 

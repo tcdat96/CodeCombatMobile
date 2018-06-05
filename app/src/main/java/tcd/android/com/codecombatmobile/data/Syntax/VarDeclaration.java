@@ -19,7 +19,7 @@ public class VarDeclaration extends Operation {
     }
 
     @Override
-    protected boolean isNewOpValid(int index, Operation op) {
+    public boolean isNewOpValid(int index, Operation op) {
         switch (index) {
             case 0: return op instanceof Value;             // TODO: 29/05/2018 must be a string
             case 1: return op instanceof Assignment;

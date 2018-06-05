@@ -21,7 +21,7 @@ public class Function extends Operation {
     }
 
     @Override
-    protected boolean isNewOpValid(int index, Operation op) {
+    public boolean isNewOpValid(int index, Operation op) {
         return op.returnsValue();
     }
 

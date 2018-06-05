@@ -6,7 +6,7 @@ public class FlowControl extends CodeBlock {
     }
 
     @Override
-    protected boolean isNewOpValid(int index, Operation op) {
+    public boolean isNewOpValid(int index, Operation op) {
         if (index == 0) {
             return op.returnsValue();
         }

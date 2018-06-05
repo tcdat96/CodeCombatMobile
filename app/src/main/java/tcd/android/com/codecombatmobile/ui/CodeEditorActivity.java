@@ -1,6 +1,7 @@
 package tcd.android.com.codecombatmobile.ui;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Pair;
@@ -60,7 +61,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initVirtualKeyboard() {
-        LinearLayout buttonContainer = findViewById(R.id.ll_button_container);
+        final LinearLayout buttonContainer = findViewById(R.id.ll_button_container);
 
         List<Pair<Integer, String>> opTypes = new ArrayList<>();
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "if"));
@@ -85,6 +86,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_OPERATOR, "/"));
         final OperationFactory factory = new OperationFactory();
 
+        final SyntaxButton[] buttons = new SyntaxButton[opTypes.size()];
         LinearLayout columnLayout = new LinearLayout(this);
         for (int i = 0; i < opTypes.size(); i++) {
             if (i % 4 == 0) {
@@ -108,9 +110,34 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                     }
                 });
 
+                buttons[i] = button;
                 columnLayout.addView(button);
             }
         }
+
+        setOnOperationChangedListener(buttons);
+    }
+
+    private void setOnOperationChangedListener(final SyntaxButton[] buttons) {
+        mCodeEditor.setOnOperationChangedListener(new CodeEditor.OnOperationChangedListener() {
+            @Override
+            public void onOperationChangedListener(@Nullable Operation operation) {
+                if (operation == null || operation.getContainer() == null) {
+                    for (SyntaxButton button : buttons) {
+                        button.setEnabled(true);
+                    }
+                } else {
+                    Operation container = operation.getContainer();
+                    int index = container.findOperation(operation);
+                    if (index > -1) {
+                        for (SyntaxButton button : buttons) {
+                            boolean enabled = container.isNewOpValid(index, button.getOperation());
+                            button.setEnabled(enabled);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override

@@ -26,7 +26,20 @@ public class Assignment extends Operation {
     }
 
     @Override
-    protected boolean isNewOpValid(int index, Operation op) {
+    public boolean replaceOperation(Operation oldOp, Operation newOp) {
+        int index = mChildren.indexOf(oldOp);
+        if (isNewOpValid(index, newOp)) {
+            if (index == 1) {
+                newOp = new Expression(newOp);
+            }
+            mChildren.set(index, newOp);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isNewOpValid(int index, Operation op) {
         switch (index) {
             case 0: return op instanceof Variable;
             case 1: return op.returnsValue();

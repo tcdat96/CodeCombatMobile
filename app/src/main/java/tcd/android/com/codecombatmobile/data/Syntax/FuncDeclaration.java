@@ -11,7 +11,7 @@ public class FuncDeclaration extends CodeBlock {
     }
 
     @Override
-    protected boolean isNewOpValid(int index, Operation op) {
+    public boolean isNewOpValid(int index, Operation op) {
         if (index < mParamTotal + 1) {
             // TODO: 10/05/2018 must be string
             return op instanceof Value;
