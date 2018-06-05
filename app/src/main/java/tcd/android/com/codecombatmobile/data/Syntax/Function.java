@@ -21,8 +21,9 @@ public class Function extends Operation {
     }
 
     @Override
-    public boolean isNewOpValid(int index, Operation op) {
-        return op.returnsValue();
+    public int getReplacementIndex(Operation oldOp, Operation newOp) {
+        int index = mChildren.indexOf(oldOp);
+        return newOp.returnsValue() ? index : -1;
     }
 
     @Override

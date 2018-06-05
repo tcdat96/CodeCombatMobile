@@ -128,12 +128,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                     }
                 } else {
                     Operation container = operation.getContainer();
-                    int index = container.findOperation(operation);
-                    if (index > -1) {
-                        for (SyntaxButton button : buttons) {
-                            boolean enabled = container.isNewOpValid(index, button.getOperation());
-                            button.setEnabled(enabled);
-                        }
+                    for (SyntaxButton button : buttons) {
+                        int index = container.getReplacementIndex(operation, button.getOperation());
+                        button.setEnabled(index >= 0);
                     }
                 }
             }

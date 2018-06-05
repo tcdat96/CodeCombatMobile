@@ -22,15 +22,13 @@ public abstract class CodeBlock extends Operation {
 
     @Override
     public boolean replaceOperation(Operation oldOp, Operation newOp) {
-        int index = mChildren.indexOf(oldOp);
+        int index = getReplacementIndex(oldOp, newOp);
         if (index >= 0) {
-            if (isNewOpValid(index, newOp)) {
-                mChildren.set(index, newOp);
-                if (!(mChildren.get(mChildren.size() - 1) instanceof Blank)) {
-                    mChildren.add(new Blank());
-                }
-                return true;
+            mChildren.set(index, newOp);
+            if (!(mChildren.get(mChildren.size() - 1) instanceof Blank)) {
+                mChildren.add(new Blank());
             }
+            return true;
         }
         return false;
     }

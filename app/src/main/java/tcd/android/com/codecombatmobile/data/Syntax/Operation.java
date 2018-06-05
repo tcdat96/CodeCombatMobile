@@ -86,23 +86,23 @@ public abstract class Operation {
         }
     }
 
-    public int findOperation(Operation operation) {
-        return mChildren.indexOf(operation);
-    }
-
     public boolean replaceOperation(Operation oldOp, Operation newOp) {
-        int index = mChildren.indexOf(oldOp);
+        int index = getReplacementIndex(oldOp, newOp);
         if (index >= 0) {
-            if (isNewOpValid(index, newOp)) {
-                mChildren.set(index, newOp);
-                return true;
-            }
+            mChildren.set(index, newOp);
+            return true;
         }
         return false;
     }
 
-    public boolean isNewOpValid(int index, Operation op) {
-        return mChildren.get(index).getClass().equals(op.getClass());
+    public int getReplacementIndex(Operation oldOp, Operation newOp) {
+        int index = mChildren.indexOf(oldOp);
+        if (index >= 0) {
+            if (oldOp.getClass().equals(newOp.getClass())) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     public void removeOperation(Operation op) {

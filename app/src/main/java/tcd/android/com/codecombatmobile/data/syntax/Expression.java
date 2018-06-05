@@ -21,8 +21,8 @@ public class Expression extends Operation {
 
     @Override
     public boolean replaceOperation(Operation oldOp, Operation newOp) {
-        int index = mChildren.indexOf(oldOp);
-        if (index >= 0 && isNewOpValid(index, newOp)) {
+        int index = getReplacementIndex(oldOp, newOp);
+        if (index >= 0) {
             if (newOp instanceof Operator && oldOp.returnsValue()) {
                 mChildren.set(index, oldOp);
                 add(index + 1, (Operator) newOp);
@@ -36,12 +36,12 @@ public class Expression extends Operation {
     }
 
     @Override
-    public boolean isNewOpValid(int index, Operation op) {
-        Operation oldOp = mChildren.get(index);
-        if (op instanceof Operator) {
-            return oldOp.returnsValue() || oldOp instanceof Operator;
+    public int getReplacementIndex(Operation oldOp, Operation newOp) {
+        int index = mChildren.indexOf(oldOp);
+        if (newOp instanceof Operator) {
+            return oldOp.returnsValue() || oldOp instanceof Operator ? index : -1;
         } else {
-            return !(oldOp instanceof Operator) && op.returnsValue();
+            return !(oldOp instanceof Operator) && newOp.returnsValue() ? index : -1;
         }
     }
 

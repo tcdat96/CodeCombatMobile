@@ -27,8 +27,8 @@ public class Assignment extends Operation {
 
     @Override
     public boolean replaceOperation(Operation oldOp, Operation newOp) {
-        int index = mChildren.indexOf(oldOp);
-        if (isNewOpValid(index, newOp)) {
+        int index = getReplacementIndex(oldOp, newOp);
+        if (index >= 0) {
             if (index == 1) {
                 newOp = new Expression(newOp);
             }
@@ -39,12 +39,13 @@ public class Assignment extends Operation {
     }
 
     @Override
-    public boolean isNewOpValid(int index, Operation op) {
+    public int getReplacementIndex(Operation oldOp, Operation newOp) {
+        int index = mChildren.indexOf(oldOp);
         switch (index) {
-            case 0: return op instanceof Variable;
-            case 1: return op.returnsValue();
+            case 0: return newOp instanceof Variable ? index : -1;
+            case 1: return newOp.returnsValue() ? index : -1;
         }
-        return super.isNewOpValid(index, op);
+        return super.getReplacementIndex(oldOp, newOp);
     }
 
     @Override

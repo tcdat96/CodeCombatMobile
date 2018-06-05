@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 public class VarDeclaration extends Operation {
 
-    private static final String TAG = VarDeclaration.class.getSimpleName();
-
     public VarDeclaration() {
         super("var", TYPE_DECLARATION);
         mChildren = new ArrayList<>(3);
@@ -19,12 +17,16 @@ public class VarDeclaration extends Operation {
     }
 
     @Override
-    public boolean isNewOpValid(int index, Operation op) {
+    public int getReplacementIndex(Operation oldOp, Operation newOp) {
+        boolean replaceable;
+        int index = mChildren.indexOf(oldOp);
         switch (index) {
-            case 0: return op instanceof Value;             // TODO: 29/05/2018 must be a string
-            case 1: return op instanceof Assignment;
-            case 2: return op.returnsValue();
+            case 0: replaceable = newOp instanceof Value; break;             // TODO: 29/05/2018 must be a string
+            case 1: replaceable = newOp instanceof Assignment; break;
+            case 2: replaceable = newOp.returnsValue(); break;
+            default:
+                return super.getReplacementIndex(oldOp, newOp);
         }
-        return super.isNewOpValid(index, op);
+        return replaceable ? index : -1;
     }
 }

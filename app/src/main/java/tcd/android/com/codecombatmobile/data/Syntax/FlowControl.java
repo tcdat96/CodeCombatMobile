@@ -6,10 +6,13 @@ public class FlowControl extends CodeBlock {
     }
 
     @Override
-    public boolean isNewOpValid(int index, Operation op) {
+    public int getReplacementIndex(Operation oldOp, Operation newOp) {
+        int index = mChildren.indexOf(oldOp);
+        // comparison
         if (index == 0) {
-            return op.returnsValue();
+            return newOp.returnsValue() ? index : -1;
         }
-        return true;
+        // others
+        return index;
     }
 }

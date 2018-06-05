@@ -11,12 +11,13 @@ public class FuncDeclaration extends CodeBlock {
     }
 
     @Override
-    public boolean isNewOpValid(int index, Operation op) {
+    public int getReplacementIndex(Operation oldOp, Operation newOp) {
+        int index = mChildren.indexOf(oldOp);
         if (index < mParamTotal + 1) {
             // TODO: 10/05/2018 must be string
-            return op instanceof Value;
+            return newOp instanceof Value ? index : -1;
         }
-        return true;
+        return index;
     }
 
     @Override
