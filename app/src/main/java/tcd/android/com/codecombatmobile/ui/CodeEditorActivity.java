@@ -68,7 +68,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "for"));
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "return"));
         opTypes.add(new Pair<>(TYPE_DECLARATION, "func"));
-        opTypes.add(new Pair<>(TYPE_DECLARATION, "var"));
         opTypes.add(new Pair<>(TYPE_VARIABLE, "abc"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBoxes()_3"));
@@ -97,6 +96,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
             final Pair<Integer, String> pair = opTypes.get(i);
             final Operation operation = factory.getOperation(pair);
             if (operation != null) {
+                operation.init(this);
                 SyntaxButton button = new SyntaxButton(this);
                 button.setText(operation.getButtonName());
                 button.setOperation(operation);

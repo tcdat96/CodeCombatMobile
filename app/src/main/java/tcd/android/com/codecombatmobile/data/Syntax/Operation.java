@@ -1,5 +1,7 @@
 package tcd.android.com.codecombatmobile.data.syntax;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
@@ -39,14 +41,18 @@ public abstract class Operation {
 
     protected String mName;
     @SyntaxType
-    private int mSyntaxType = TYPE_VALUE;
+    private int mSyntaxType;
     protected Spannable mSpannable;
     protected boolean mReturnsValue = false;
+    private int mButtonColor = Color.BLACK;
+    private int mCodeColor = Color.BLACK;
 
     @NonNull
     protected List<Operation> mChildren;
     private CodeEditor mCodeEditor;
     protected Operation mContainer;
+
+
 
     public Operation(String name, @SyntaxType int syntaxType) {
         mName = name;
@@ -54,12 +60,22 @@ public abstract class Operation {
         mChildren = new ArrayList<>();
     }
 
-    public int getColor() {
-        return DisplayUtil.getColor(mSyntaxType);
+    public void init(Context context) {
+        mButtonColor = DisplayUtil.getButtonColor(context, mSyntaxType);
+        mCodeColor = DisplayUtil.getCodeColor(context, mSyntaxType);
+        setSpannableColor();
     }
 
     protected void setSpannableColor() {
-        mSpannable.setSpan(new ForegroundColorSpan(getColor()), 0, mSpannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (mSpannable != null) {
+            mSpannable.setSpan(new ForegroundColorSpan(mCodeColor), 0, mSpannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+    }
+
+
+
+    public String getButtonName() {
+        return mName;
     }
 
     public Operation getContainer() {
@@ -70,8 +86,19 @@ public abstract class Operation {
         return mReturnsValue;
     }
 
+    public int getButtonColor() {
+        return mButtonColor;
+    }
+
+    public int getCodeColor() {
+        return mCodeColor;
+    }
+
+
+
     public void setOnClickListener(CodeEditor codeEditor) {
         mCodeEditor = codeEditor;
+        init(codeEditor.getContext());
 
         if (mSpannable != null) {
             DataUtil.removeAllSpans(mSpannable);
@@ -124,10 +151,6 @@ public abstract class Operation {
             mCodeEditor.setSelectedOperation(this);
             mCodeEditor.removeOperation();
         }
-    }
-
-    public String getButtonName() {
-        return mName;
     }
 
     public void display(TextView container) {

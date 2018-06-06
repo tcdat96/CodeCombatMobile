@@ -16,16 +16,23 @@
     <color name="ancillary_text_color">#d6d6d6</color>
 
     <!--code editor-->
-    <color name="virtual_keyboard_color">#F2F6F7</color>
+    <color name="virtual_keyboard_background_color">#F2F6F7</color>
     <color name="keyboard_button_color">#5E666A</color>
     <color name="select_background_color">#BDBDBD</color>
-    <color name="condition_color">#FF647E</color>
-    <color name="declaration_color">#657DFF</color>
-    <color name="variable_color">#73B3C1</color>
-    <color name="function_color">#309CE8</color>
-    <color name="method_color">#2AE48A</color>
-    <color name="value_color">#F9A825</color>
-    <color name="operator_color">#F86AFF</color>
+    <color name="flow_control_button_color">#FF647E</color>
+    <color name="flow_control_editor_color">#F6052D</color>
+    <color name="declaration_button_color">#657DFF</color>
+    <color name="declaration_editor_color">#0026F7</color>
+    <color name="variable_button_color">#73B3C1</color>
+    <color name="variable_editor_color">#368FA2</color>
+    <color name="function_button_color">#309CE8</color>
+    <color name="function_editor_color">#0073C4</color>
+    <color name="method_button_color">#2AE48A</color>
+    <color name="method_editor_color">#00BD62</color>
+    <color name="value_button_color">#F9A825</color>
+    <color name="value_editor_color">#BC5800</color>
+    <color name="operator_button_color">#F86AFF</color>
+    <color name="operator_editor_color">#673AB7</color>
 
      <!--game-->
     <color name="time_progress_color">#F5AA31</color>

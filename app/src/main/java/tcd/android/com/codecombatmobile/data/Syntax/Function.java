@@ -13,7 +13,6 @@ public class Function extends Operation {
 
         mReturnsValue = true;
         mSpannable = new SpannableString(name.substring(0, name.length() - 2));
-        setSpannableColor();
 
         for (int i = 0; i < paramTotal; i++) {
             mChildren.add(new Blank());

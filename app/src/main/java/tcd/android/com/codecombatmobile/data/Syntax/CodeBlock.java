@@ -17,7 +17,6 @@ public abstract class CodeBlock extends Operation {
         }
 
         mSpannable = new SpannableString(mName);
-        setSpannableColor();
     }
 
     @Override

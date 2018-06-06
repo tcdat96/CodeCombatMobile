@@ -66,7 +66,7 @@ public class SyntaxButton extends FButton {
     }
 
     private void setButtonColorInternal() {
-        int color = mEnabled && mOperation != null ? mOperation.getColor() : Color.GRAY;
+        int color = mEnabled && mOperation != null ? mOperation.getButtonColor() : Color.GRAY;
         setTextColor(color);
         setShadowColor(color);
     }

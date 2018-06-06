@@ -12,17 +12,19 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.Display;
 import android.widget.LinearLayout;
 
+import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.syntax.Operation;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_ASSIGNMENT;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_BLANK;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_DECLARATION;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FLOW_CONTROL;
+import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_DECLARATION;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FUNCTION;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_METHOD;
 import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_OPERATOR;
@@ -40,28 +42,46 @@ public class DisplayUtil {
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 
-    public static int getColor(@Operation.SyntaxType int type) {
+    public static int getButtonColor(Context context, @Operation.SyntaxType int type) {
+        return getColor(context, type, true);
+    }
+
+    public static int getCodeColor(Context context, @Operation.SyntaxType int type) {
+        return getColor(context, type, false);
+    }
+
+    private static int getColor(Context context, @Operation.SyntaxType int type, boolean isButtonColor) {
+        int colorResId;
         switch (type) {
             case TYPE_FLOW_CONTROL:
-                return Color.parseColor("#FF647E");
+                colorResId = isButtonColor ? R.color.flow_control_button_color : R.color.flow_control_editor_color;
+                break;
             case TYPE_DECLARATION:
-                return Color.parseColor("#657DFF");
+                colorResId = isButtonColor ? R.color.declaration_button_color : R.color.declaration_editor_color;
+                break;
             case TYPE_VARIABLE:
-                return Color.parseColor("#73B3C1");
+                colorResId = isButtonColor ? R.color.variable_button_color : R.color.variable_editor_color;
+                break;
             case TYPE_FUNCTION:
-                return Color.parseColor("#309CE8");
+                colorResId = isButtonColor ? R.color.function_button_color : R.color.function_editor_color;
+                break;
             case TYPE_METHOD:
-                return Color.parseColor("#2AE48A");
+                colorResId = isButtonColor ? R.color.method_button_color : R.color.method_editor_color;
+                break;
             case TYPE_VALUE:
-                return Color.parseColor("#F9A825");
+                colorResId = isButtonColor ? R.color.value_button_color : R.color.value_editor_color;
+                break;
             case TYPE_ASSIGNMENT:
             case TYPE_OPERATOR:
-                return Color.parseColor("#F86AFF");
+                colorResId = isButtonColor ? R.color.operator_button_color : R.color.operator_editor_color;
+                break;
             case TYPE_BLANK:
-                return Color.parseColor("#5E666A");
+                colorResId = R.color.keyboard_button_color;
+                break;
             default:
                 throw new IllegalArgumentException("Unknown color type");
         }
+        return ContextCompat.getColor(context, colorResId);
     }
 
     public static int dpToPx(Context context, int dp) {

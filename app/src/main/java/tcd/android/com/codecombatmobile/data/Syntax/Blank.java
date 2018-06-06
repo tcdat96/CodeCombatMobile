@@ -11,7 +11,6 @@ public class Blank extends Operation {
     public Blank() {
         super("___", TYPE_VARIABLE);
         mSpannable = new SpannableString(mName);
-        setSpannableColor();
     }
 
     @Override

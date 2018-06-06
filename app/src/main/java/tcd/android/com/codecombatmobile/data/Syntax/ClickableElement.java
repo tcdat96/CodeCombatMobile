@@ -47,7 +47,7 @@ public class ClickableElement extends ClickableSpan {
 
     @Override
     public void updateDrawState(TextPaint ds) {
-        ds.setColor(mOperation.getColor());
+        ds.setColor(mOperation.getCodeColor());
         ds.setUnderlineText(false);
     }
 }

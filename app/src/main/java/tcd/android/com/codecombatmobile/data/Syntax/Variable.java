@@ -13,7 +13,6 @@ public class Variable extends Operation {
     public Variable(@NonNull String name) {
         super(name, TYPE_VARIABLE);
         mSpannable = new SpannableString(name);
-        setSpannableColor();
 
         mReturnsValue = true;
     }

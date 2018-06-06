@@ -34,8 +34,6 @@ public class OperationFactory {
                 }
             case Operation.TYPE_DECLARATION:
                 switch (name) {
-                    case "var":
-                        return new VarDeclaration();
                     case "func":
                         return new FuncDeclaration();
                 }
