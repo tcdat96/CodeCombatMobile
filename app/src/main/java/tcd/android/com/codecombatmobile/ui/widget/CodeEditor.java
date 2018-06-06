@@ -85,6 +85,7 @@ public class CodeEditor extends LinearLayout {
             if (container == null) {
                 int index = mOperations.indexOf(mSelectedOperation);
                 mOperations.set(index, newOp);
+                setSelectedOperation(null);
             } else {
                 boolean result = container.replaceOperation(mSelectedOperation, newOp);
                 if (result) {
