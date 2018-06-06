@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -49,12 +50,16 @@ public class SyntaxButton extends FButton {
         int px_8dp = DisplayUtil.dpToPx(getContext(), 8);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         params.setMargins(0, 0, 0, px_8dp);
-
         setLayoutParams(params);
+
         setButtonColor(Color.WHITE);
         setShadowColor(Color.CYAN);
+        setShadowHeight(6);
+
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         setAllCaps(false);
-        setFButtonPadding(px_8dp, px_8dp, px_8dp, px_8dp);
+
+        setFButtonPadding(px_8dp, 0, px_8dp, 0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setStateListAnimator(null);
         }

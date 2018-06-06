@@ -78,8 +78,8 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "+="));
         opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "-="));
         opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "*="));
-        opTypes.add(new Pair<>(TYPE_OPERATOR, "+"));
         opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "/="));
+        opTypes.add(new Pair<>(TYPE_OPERATOR, "+"));
         opTypes.add(new Pair<>(TYPE_OPERATOR, "-"));
         opTypes.add(new Pair<>(TYPE_OPERATOR, "*"));
         opTypes.add(new Pair<>(TYPE_OPERATOR, "/"));
