@@ -163,6 +163,8 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.iv_hide_keyboard_button:
+                TransitionManager.beginDelayedTransition(mRootLayout);
+                mKeyboardLayout.setVisibility(View.GONE);
                 break;
             case R.id.iv_reset_button:
                 mCodeEditor.clear();

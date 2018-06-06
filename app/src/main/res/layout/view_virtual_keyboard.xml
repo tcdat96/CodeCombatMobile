@@ -42,6 +42,7 @@
             android:tint="@color/keyboard_button_color"
             android:src="@drawable/ic_undo_white_24dp"
             android:padding="8dp"
+            android:visibility="gone"
             android:contentDescription="@string/undo" />
 
         <ImageView
@@ -51,6 +52,7 @@
             android:tint="@color/keyboard_button_color"
             android:src="@drawable/ic_redo_white_24dp"
             android:padding="8dp"
+            android:visibility="gone"
             android:contentDescription="@string/redo" />
 
         <ImageView
