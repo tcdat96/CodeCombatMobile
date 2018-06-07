@@ -22,8 +22,7 @@
             <tcd.android.com.codecombatmobile.ui.widget.CodeEditor
                 android:id="@+id/code_editor"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"/>
+                android:layout_height="wrap_content"/>
 
         </ScrollView>
 

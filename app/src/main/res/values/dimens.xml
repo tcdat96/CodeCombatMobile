@@ -21,4 +21,7 @@
 
     <!--class detail-->
     <dimen name="card_icon_size">20dp</dimen>
+
+    <!--code editor-->
+    <dimen name="code_editor_margin">16dp</dimen>
 </resources>

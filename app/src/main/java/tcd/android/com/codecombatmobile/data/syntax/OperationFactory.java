@@ -20,6 +20,8 @@ public class OperationFactory {
         if (TextUtils.isEmpty(name)) {
             return null;
         }
+
+        name = name.toLowerCase();
         switch (type) {
             case Operation.TYPE_FLOW_CONTROL:
                 switch (name) {
@@ -47,11 +49,13 @@ public class OperationFactory {
             case Operation.TYPE_METHOD:
                 break;
             case Operation.TYPE_VALUE:
-                return new Value(name);
+                return name.equals("___") ? new UserInput(name) : new Value(name);
             case Operation.TYPE_ASSIGNMENT:
                 return new Assignment(name);
             case Operation.TYPE_OPERATOR:
                 return new Operator(name);
+            case Operation.TYPE_BLANK:
+                throw new IllegalArgumentException("Blank type should not be used here");
             default:
                 throw new IllegalArgumentException("Unknown syntax type");
         }

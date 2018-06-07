@@ -37,13 +37,14 @@ public class ClickableElement extends ClickableSpan {
         Operation selectedOperation = mCodeEditor.getSelectedOperation();
         if (selectedOperation != null) {
             selectedOperation.mSpannable.removeSpan(sBgrColorSpan);
-            mCodeEditor.updateOperationChanged(selectedOperation);
         }
 
         // set new selected operation
         mOperation.mSpannable.setSpan(sBgrColorSpan, 0, mOperation.mSpannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         mCodeEditor.setSelectedOperation(mOperation);
-        mCodeEditor.updateOperationChanged(mOperation);
+
+        // update in editor
+        mCodeEditor.updateClickedOperation(selectedOperation, mOperation);
     }
 
     @Override

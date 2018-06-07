@@ -1,8 +1,11 @@
 package tcd.android.com.codecombatmobile.ui;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Pair;
 import android.view.View;
@@ -15,6 +18,7 @@ import java.util.List;
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.syntax.Operation;
 import tcd.android.com.codecombatmobile.data.syntax.OperationFactory;
+import tcd.android.com.codecombatmobile.data.syntax.UserInput;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
 import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
@@ -35,12 +39,25 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     private ScrollView mEditorScrollView;
     private CodeEditor mCodeEditor;
 
+    @Nullable
+    private Drawable mKeyboardDrawable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_editor);
 
+        getKeyboardDrawable();
+
         initUiComponents();
+    }
+
+    private void getKeyboardDrawable() {
+        mKeyboardDrawable = ContextCompat.getDrawable(this, R.drawable.ic_keyboard_white_24);
+        if (mKeyboardDrawable != null) {
+            mKeyboardDrawable = DrawableCompat.wrap(mKeyboardDrawable);
+            DrawableCompat.setTint(mKeyboardDrawable, ContextCompat.getColor(this, R.color.keyboard_button_color));
+        }
     }
 
     private void initUiComponents() {
@@ -74,6 +91,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_VALUE, "True"));
         opTypes.add(new Pair<>(TYPE_VALUE, "False"));
         opTypes.add(new Pair<>(TYPE_VALUE, "null"));
+        opTypes.add(new Pair<>(TYPE_VALUE, "___"));
         opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "="));
         opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "+="));
         opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "-="));
@@ -110,6 +128,10 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                     }
                 });
 
+                if (operation instanceof UserInput) {
+                    button.setCompoundDrawablesWithIntrinsicBounds(null, null, mKeyboardDrawable, null);
+                }
+
                 buttons[i] = button;
                 columnLayout.addView(button);
             }
@@ -140,11 +162,15 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onBackPressed() {
         if (mKeyboardLayout.getVisibility() == View.VISIBLE) {
-            TransitionManager.beginDelayedTransition(mRootLayout);
-            mKeyboardLayout.setVisibility(View.GONE);
+            setVirtualKeyboardVisibility(View.GONE);
             return;
         }
         super.onBackPressed();
+    }
+
+    public void setVirtualKeyboardVisibility(int visibility) {
+        TransitionManager.beginDelayedTransition(mRootLayout);
+        mKeyboardLayout.setVisibility(visibility);
     }
 
     @Override
@@ -152,8 +178,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.code_editor:
                 if (mKeyboardLayout.getVisibility() == View.GONE) {
-                    TransitionManager.beginDelayedTransition(mRootLayout);
-                    mKeyboardLayout.setVisibility(View.VISIBLE);
+                    setVirtualKeyboardVisibility(View.VISIBLE);
                     mKeyboardLayout.postDelayed(new Runnable() {
                         @Override
                         public void run() {
