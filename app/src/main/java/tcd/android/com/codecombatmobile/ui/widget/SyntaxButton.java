@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import info.hoang8f.widget.FButton;
-import tcd.android.com.codecombatmobile.data.syntax.Operation;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;

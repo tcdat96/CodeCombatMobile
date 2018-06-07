@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.syntax;
+package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-import tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 

@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.syntax;
+package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 
 import android.support.v4.content.ContextCompat;
 import android.text.Spanned;
@@ -8,7 +8,7 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor;
 
 /**
  * Created by ADMIN on 25/04/2018.

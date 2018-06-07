@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.ui.widget;
+package tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.syntax.Operation;
-import tcd.android.com.codecombatmobile.data.syntax.UserInput;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
 import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
 
 /**

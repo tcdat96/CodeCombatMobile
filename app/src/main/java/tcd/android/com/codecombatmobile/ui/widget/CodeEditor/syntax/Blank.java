@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.syntax;
+package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 
 import android.text.SpannableString;
 import android.widget.TextView;

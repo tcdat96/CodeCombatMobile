@@ -18,18 +18,18 @@ import android.view.Display;
 import android.widget.LinearLayout;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.syntax.Operation;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_ASSIGNMENT;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_BLANK;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_DECLARATION;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FLOW_CONTROL;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_FUNCTION;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_METHOD;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_OPERATOR;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_VALUE;
-import static tcd.android.com.codecombatmobile.data.syntax.Operation.TYPE_VARIABLE;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_ASSIGNMENT;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_BLANK;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_DECLARATION;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_FLOW_CONTROL;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_FUNCTION;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_METHOD;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_OPERATOR;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VALUE;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VARIABLE;
 
 /**
  * Created by ADMIN on 22/04/2018.
