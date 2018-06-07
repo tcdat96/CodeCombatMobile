@@ -16,7 +16,6 @@ import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.syntax.Operation;
-import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
 
 /**
  * Created by ADMIN on 21/04/2018.
@@ -80,10 +79,14 @@ public class CodeEditor extends LinearLayout {
 
         if (mSelectedOperation == null) {
             mOperations.add(newOp);
+            display();
         } else {
+            // get operation index for later update
+            Operation root = mSelectedOperation.getRoot();
+            int index = mOperations.indexOf(root);
+            // replace current operation
             Operation container = mSelectedOperation.getContainer();
             if (container == null) {
-                int index = mOperations.indexOf(mSelectedOperation);
                 mOperations.set(index, newOp);
                 setSelectedOperation(null);
             } else {
@@ -96,8 +99,8 @@ public class CodeEditor extends LinearLayout {
                     return;
                 }
             }
+            updateOperationAt(index);
         }
-        display();
     }
 
     public void removeOperation() {
@@ -105,16 +108,22 @@ public class CodeEditor extends LinearLayout {
             return;
         }
 
+        // get operation index for later update
+        Operation root = mSelectedOperation.getRoot();
+        int index = mOperations.indexOf(root);
+
+        // remove the selected operation
         Operation container = mSelectedOperation.getContainer();
         if (container == null) {
             mOperations.remove(mSelectedOperation);
+            removeViewAt(index);
         } else {
             container.removeOperation(mSelectedOperation);
             container.setOnClickListener(this);
+            updateOperationAt(index);
         }
         setSelectedOperation(null);
-        display();
-    }
+        }
 
     public void display() {
         // clear current content
@@ -122,17 +131,30 @@ public class CodeEditor extends LinearLayout {
             ((TextView)getChildAt(i)).setText(null);
         }
 
-        TextView container;
         for (int i = 0; i < mOperations.size(); i++) {
-            if (i < getChildCount()) {
-                container = (TextView) getChildAt(i);
-                container.setText(null);
-            } else {
-                container = getEditorTextView();
-                addView(container);
-            }
-            mOperations.get(i).display(container);
+            updateOperationAt(i);
         }
+    }
+
+    public void updateOperationChanged(Operation operation) {
+        Operation root = operation.getRoot();
+        int index = mOperations.indexOf(root);
+        if (index >= 0) {
+            updateOperationAt(index);
+        }
+    }
+
+    private void updateOperationAt(int index) {
+        TextView container;
+        if (index < getChildCount()) {
+            container = (TextView) getChildAt(index);
+            container.setText(null);
+        } else {
+            container = getEditorTextView();
+            addView(container);
+        }
+
+        mOperations.get(index).display(container);
     }
 
     private TextView getEditorTextView() {

@@ -82,6 +82,14 @@ public abstract class Operation {
         return mContainer;
     }
 
+    public Operation getRoot() {
+        Operation iterator = this;
+        while (iterator.mContainer != null) {
+            iterator = iterator.mContainer;
+        }
+        return iterator;
+    }
+
     public boolean returnsValue() {
         return mReturnsValue;
     }
