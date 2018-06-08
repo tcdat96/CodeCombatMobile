@@ -3,6 +3,7 @@ package tcd.android.com.codecombatmobile.ui.widget.CodeEditor;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.TextViewCompat;
@@ -12,7 +13,6 @@ import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
+import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Blank;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
-import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * Created by ADMIN on 21/04/2018.
@@ -72,7 +75,7 @@ public class CodeEditor extends FrameLayout {
         addView(mCodeLines);
 
         mUserInputEditText = new EditText(getContext());
-        mUserInputEditText.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mUserInputEditText.setLayoutParams(new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         mUserInputEditText.setTextColor(Color.TRANSPARENT);
         mUserInputEditText.setPadding(0, 0, 0, 0);
         mUserInputEditText.setBackgroundResource(android.R.color.transparent);
@@ -105,19 +108,23 @@ public class CodeEditor extends FrameLayout {
     }
 
     public void addOperation(@NonNull Operation newOp) {
+        addOperation(mOperations.size(), newOp);
+    }
+
+    public void addOperation(int index, @NonNull Operation newOp) {
         newOp.setOnClickListener(this);
 
         if (mSelectedOperation == null) {
-            mOperations.add(newOp);
+            mOperations.add(index, newOp);
             display();
         } else {
             // get operation index for later update
             Operation root = mSelectedOperation.getRoot();
-            int index = mOperations.indexOf(root);
+            int curOpIndex = mOperations.indexOf(root);
             // replace current operation
             Operation container = mSelectedOperation.getContainer();
             if (container == null) {
-                mOperations.set(index, newOp);
+                mOperations.set(curOpIndex, newOp);
                 setSelectedOperation(null);
             } else {
                 boolean result = container.replaceOperation(mSelectedOperation, newOp);
@@ -129,7 +136,7 @@ public class CodeEditor extends FrameLayout {
                     return;
                 }
             }
-            updateOperationAt(index);
+            updateOperationAt(curOpIndex);
         }
     }
 
@@ -158,6 +165,17 @@ public class CodeEditor extends FrameLayout {
     public void display() {
         for (int i = 0; i < mOperations.size(); i++) {
             updateOperationAt(i);
+        }
+    }
+
+    private void removeSelection() {
+        if (mSelectedOperation != null) {
+            Operation root = mSelectedOperation.getRoot();
+            root.setOnClickListener(this);
+            setSelectedOperation(null);
+
+            int index = mOperations.indexOf(root);
+            updateOperationAt(index);
         }
     }
 
@@ -194,8 +212,17 @@ public class CodeEditor extends FrameLayout {
         mOperations.get(index).display(container);
     }
 
+    private void insertBlankOperationAt(int index) {
+        TextView container = getEditorTextView();
+        mCodeLines.addView(container, index);
+
+        Blank blank = new Blank();
+        addOperation(index, blank);
+    }
+
     private TextView getEditorTextView() {
         TextView textView = new TextView(getContext());
+        textView.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setHighlightColor(Color.TRANSPARENT);
         TextViewCompat.setTextAppearance(textView, R.style.TextAppearance_AppCompat_Medium);
@@ -251,7 +278,6 @@ public class CodeEditor extends FrameLayout {
     }
 
     private boolean mIsPressing = false;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
@@ -270,6 +296,21 @@ public class CodeEditor extends FrameLayout {
                     if (getContext() instanceof OnClickListener) {
                         ((OnClickListener) getContext()).onClick(this);
                     }
+
+                    // if user tap outside code
+                    Rect bounds = new Rect();
+                    int y = (int) event.getY();
+                    // TODO: 08/06/2018 should implement binary search instead of sequential search
+                    for (int i = 0; i < mCodeLines.getChildCount(); i++) {
+                        View view = mCodeLines.getChildAt(i);
+                        view.getHitRect(bounds);
+                        if (y > bounds.top && y < bounds.bottom) {
+                            // add new line
+                            removeSelection();
+                            insertBlankOperationAt(i + 1);
+                        }
+                    }
+
                     mIsPressing = false;
                 }
                 return false;

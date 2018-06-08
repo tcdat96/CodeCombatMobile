@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
-import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor;
 import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
