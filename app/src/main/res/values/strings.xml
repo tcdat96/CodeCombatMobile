@@ -115,7 +115,9 @@
     <string name="incomplete">Incomplete</string>
     <string name="success">Success!</string>
     <string name="background">background</string>
+    <string name="level_loading_message">Loading level…</string>
 
     <!--game level map-->
     <string name="play">Play</string>
+    <string name="your_code">Your code</string>
 </resources>

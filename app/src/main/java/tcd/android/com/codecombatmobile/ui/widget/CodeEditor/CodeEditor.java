@@ -70,8 +70,6 @@ public class CodeEditor extends FrameLayout {
     private void init(AttributeSet attrs, int defStyle) {
         mCodeLines = new LinearLayout(getContext());
         mCodeLines.setOrientation(LinearLayout.VERTICAL);
-        int editorMargin = (int) getResources().getDimension(R.dimen.code_editor_margin);
-        mCodeLines.setPadding(editorMargin, editorMargin, editorMargin, editorMargin);
         addView(mCodeLines);
 
         mUserInputEditText = new EditText(getContext());

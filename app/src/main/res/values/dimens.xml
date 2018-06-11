@@ -24,4 +24,5 @@
 
     <!--code editor-->
     <dimen name="code_editor_margin">16dp</dimen>
+    <dimen name="game_level_container_elevation">8dp</dimen>
 </resources>
