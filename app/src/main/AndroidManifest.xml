@@ -23,9 +23,11 @@
         </activity>
         <activity
             android:name=".ui.CodeEditorActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.LoginActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_login" />
         <activity
             android:name=".ui.SClassroomListActivity"
@@ -33,11 +35,15 @@
         <activity
             android:name=".ui.TClassroomListActivity"
             android:theme="@style/NoActionBar" />
-        <activity android:name=".ui.ClassroomDetailActivity" />
+        <activity
+            android:name=".ui.ClassroomDetailActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".ui.MoreInfoTeacherActivity" />
+        <activity
+            android:name=".ui.MoreInfoTeacherActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.GameLevelActivity"
             android:screenOrientation="landscape"
