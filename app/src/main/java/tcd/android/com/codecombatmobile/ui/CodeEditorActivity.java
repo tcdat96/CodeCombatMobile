@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +27,14 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Function;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Object;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
@@ -87,9 +89,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
         initCookie();
         initWebView();
-
         String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
-        Log.d(TAG, "onCreate: " + path);
         String url = CCRequestManager.getInstance(this).getRequestUrl(path);
         mGameLevelWebView.loadUrl(url);
     }
@@ -184,9 +184,10 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "for"));
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "return"));
         opTypes.add(new Pair<>(TYPE_DECLARATION, "func"));
-        opTypes.add(new Pair<>(TYPE_VARIABLE, "abc"));
+        opTypes.add(new Pair<>(TYPE_VARIABLE, "hero"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBoxes()_3"));
+        opTypes.add(new Pair<>(TYPE_FUNCTION, ".moveRight()_0"));
         opTypes.add(new Pair<>(TYPE_VALUE, "True"));
         opTypes.add(new Pair<>(TYPE_VALUE, "False"));
         opTypes.add(new Pair<>(TYPE_VALUE, "null"));
@@ -204,6 +205,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
         final SyntaxButton[] buttons = new SyntaxButton[opTypes.size()];
         LinearLayout columnLayout = new LinearLayout(this);
+        Object object = null;
         for (int i = 0; i < opTypes.size(); i++) {
             if (i % 4 == 0) {
                 columnLayout = DisplayUtil.getVerticalLinearLayout(this);
@@ -214,7 +216,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
             final Operation operation = factory.getOperation(pair);
             if (operation != null) {
                 operation.init(this);
-                SyntaxButton button = new SyntaxButton(this);
+                final SyntaxButton button = new SyntaxButton(this);
                 button.setText(operation.getButtonName());
                 button.setOperation(operation);
                 button.setOnClickListener(new View.OnClickListener() {
@@ -224,11 +226,26 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                         if (newOp != null) {
                             mCodeEditor.addOperation(newOp);
                         }
+
+                        Operation source = button.getOperation();
+                        if (source != null && source instanceof Object && newOp != null) {
+                            ((Object) newOp).addMethods(((Object) source).getMethods());
+                        }
                     }
                 });
 
                 if (operation instanceof UserInput) {
                     button.setCompoundDrawablesWithIntrinsicBounds(null, null, mKeyboardDrawable, null);
+                } else {
+                    // TODO: 13/06/2018 temporary workaround for debug purpose
+                    if (operation instanceof Object) {
+                        object = (Object) operation;
+                    } else if (operation instanceof Function && operation.getButtonName().startsWith(".")) {
+                        if (object != null) {
+                            Function function = (Function) operation;
+                            object.addMethods(Collections.singletonList(function));
+                        }
+                    }
                 }
 
                 buttons[i] = button;

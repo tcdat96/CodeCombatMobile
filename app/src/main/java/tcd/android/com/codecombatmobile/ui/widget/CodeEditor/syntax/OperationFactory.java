@@ -21,7 +21,6 @@ public class OperationFactory {
             return null;
         }
 
-        name = name.toLowerCase();
         switch (type) {
             case Operation.TYPE_FLOW_CONTROL:
                 switch (name) {
@@ -40,7 +39,7 @@ public class OperationFactory {
                         return new FuncDeclaration();
                 }
             case Operation.TYPE_VARIABLE:
-                return new Variable(name);
+                return new Object(name);
             case Operation.TYPE_FUNCTION:
                 int lastUdsIdx = name.lastIndexOf("_");
                 String funcName = name.substring(0, lastUdsIdx);

@@ -9,6 +9,7 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.widget.TextView;
 
+import java.lang.Object;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -35,9 +36,11 @@ public abstract class Operation {
             TYPE_ASSIGNMENT = 6,
             TYPE_OPERATOR = 7,
             TYPE_BLANK = 8;
+
     @IntDef({TYPE_FLOW_CONTROL, TYPE_DECLARATION, TYPE_VARIABLE, TYPE_FUNCTION, TYPE_METHOD, TYPE_VALUE, TYPE_ASSIGNMENT, TYPE_OPERATOR, TYPE_BLANK})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface SyntaxType {}
+    public @interface SyntaxType {
+    }
 
     protected String mName;
     @SyntaxType
@@ -51,7 +54,6 @@ public abstract class Operation {
     protected List<Operation> mChildren;
     private CodeEditor mCodeEditor;
     protected Operation mContainer;
-
 
 
     public Operation(String name, @SyntaxType int syntaxType) {
@@ -71,7 +73,6 @@ public abstract class Operation {
             mSpannable.setSpan(new ForegroundColorSpan(mCodeColor), 0, mSpannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
-
 
 
     public String getButtonName() {
@@ -101,7 +102,6 @@ public abstract class Operation {
     public int getCodeColor() {
         return mCodeColor;
     }
-
 
 
     public void setOnClickListener(CodeEditor codeEditor) {

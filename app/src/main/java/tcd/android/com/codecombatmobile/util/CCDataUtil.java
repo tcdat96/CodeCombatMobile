@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import tcd.android.com.codecombatmobile.data.course.Course;
-import tcd.android.com.codecombatmobile.data.level.Level;
 import tcd.android.com.codecombatmobile.data.Position;
+import tcd.android.com.codecombatmobile.data.course.Course;
 import tcd.android.com.codecombatmobile.data.course.TClassroom;
 import tcd.android.com.codecombatmobile.data.level.Goal;
+import tcd.android.com.codecombatmobile.data.level.Level;
 import tcd.android.com.codecombatmobile.data.level.Thang;
 import tcd.android.com.codecombatmobile.data.level.ThangType;
 

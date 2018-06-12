@@ -3,6 +3,8 @@ package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 import android.text.SpannableString;
 import android.widget.TextView;
 
+import java.lang.Object;
+
 /**
  * Created by ADMIN on 26/04/2018.
  */
@@ -17,6 +19,25 @@ public class Function extends Operation {
         for (int i = 0; i < paramTotal; i++) {
             mChildren.add(new Blank());
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Function)) {
+            return false;
+        }
+        Function function = (Function) obj;
+
+        if (!mName.equals(function.mName) || mChildren.size() != function.mChildren.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < mChildren.size(); i++) {
+            if (!mChildren.get(i).mName.equals(function.mChildren.get(i).mName)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
