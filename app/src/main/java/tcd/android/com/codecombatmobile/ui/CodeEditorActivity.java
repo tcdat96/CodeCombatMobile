@@ -1,5 +1,6 @@
 package tcd.android.com.codecombatmobile.ui;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
     private static final String TAG = CodeEditorActivity.class.getSimpleName();
     private static final long DEFAULT_JS_CODE_INTERVAL = TimeUnit.SECONDS.toMillis(2);
+    public static final String ARG_LEVEL_ID_DATA = "argLevelId";
+    public static final String ARG_COURSE_ID_DATA = "argCourseId";
+    public static final String ARG_INSTANCE_ID_DATA = "argInstanceId";
 
     private ViewGroup mRootLayout;
     private FloatingActionButton mRunFab;
@@ -65,13 +71,25 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_editor);
 
+        // get level data
+        Intent data = getIntent();
+        String levelId = data != null && data.hasExtra(ARG_LEVEL_ID_DATA) ? data.getStringExtra(ARG_LEVEL_ID_DATA) : null;
+        String courseId = data != null && data.hasExtra(ARG_COURSE_ID_DATA) ? data.getStringExtra(ARG_COURSE_ID_DATA) : null;
+        String instanceId = data != null && data.hasExtra(ARG_INSTANCE_ID_DATA) ? data.getStringExtra(ARG_INSTANCE_ID_DATA) : null;
+        if (levelId == null || courseId == null || instanceId == null) {
+            Toast.makeText(this, R.string.error_get_level_message, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         getKeyboardDrawable();
         initUiComponents();
 
         initCookie();
         initWebView();
 
-        String path = "/play/level/dungeons-of-kithgard?course=560f1a9f22961295f9427742&course-instance=5b018b55137ddc2dc00c2407";
+        String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
+        Log.d(TAG, "onCreate: " + path);
         String url = CCRequestManager.getInstance(this).getRequestUrl(path);
         mGameLevelWebView.loadUrl(url);
     }
@@ -117,8 +135,12 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         mGameLevelWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                if (consoleMessage.message().contains("PlayLevelView: level started")) {
+                String msg = consoleMessage.message();
+                if (msg.contains("PlayLevelView: level started")) {
                     ccWebClient.setPageFinished(true);
+                } else if (msg.contains("PlayLevelView: loaded session")) {
+                    findViewById(R.id.ll_loading_message).setVisibility(View.GONE);
+                    mGameLevelWebView.setVisibility(View.VISIBLE);
                 }
                 return super.onConsoleMessage(consoleMessage);
             }
@@ -148,9 +170,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) container.getLayoutParams();
                 params.height = (int) height;
                 container.setLayoutParams(params);
-                // show it
-                findViewById(R.id.ll_loading_message).setVisibility(View.GONE);
-                mGameLevelWebView.setVisibility(View.VISIBLE);
+                // show run FAB
                 mRunFab.setVisibility(View.VISIBLE);
             }
         });

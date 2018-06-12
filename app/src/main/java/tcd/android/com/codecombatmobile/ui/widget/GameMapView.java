@@ -31,9 +31,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.level.Level;
 import tcd.android.com.codecombatmobile.data.Position;
-import tcd.android.com.codecombatmobile.ui.GameLevelActivity;
+import tcd.android.com.codecombatmobile.data.course.SClassroom;
+import tcd.android.com.codecombatmobile.data.level.Level;
+import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public class GameMapView extends SurfaceView implements Runnable {
@@ -53,6 +54,7 @@ public class GameMapView extends SurfaceView implements Runnable {
     private Point mScreenSize;
     private Bitmap mMapBackground;
 
+    private SClassroom mClassroom;
     @NonNull
     private List<Level> mLevels = new ArrayList<>();
     @NonNull
@@ -127,6 +129,10 @@ public class GameMapView extends SurfaceView implements Runnable {
                 }
             }
         });
+    }
+
+    public void setClassroom(SClassroom classroom) {
+        mClassroom = classroom;
     }
 
     public void setMapBackground(Bitmap mapBgr) {
@@ -244,6 +250,7 @@ public class GameMapView extends SurfaceView implements Runnable {
 
     private boolean isPressed = false;
     private long mLastClickTime = 0;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
@@ -282,15 +289,22 @@ public class GameMapView extends SurfaceView implements Runnable {
         dialog.setContentView(R.layout.dialog_level_info);
 
         final Level level = mLevels.get(position);
-        ((TextView)dialog.findViewById(R.id.tv_level_name)).setText(level.getName());
-        ((TextView)dialog.findViewById(R.id.tv_level_description)).setText(level.getDescription());
+        ((TextView) dialog.findViewById(R.id.tv_level_name)).setText(level.getName());
+        ((TextView) dialog.findViewById(R.id.tv_level_description)).setText(level.getDescription());
         dialog.findViewById(R.id.btn_play).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                Intent intent = new Intent(context, GameLevelActivity.class);
+//                Intent intent = new Intent(context, GameLevelActivity.class);
+//                String levelId = level.getName().toLowerCase().replace(" ", "-");       // TODO: 02/06/2018 temporary workaround
+//                intent.putExtra(GameLevelActivity.ARG_LEVEL_ID, levelId);
+//                context.startActivity(intent);
+
+                Intent intent = new Intent(context, CodeEditorActivity.class);
                 String levelId = level.getName().toLowerCase().replace(" ", "-");       // TODO: 02/06/2018 temporary workaround
-                intent.putExtra(GameLevelActivity.ARG_LEVEL_ID, levelId);
+                intent.putExtra(CodeEditorActivity.ARG_LEVEL_ID_DATA, levelId);
+                intent.putExtra(CodeEditorActivity.ARG_COURSE_ID_DATA, mClassroom.getId());
+                intent.putExtra(CodeEditorActivity.ARG_INSTANCE_ID_DATA, mClassroom.getInstanceId());
                 context.startActivity(intent);
             }
         });

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">CodeCombatMobile</string>
 
+    <!--main activity-->
+    <string name="error_login">There was a problem logging in CodeCombat. Please try again later.</string>
+
     <!--code editor-->
     <string name="hide_keyboard">Hide keyboard</string>
     <string name="reset">Reset</string>

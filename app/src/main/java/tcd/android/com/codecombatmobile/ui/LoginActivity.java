@@ -520,6 +520,7 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
                     intent.putExtra(MoreInfoTeacherActivity.ARG_TEACHER_DATA, mUser);
                     intent.putExtra(MoreInfoTeacherActivity.ARG_PASSWORD_DATA, mPassword);
                     startActivity(intent);
+                    finish();
                 }
             }
         }

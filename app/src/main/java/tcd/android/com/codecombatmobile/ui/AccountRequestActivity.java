@@ -2,6 +2,7 @@ package tcd.android.com.codecombatmobile.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,8 @@ import tcd.android.com.codecombatmobile.data.user.User;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 
 public abstract class AccountRequestActivity extends AppCompatActivity {
+
+    public static final int RESULT_FAILED = 2;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -76,7 +79,9 @@ public abstract class AccountRequestActivity extends AppCompatActivity {
             return result != null;
         }
 
-        protected JSONObject getResponse() { return null; }
+        protected JSONObject getResponse() {
+            return null;
+        }
 
         private User getUserData(JSONObject result) {
             User user = null;
@@ -105,7 +110,10 @@ public abstract class AccountRequestActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
+                setResult(RESULT_OK);
                 finish();
+            } else {
+                setResult(RESULT_FAILED);
             }
         }
 

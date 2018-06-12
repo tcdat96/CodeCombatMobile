@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.level.Level;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
+import tcd.android.com.codecombatmobile.data.level.Level;
 import tcd.android.com.codecombatmobile.ui.widget.GameMapView;
 import tcd.android.com.codecombatmobile.util.CCDataUtil;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
@@ -157,6 +157,7 @@ public class GameMapActivity extends AppCompatActivity {
             super.onPostExecute(success);
 
             if (success) {
+                mMapView.setClassroom(mClassroom);
                 mMapView.setMapBackground(mBackground);
                 mMapView.setLevels(mLevels);
                 mMapView.setLevelSessions(mLevelSessions);
