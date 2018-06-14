@@ -109,7 +109,7 @@ public class CodeEditor extends FrameLayout {
         addOperation(mOperations.size(), newOp);
     }
 
-    public void addOperation(int index, @NonNull Operation newOp) {
+    private void addOperation(int index, @NonNull Operation newOp) {
         newOp.setOnClickListener(this);
 
         if (mSelectedOperation == null) {

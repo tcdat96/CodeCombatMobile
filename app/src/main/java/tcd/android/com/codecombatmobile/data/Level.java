@@ -1,4 +1,4 @@
-package tcd.android.com.codecombatmobile.data.level;
+package tcd.android.com.codecombatmobile.data;
 
 import android.support.annotation.IntDef;
 

@@ -42,7 +42,7 @@ public class SClassroomAdapter extends RecyclerView.Adapter<SClassroomAdapter.SC
     @Override
     public SClassroomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_student_class_row, parent, false);
+                .inflate(R.layout.layout_sclassroom_row, parent, false);
         final SClassroomViewHolder holder = new SClassroomViewHolder(itemView);
         setOnItemClickListener(itemView, holder);
         return holder;

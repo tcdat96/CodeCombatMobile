@@ -8,7 +8,7 @@ public abstract class CodeBlock extends Operation {
 
     private int mHeaderTotal;
 
-    public CodeBlock(String name, @SyntaxType int syntaxType, int headerTotal) {
+    CodeBlock(String name, @SyntaxType int syntaxType, int headerTotal) {
         super(name.toLowerCase(), syntaxType);
 
         mHeaderTotal = headerTotal;

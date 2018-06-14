@@ -45,15 +45,7 @@
             android:name=".ui.MoreInfoTeacherActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.GameLevelActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/GameTheme" />
-        <activity
             android:name=".ui.GameMapActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/GameTheme" />
-        <activity
-            android:name=".ui.LevelWebViewActivity"
             android:screenOrientation="landscape"
             android:theme="@style/GameTheme" />
     </application>

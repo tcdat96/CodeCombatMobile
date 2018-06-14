@@ -31,8 +31,6 @@ import tcd.android.com.codecombatmobile.data.user.User;
  */
 
 public class DataUtil {
-    private static final String TAG = DataUtil.class.getSimpleName();
-
     private static int[] sPythonCovers = new int[]{R.drawable.cover_python_1, R.drawable.cover_py_2};
     private static int[] sJavascriptCovers = new int[]{R.drawable.cover_js_1, R.drawable.cover_js_2, R.drawable.cover_js_3};
 

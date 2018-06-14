@@ -63,7 +63,6 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
 
     private static final int RC_PERMISSION_READ_CONTACTS = 0;
     private static final int RC_GOOGLE_SIGN_IN = 1;
-    private static final int RC_FACEBOOK_SIGN_IN = 2;
 
     private GoogleSignInClient mGoogleSignInClient;
 

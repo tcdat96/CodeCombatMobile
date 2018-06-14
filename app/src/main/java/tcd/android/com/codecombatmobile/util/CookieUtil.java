@@ -6,8 +6,6 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 
-import com.bumptech.glide.util.Util;
-
 import java.net.CookieHandler;
 import java.net.CookiePolicy;
 

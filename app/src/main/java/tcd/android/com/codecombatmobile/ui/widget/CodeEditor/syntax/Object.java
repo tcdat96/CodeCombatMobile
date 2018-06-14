@@ -1,15 +1,12 @@
 package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Object extends Variable {
-
-    private static final String TAG = Object.class.getSimpleName();
 
     @NonNull
     private List<Function> mMethods = new ArrayList<>();

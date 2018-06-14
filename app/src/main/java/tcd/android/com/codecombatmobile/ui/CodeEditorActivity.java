@@ -335,7 +335,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
         private boolean mIsPageFinished = false;
 
-        public void setPageFinished(boolean finished) {
+        void setPageFinished(boolean finished) {
             mIsPageFinished = finished;
         }
 

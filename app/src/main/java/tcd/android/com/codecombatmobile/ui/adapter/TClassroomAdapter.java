@@ -53,7 +53,7 @@ public class TClassroomAdapter extends RecyclerView.Adapter<TClassroomAdapter.TC
     @Override
     public TClassroomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_teacher_class_row, parent, false);
+                .inflate(R.layout.layout_tclassroom_row, parent, false);
         TClassroomViewHolder holder = new TClassroomViewHolder(itemView);
         setOnItemClickListener(itemView, holder);
         return holder;

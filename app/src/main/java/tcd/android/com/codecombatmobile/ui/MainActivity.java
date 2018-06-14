@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        boolean isDebugging = true;
+        boolean isDebugging = false;
         if (!isDebugging) {
             startActivityForResult(new Intent(this, LoginActivity.class), RC_LOGIN_ATTEMPT);
         } else {
@@ -37,9 +37,7 @@ public class MainActivity extends AppCompatActivity {
                     ClassroomDetailActivity.class,
                     CodeEditorActivity.class,
                     SettingsActivity.class,
-                    GameLevelActivity.class,
-                    GameMapActivity.class,
-                    LevelWebViewActivity.class
+                    GameMapActivity.class
             };
             for (final Class activity : activities) {
                 Button button = new Button(this);

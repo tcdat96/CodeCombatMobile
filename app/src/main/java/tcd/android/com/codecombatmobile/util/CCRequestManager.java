@@ -2,7 +2,6 @@ package tcd.android.com.codecombatmobile.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,11 +24,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.net.URLEncoder;
 import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.data.user.Student;
@@ -84,7 +80,7 @@ public class CCRequestManager {
         return mInstance;
     }
 
-    public RequestQueue getRequestQueue() {
+    private RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(mContext.getApplicationContext(), new HurlStack());
         }
@@ -333,27 +329,6 @@ public class CCRequestManager {
 
     public JSONObject requestCampaignSync(String campaignId) {
         String path = "/db/campaign/" + campaignId;
-        RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
-        return getResponse(future);
-    }
-
-    public JSONObject requestLevelDataSync(String slug) {
-        String path = "/db/level/" + slug;
-        RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
-        return getResponse(future);
-    }
-
-    public JSONArray requestThangTypeListSync(Set<String> thangTypes) {
-        Uri.Builder builder = Uri.parse("/db/thang.type/names?").buildUpon();
-        for (String thangType : thangTypes) {
-            builder.appendQueryParameter("ids[]", thangType);
-        }
-        RequestFuture<JSONArray> future = sendRequestSync(GET, builder.toString(), new JSONArray());
-        return getResponse(future);
-    }
-
-    public JSONObject requestThangTypeSync(String thangTypeId) {
-        String path = "/db/thang.type/" + thangTypeId;
         RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
         return getResponse(future);
     }

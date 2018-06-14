@@ -15,7 +15,7 @@ class CookieStore_ implements CookieStore {
     /**
      * this map may have null keys!
      */
-    private final Map<URI, List<HttpCookie>> map = new HashMap<URI, List<HttpCookie>>();
+    private final Map<URI, List<HttpCookie>> map = new HashMap<>();
     private android.webkit.CookieManager manager;
 
     public CookieStore_() {
@@ -35,7 +35,7 @@ class CookieStore_ implements CookieStore {
 
         List<HttpCookie> cookies = map.get(uri);
         if (cookies == null) {
-            cookies = new ArrayList<HttpCookie>();
+            cookies = new ArrayList<>();
             map.put(uri, cookies);
         } else {
             cookies.remove(cookie);
@@ -59,7 +59,7 @@ class CookieStore_ implements CookieStore {
             throw new NullPointerException("uri == null");
         }
 
-        List<HttpCookie> result = new ArrayList<HttpCookie>();
+        List<HttpCookie> result = new ArrayList<>();
 
         // get cookies associated with given URI. If none, returns an empty list
         List<HttpCookie> cookiesForUri = map.get(uri);
@@ -98,7 +98,7 @@ class CookieStore_ implements CookieStore {
     }
 
     public synchronized List<HttpCookie> getCookies() {
-        List<HttpCookie> result = new ArrayList<HttpCookie>();
+        List<HttpCookie> result = new ArrayList<>();
         for (List<HttpCookie> list : map.values()) {
             for (Iterator<HttpCookie> i = list.iterator(); i.hasNext(); ) {
                 HttpCookie cookie = i.next();
@@ -113,7 +113,7 @@ class CookieStore_ implements CookieStore {
     }
 
     public synchronized List<URI> getURIs() {
-        List<URI> result = new ArrayList<URI>(map.keySet());
+        List<URI> result = new ArrayList<>(map.keySet());
         result.remove(null); // sigh
         return Collections.unmodifiableList(result);
     }
@@ -124,11 +124,7 @@ class CookieStore_ implements CookieStore {
         }
 
         List<HttpCookie> cookies = map.get(cookiesUri(uri));
-        if (cookies != null) {
-            return cookies.remove(cookie);
-        } else {
-            return false;
-        }
+        return cookies != null && cookies.remove(cookie);
     }
 
     public synchronized boolean removeAll() {

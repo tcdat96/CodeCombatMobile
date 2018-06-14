@@ -14,7 +14,7 @@ public class Expression extends Operation {
         mChildren.add(operation);
     }
 
-    public void add(int index, Operator operator) {
+    private void add(int index, Operator operator) {
         mChildren.add(index, operator);
         mChildren.add(index + 1, new Blank());
     }

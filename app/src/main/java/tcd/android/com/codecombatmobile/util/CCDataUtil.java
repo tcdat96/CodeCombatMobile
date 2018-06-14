@@ -8,19 +8,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import tcd.android.com.codecombatmobile.data.Position;
 import tcd.android.com.codecombatmobile.data.course.Course;
 import tcd.android.com.codecombatmobile.data.course.TClassroom;
-import tcd.android.com.codecombatmobile.data.level.Goal;
-import tcd.android.com.codecombatmobile.data.level.Level;
-import tcd.android.com.codecombatmobile.data.level.Thang;
-import tcd.android.com.codecombatmobile.data.level.ThangType;
+import tcd.android.com.codecombatmobile.data.Level;
 
 public class CCDataUtil {
 
@@ -107,135 +102,5 @@ public class CCDataUtil {
             sessions.put(original, isComplete);
         }
         return sessions;
-    }
-
-    // game level
-    @NonNull
-    public static List<Goal> parseGoalArr(@NonNull JSONArray goalArr) throws JSONException {
-        List<Goal> goals = new ArrayList<>(goalArr.length());
-        for (int i = 0; i < goalArr.length(); i++) {
-            JSONObject goalObj = goalArr.getJSONObject(i);
-
-            String name = goalObj.getString("name");
-            Goal goal = new Goal(name);
-
-            // collect thangs
-            if (goalObj.has("collectThangs")) {
-                JSONArray targetArr = goalObj.getJSONObject("collectThangs").getJSONArray("targets");
-                List<String> targets = new ArrayList<>(targetArr.length());
-                for (int j = 0; j < targetArr.length(); j++) {
-                    targets.add(targetArr.getString(j));
-                }
-                goal.setCollectThangs(targets);
-            }
-
-            goals.add(goal);
-        }
-        return goals;
-    }
-
-    @NonNull
-    public static List<Thang> parseThangArr(@NonNull JSONArray thangArr) throws JSONException {
-        List<Thang> thangs = new ArrayList<>(thangArr.length());
-        for (int i = 0; i < thangArr.length(); i++) {
-            JSONObject thangObj = thangArr.getJSONObject(i);
-            String id = thangObj.getString("id");
-            String thangType = thangObj.getString("thangType");
-            Thang thang = new Thang(id, thangType, null);
-
-            JSONArray componentArr = thangObj.getJSONArray("components");
-            for (int j = 0; j < componentArr.length(); j++) {
-                JSONObject componentObj = componentArr.getJSONObject(j);
-                if (!componentObj.has("config")) {
-                    continue;
-                }
-                JSONObject configObj = componentObj.getJSONObject("config");
-                // position
-                if (configObj.has("pos")) {
-                    JSONObject posObj = configObj.getJSONObject("pos");
-                    float x = (float) posObj.getDouble("x");
-                    float y = (float) posObj.getDouble("y");
-                    thang.setPosition(new Position(x, y));
-                }
-                // width
-                if (configObj.has("width")) {
-                    int width = configObj.getInt("width");
-                    thang.setWidth(width);
-                }
-                // height
-                if (configObj.has("height")) {
-                    int height = configObj.getInt("height");
-                    thang.setHeight(height);
-                }
-                // rotation
-                if (configObj.has("rotation")) {
-                    float rotation = (float) configObj.getDouble("rotation");
-                    thang.setRotation(rotation);
-                }
-            }
-
-            thangs.add(thang);
-        }
-        return thangs;
-    }
-
-    @NonNull
-    public static Set<String> getThangTypeSet(@NonNull List<Thang> thangs) {
-        Set<String> types = new HashSet<>(thangs.size());
-        for (Thang thang : thangs) {
-            types.add(thang.getThangType());
-        }
-        return types;
-    }
-
-    public static List<String> getThangTypeIds(@NonNull JSONArray thangTypeArr) throws JSONException {
-        List<String> typeIds = new ArrayList<>(thangTypeArr.length());
-        for (int i = 0; i < thangTypeArr.length(); i++) {
-            String id = thangTypeArr.getJSONObject(i).getString("_id");
-            typeIds.add(id);
-        }
-        return typeIds;
-    }
-
-    public static ThangType getThangType(@NonNull JSONObject thangTypeObj) throws JSONException {
-        String original = thangTypeObj.getString("original");
-        String kind = thangTypeObj.getString("kind");
-        ThangType thangType = new ThangType(original, kind);
-
-        // image (if exists)
-        if (thangTypeObj.has("raster")) {
-            String image = thangTypeObj.getString("raster");
-            thangType.setImage(image);
-        } else if (thangTypeObj.has("prerenderedSpriteSheetData")) {
-            JSONObject prerenderedData = thangTypeObj.getJSONArray("prerenderedSpriteSheetData").getJSONObject(0);
-            if (prerenderedData.has("image")) {
-                String image = prerenderedData.getString("image");
-                thangType.setImage(image);
-            }
-        }
-
-        // width and height
-        JSONArray componentArr = thangTypeObj.getJSONArray("components");
-        for (int j = 0; j < componentArr.length(); j++) {
-            JSONObject componentObj = componentArr.getJSONObject(j);
-            if (!componentObj.has("config")) {
-                continue;
-            }
-            JSONObject configObj = componentObj.getJSONObject("config");
-            // width
-            if (configObj.has("width")) {
-                int width = configObj.getInt("width");
-                thangType.setWidth(width);
-            }
-            // height
-            if (configObj.has("height")) {
-                int height = configObj.getInt("height");
-                thangType.setHeight(height);
-            }
-        }
-
-        // TODO: 28/05/2018 get raw
-
-        return thangType;
     }
 }

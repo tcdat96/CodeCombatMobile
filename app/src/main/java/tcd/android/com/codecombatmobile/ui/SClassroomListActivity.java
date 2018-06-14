@@ -33,7 +33,7 @@ public class SClassroomListActivity extends ClassroomListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_class);
+        setContentView(R.layout.activity_sclassroom_list);
         configureActionBar();
 
         initClassList();

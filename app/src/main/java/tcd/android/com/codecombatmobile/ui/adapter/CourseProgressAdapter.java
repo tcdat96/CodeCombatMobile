@@ -30,7 +30,7 @@ public class CourseProgressAdapter extends RecyclerView.Adapter<CourseProgressAd
     @Override
     public StudentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_student_row, parent, false);
+                .inflate(R.layout.layout_progress_row, parent, false);
         return new StudentViewHolder(view);
     }
 

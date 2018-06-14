@@ -14,7 +14,7 @@ import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor;
  * Created by ADMIN on 25/04/2018.
  */
 
-public class ClickableElement extends ClickableSpan {
+class ClickableElement extends ClickableSpan {
 
     private static BackgroundColorSpan sBgrColorSpan = null;
 

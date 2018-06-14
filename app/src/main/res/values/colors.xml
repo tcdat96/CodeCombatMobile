@@ -4,10 +4,6 @@
     <color name="colorPrimaryDark">#FFFFFF</color>
     <color name="colorAccent">#4285F4</color>
 
-    <!--log in/up-->
-    <color name="login_background_color">#3F4050</color>
-    <color name="sign_in_button_color">#FF5E57</color>
-
     <!--student classes-->
     <color name="python_color">#03A9F4</color>
     <color name="javascript_color">#FB9C1C</color>
@@ -33,10 +29,6 @@
     <color name="value_editor_color">#BC5800</color>
     <color name="operator_button_color">#F86AFF</color>
     <color name="operator_editor_color">#673AB7</color>
-
-     <!--game-->
-    <color name="time_progress_color">#F5AA31</color>
-    <color name="hp_progress_color">#EA232D</color>
 
     <!--game map-->
     <color name="map_background_color">#44362D</color>

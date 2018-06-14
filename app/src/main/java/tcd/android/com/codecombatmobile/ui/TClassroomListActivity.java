@@ -28,7 +28,7 @@ public class TClassroomListActivity extends ClassroomListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_teacher_class);
+        setContentView(R.layout.activity_tclassroom_list);
         configureActionBar();
 
         initClassListView();
