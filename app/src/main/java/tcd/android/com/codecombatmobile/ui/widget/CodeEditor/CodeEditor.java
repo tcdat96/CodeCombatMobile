@@ -28,6 +28,7 @@ import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Blank;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.VarDeclaration;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -39,6 +40,9 @@ public class CodeEditor extends FrameLayout {
 
     private List<Operation> mOperations = new ArrayList<>();
     private Operation mSelectedOperation;
+
+    @Nullable
+    private CodeEditorActivity mActivity = null;
 
     @NonNull
     private LinearLayout mCodeLines = new LinearLayout(getContext());
@@ -68,6 +72,16 @@ public class CodeEditor extends FrameLayout {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
+        // save activity
+        Activity activity = (Activity) getContext();
+        if (activity instanceof CodeEditorActivity) {
+            mActivity = (CodeEditorActivity) activity;
+        }
+
+        initUiComponents();
+    }
+
+    private void initUiComponents() {
         mCodeLines = new LinearLayout(getContext());
         mCodeLines.setOrientation(LinearLayout.VERTICAL);
         addView(mCodeLines);
@@ -254,6 +268,13 @@ public class CodeEditor extends FrameLayout {
                         mUserInputEditText.removeTextChangedListener(mTextWatcher);
                         mUserInputEditText.setText(null);
                         mUserInputEditText.setVisibility(GONE);
+
+                        // add new variable
+                        if (root instanceof VarDeclaration) {
+                            if (mActivity != null) {
+                                mActivity.addVariableButton(inputOp.getButtonName());
+                            }
+                        }
                     }
                 }
             });
@@ -269,9 +290,8 @@ public class CodeEditor extends FrameLayout {
         }
 
         // hide virtual keyboard
-        Activity activity = (Activity) getContext();
-        if (activity instanceof CodeEditorActivity) {
-            ((CodeEditorActivity) activity).setVirtualKeyboardVisibility(View.GONE);
+        if (mActivity != null) {
+            mActivity.setVirtualKeyboardVisibility(View.GONE);
         }
     }
 

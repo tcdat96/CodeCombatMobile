@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        boolean isDebugging = false;
+        boolean isDebugging = true;
         if (!isDebugging) {
             startActivityForResult(new Intent(this, LoginActivity.class), RC_LOGIN_ATTEMPT);
         } else {

@@ -1,9 +1,9 @@
 package tcd.android.com.codecombatmobile.ui;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.transition.TransitionManager;
@@ -24,7 +24,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +38,6 @@ import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
 import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
-import tcd.android.com.codecombatmobile.util.CCRequestManager;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_ASSIGNMENT;
@@ -58,12 +56,18 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     public static final String ARG_COURSE_ID_DATA = "argCourseId";
     public static final String ARG_INSTANCE_ID_DATA = "argInstanceId";
 
+    private static OperationFactory mFactory = new OperationFactory();
+
     private ViewGroup mRootLayout;
     private FloatingActionButton mRunFab;
     private LinearLayout mKeyboardLayout;
     private ScrollView mEditorScrollView;
     private CodeEditor mCodeEditor;
     private WebView mGameLevelWebView;
+    @NonNull
+
+    private LinearLayout mButtonContainer;
+    private List<SyntaxButton> mSyntaxButtons = new ArrayList<>();
 
     @Nullable
     private Drawable mKeyboardDrawable;
@@ -74,24 +78,24 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_code_editor);
 
         // get level data
-        Intent data = getIntent();
-        String levelId = data != null && data.hasExtra(ARG_LEVEL_ID_DATA) ? data.getStringExtra(ARG_LEVEL_ID_DATA) : null;
-        String courseId = data != null && data.hasExtra(ARG_COURSE_ID_DATA) ? data.getStringExtra(ARG_COURSE_ID_DATA) : null;
-        String instanceId = data != null && data.hasExtra(ARG_INSTANCE_ID_DATA) ? data.getStringExtra(ARG_INSTANCE_ID_DATA) : null;
-        if (levelId == null || courseId == null || instanceId == null) {
-            Toast.makeText(this, R.string.error_get_level_message, Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+//        Intent data = getIntent();
+//        String levelId = data != null && data.hasExtra(ARG_LEVEL_ID_DATA) ? data.getStringExtra(ARG_LEVEL_ID_DATA) : null;
+//        String courseId = data != null && data.hasExtra(ARG_COURSE_ID_DATA) ? data.getStringExtra(ARG_COURSE_ID_DATA) : null;
+//        String instanceId = data != null && data.hasExtra(ARG_INSTANCE_ID_DATA) ? data.getStringExtra(ARG_INSTANCE_ID_DATA) : null;
+//        if (levelId == null || courseId == null || instanceId == null) {
+//            Toast.makeText(this, R.string.error_get_level_message, Toast.LENGTH_SHORT).show();
+//            finish();
+//            return;
+//        }
 
         getKeyboardDrawable();
         initUiComponents();
 
-        initCookie();
-        initWebView();
-        String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
-        String url = CCRequestManager.getInstance(this).getRequestUrl(path);
-        mGameLevelWebView.loadUrl(url);
+//        initCookie();
+//        initWebView();
+//        String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
+//        String url = CCRequestManager.getInstance(this).getRequestUrl(path);
+//        mGameLevelWebView.loadUrl(url);
     }
 
     private void getKeyboardDrawable() {
@@ -106,6 +110,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         mRootLayout = findViewById(R.id.ll_root);
         mKeyboardLayout = findViewById(R.id.ll_keyboard_layout);
         mEditorScrollView = findViewById(R.id.sv_editor_container);
+        mButtonContainer = findViewById(R.id.ll_button_container);
 
         mCodeEditor = findViewById(R.id.code_editor);
         mCodeEditor.setOnClickListener(this);
@@ -177,12 +182,11 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initVirtualKeyboard() {
-        final LinearLayout buttonContainer = findViewById(R.id.ll_button_container);
-
         List<Pair<Integer, String>> opTypes = new ArrayList<>();
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "if"));
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "for"));
         opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "return"));
+        opTypes.add(new Pair<>(TYPE_DECLARATION, "var"));
         opTypes.add(new Pair<>(TYPE_DECLARATION, "func"));
         opTypes.add(new Pair<>(TYPE_VARIABLE, "hero"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));
@@ -201,78 +205,108 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_OPERATOR, "-"));
         opTypes.add(new Pair<>(TYPE_OPERATOR, "*"));
         opTypes.add(new Pair<>(TYPE_OPERATOR, "/"));
-        final OperationFactory factory = new OperationFactory();
 
-        final SyntaxButton[] buttons = new SyntaxButton[opTypes.size()];
-        LinearLayout columnLayout = new LinearLayout(this);
-        Object object = null;
-        for (int i = 0; i < opTypes.size(); i++) {
-            if (i % 4 == 0) {
-                columnLayout = DisplayUtil.getVerticalLinearLayout(this);
-                buttonContainer.addView(columnLayout);
-            }
-
-            final Pair<Integer, String> pair = opTypes.get(i);
-            final Operation operation = factory.getOperation(pair);
-            if (operation != null) {
-                operation.init(this);
-                final SyntaxButton button = new SyntaxButton(this);
-                button.setText(operation.getButtonName());
-                button.setOperation(operation);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Operation newOp = factory.getOperation(pair);
-                        if (newOp != null) {
-                            mCodeEditor.addOperation(newOp);
-                        }
-
-                        Operation source = button.getOperation();
-                        if (source != null && source instanceof Object && newOp != null) {
-                            ((Object) newOp).addMethods(((Object) source).getMethods());
-                        }
-                    }
-                });
-
-                if (operation instanceof UserInput) {
-                    button.setCompoundDrawablesWithIntrinsicBounds(null, null, mKeyboardDrawable, null);
-                } else {
-                    // TODO: 13/06/2018 temporary workaround for debug purpose
-                    if (operation instanceof Object) {
-                        object = (Object) operation;
-                    } else if (operation instanceof Function && operation.getButtonName().startsWith(".")) {
-                        if (object != null) {
-                            Function function = (Function) operation;
-                            object.addMethods(Collections.singletonList(function));
-                        }
-                    }
-                }
-
-                buttons[i] = button;
-                columnLayout.addView(button);
-            }
+        mSyntaxButtons = new ArrayList<>(opTypes.size());
+        for (Pair<Integer, String> type : opTypes) {
+            addNewButton(type);
         }
 
-        setOnOperationChangedListener(buttons);
+        setOnOperationChangedListener();
     }
 
-    private void setOnOperationChangedListener(final SyntaxButton[] buttons) {
+    private Object mObject;
+    private void addNewButton(@NonNull final Pair<Integer, String> opType) {
+        LinearLayout columnLayout = getLastColumn();
+        if (columnLayout != null) {
+            Operation operation = mFactory.getOperation(opType);
+            if (operation != null) {
+                // add new button
+                SyntaxButton button = createNewButton(operation, opType);
+                columnLayout.addView(button);
+                mSyntaxButtons.add(button);
+
+                // TODO: 13/06/2018 temporary workaround for debug purpose
+                if (operation instanceof Object) {
+                    mObject = (Object) operation;
+                } else if (operation instanceof Function && operation.getButtonName().startsWith(".")) {
+                    if (mObject != null) {
+                        Function function = (Function) operation;
+                        mObject.addMethods(Collections.singletonList(function));
+                    }
+                }
+            }
+        }
+    }
+
+    @Nullable
+    private LinearLayout getLastColumn() {
+        LinearLayout lastColumn = null;
+        int columnTotal = mButtonContainer.getChildCount();
+        if (columnTotal == 0) {
+            lastColumn = DisplayUtil.getVerticalLinearLayout(this);
+            mButtonContainer.addView(lastColumn);
+        } else {
+            View lastView = mButtonContainer.getChildAt(columnTotal - 1);
+            if (lastView instanceof LinearLayout) {
+                lastColumn = (LinearLayout) lastView;
+                if (lastColumn.getChildCount() >= 4) {
+                    lastColumn = DisplayUtil.getVerticalLinearLayout(this);
+                    mButtonContainer.addView(lastColumn);
+                }
+            }
+        }
+        return lastColumn;
+    }
+
+    @NonNull
+    private SyntaxButton createNewButton(@NonNull Operation operation, @NonNull final Pair<Integer, String> opType) {
+        operation.init(this);
+        final SyntaxButton button = new SyntaxButton(this);
+        button.setText(operation.getButtonName());
+        button.setOperation(operation);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Operation newOp = mFactory.getOperation(opType);
+                if (newOp != null) {
+                    mCodeEditor.addOperation(newOp);
+                }
+
+                Operation source = button.getOperation();
+                if (source != null && source instanceof Object && newOp != null) {
+                    List<Function> methods = ((Object) source).getMethods();
+                    ((Object) newOp).addMethods(methods);
+                }
+            }
+        });
+
+        if (operation instanceof UserInput) {
+            button.setCompoundDrawablesWithIntrinsicBounds(null, null, mKeyboardDrawable, null);
+        }
+        return button;
+    }
+
+    private void setOnOperationChangedListener() {
         mCodeEditor.setOnOperationChangedListener(new CodeEditor.OnOperationChangedListener() {
             @Override
             public void onOperationChangedListener(@Nullable Operation operation) {
                 if (operation == null || operation.getContainer() == null) {
-                    for (SyntaxButton button : buttons) {
+                    for (SyntaxButton button : mSyntaxButtons) {
                         button.setEnabled(true);
                     }
                 } else {
-                    Operation container = operation.getContainer();
-                    for (SyntaxButton button : buttons) {
-                        int index = container.getReplacementIndex(operation, button.getOperation());
-                        button.setEnabled(index >= 0);
+                    for (SyntaxButton button : mSyntaxButtons) {
+                        boolean isReplaceable = operation.isReplaceableWith(button.getOperation());
+                        button.setEnabled(isReplaceable);
                     }
                 }
             }
         });
+    }
+
+    public void addVariableButton(String varName) {
+        Pair<Integer, String> varType = new Pair<>(TYPE_VARIABLE, varName);
+        addNewButton(varType);
     }
 
     @Override

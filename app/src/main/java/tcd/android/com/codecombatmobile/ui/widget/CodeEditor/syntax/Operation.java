@@ -139,6 +139,10 @@ public abstract class Operation {
         return -1;
     }
 
+    public boolean isReplaceableWith(Operation newOp) {
+        return mContainer == null || mContainer.getReplacementIndex(this, newOp) >= 0;
+    }
+
     public void removeOperation(Operation op) {
         int index = mChildren.indexOf(op);
         if (index >= 0) {
