@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -45,9 +46,11 @@ public abstract class Operation {
     @SyntaxType
     private int mSyntaxType;
     protected Spannable mSpannable;
-    protected boolean mReturnsValue = false;
     private int mButtonColor = Color.BLACK;
     private int mCodeColor = Color.BLACK;
+
+    protected boolean mReturnsValue = false;
+    protected boolean mIsStatement = true;
 
     @NonNull
     protected List<Operation> mChildren;
@@ -73,6 +76,10 @@ public abstract class Operation {
         }
     }
 
+    void setSyntaxType(@SyntaxType int syntaxType) {
+        mSyntaxType = syntaxType;
+    }
+
 
     public String getButtonName() {
         return mName;
@@ -90,16 +97,20 @@ public abstract class Operation {
         return iterator;
     }
 
-    public boolean returnsValue() {
-        return mReturnsValue;
-    }
-
     public int getButtonColor() {
         return mButtonColor;
     }
 
     public int getCodeColor() {
         return mCodeColor;
+    }
+
+    public boolean returnsValue() {
+        return mReturnsValue;
+    }
+
+    public boolean isStatement() {
+        return mIsStatement;
     }
 
 
@@ -139,8 +150,8 @@ public abstract class Operation {
         return -1;
     }
 
-    public boolean isReplaceableWith(Operation newOp) {
-        return mContainer == null || mContainer.getReplacementIndex(this, newOp) >= 0;
+    public boolean isReplaceableWith(@Nullable Operation newOp) {
+        return newOp != null && (mContainer == null || mContainer.getReplacementIndex(this, newOp) >= 0);
     }
 
     public void removeOperation(Operation op) {

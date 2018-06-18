@@ -10,6 +10,8 @@ public class UserInput extends Operation {
     public UserInput(String name) {
         super(name, TYPE_VALUE);
         mSpannable = new SpannableString(name);
+
+        mIsStatement = false;
         mReturnsValue = true;
     }
 

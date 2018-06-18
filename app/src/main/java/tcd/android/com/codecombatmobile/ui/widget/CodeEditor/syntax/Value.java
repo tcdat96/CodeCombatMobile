@@ -14,6 +14,7 @@ public class Value extends Operation {
         mSpannable = new SpannableString(value);
 
         mReturnsValue = true;
+        mIsStatement = false;
     }
 
     @Override

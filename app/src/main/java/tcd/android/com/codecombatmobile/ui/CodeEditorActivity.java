@@ -44,6 +44,7 @@ import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Opera
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_DECLARATION;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_FLOW_CONTROL;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_FUNCTION;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_METHOD;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_OPERATOR;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VALUE;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VARIABLE;
@@ -191,7 +192,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         opTypes.add(new Pair<>(TYPE_VARIABLE, "hero"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));
         opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBoxes()_3"));
-        opTypes.add(new Pair<>(TYPE_FUNCTION, ".moveRight()_0"));
+        opTypes.add(new Pair<>(TYPE_METHOD, ".moveRight()_2"));
         opTypes.add(new Pair<>(TYPE_VALUE, "True"));
         opTypes.add(new Pair<>(TYPE_VALUE, "False"));
         opTypes.add(new Pair<>(TYPE_VALUE, "null"));
@@ -212,6 +213,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         }
 
         setOnOperationChangedListener();
+        displayStatementSyntaxButtons();
     }
 
     private Object mObject;
@@ -291,9 +293,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onOperationChangedListener(@Nullable Operation operation) {
                 if (operation == null || operation.getContainer() == null) {
-                    for (SyntaxButton button : mSyntaxButtons) {
-                        button.setEnabled(true);
-                    }
+                    displayStatementSyntaxButtons();
                 } else {
                     for (SyntaxButton button : mSyntaxButtons) {
                         boolean isReplaceable = operation.isReplaceableWith(button.getOperation());
@@ -302,6 +302,14 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         });
+    }
+
+    private void displayStatementSyntaxButtons() {
+        for (SyntaxButton button : mSyntaxButtons) {
+            Operation newOp = button.getOperation();
+            boolean isInsertable = newOp != null && newOp.isStatement();
+            button.setEnabled(isInsertable);
+        }
     }
 
     public void addVariableButton(String varName) {

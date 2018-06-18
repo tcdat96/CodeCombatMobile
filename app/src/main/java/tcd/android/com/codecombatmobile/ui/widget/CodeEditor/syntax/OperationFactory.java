@@ -43,12 +43,13 @@ public class OperationFactory {
             case Operation.TYPE_VARIABLE:
                 return new Object(name);
             case Operation.TYPE_FUNCTION:
+            case Operation.TYPE_METHOD:
                 int lastUdsIdx = name.lastIndexOf("_");
                 String funcName = name.substring(0, lastUdsIdx);
                 int paramTotal = Integer.valueOf(name.substring(lastUdsIdx + 1));
-                return new Function(funcName, paramTotal);
-            case Operation.TYPE_METHOD:
-                break;
+                return type == Operation.TYPE_FUNCTION ?
+                        new Function(funcName, paramTotal) :
+                        new Method(funcName, paramTotal);
             case Operation.TYPE_VALUE:
                 return name.equals("___") ? new UserInput(name) : new Value(name);
             case Operation.TYPE_ASSIGNMENT:
@@ -60,6 +61,5 @@ public class OperationFactory {
             default:
                 throw new IllegalArgumentException("Unknown syntax type");
         }
-        return null;
     }
 }

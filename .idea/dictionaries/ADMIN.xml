@@ -1,14 +1,15 @@
 <component name="ProjectDictionaryState">
-    <dictionary name="ADMIN">
-        <words>
-            <w>codecombatmobile</w>
-            <w>geny</w>
-            <w>genymotion</w>
-            <w>gmail</w>
-            <w>signup</w>
-            <w>webgl</w>
-            <w>webview</w>
-            <w>whoami</w>
-        </words>
-    </dictionary>
+  <dictionary name="ADMIN">
+    <words>
+      <w>codecombatmobile</w>
+      <w>geny</w>
+      <w>genymotion</w>
+      <w>gmail</w>
+      <w>insertable</w>
+      <w>signup</w>
+      <w>webgl</w>
+      <w>webview</w>
+      <w>whoami</w>
+    </words>
+  </dictionary>
 </component>
