@@ -143,6 +143,10 @@ public class CodeEditor extends FrameLayout {
                 if (result) {
                     container.setOnClickListener(this);
                     setSelectedOperation(null);
+
+                    if (newOp instanceof UserInput) {
+                        displayUserInput(newOp);
+                    }
                 } else {
                     Toast.makeText(getContext(), R.string.cannot_insert_error, Toast.LENGTH_SHORT).show();
                     return;

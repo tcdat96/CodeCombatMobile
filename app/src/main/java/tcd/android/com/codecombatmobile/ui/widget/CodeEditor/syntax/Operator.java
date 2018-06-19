@@ -12,6 +12,8 @@ public class Operator extends Operation {
     public Operator(String operator) {
         super(operator, TYPE_OPERATOR);
         mSpannable = new SpannableString(operator);
+
+        mIsStatement = false;
     }
 
     @Override

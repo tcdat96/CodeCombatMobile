@@ -13,11 +13,13 @@ public class FuncDeclaration extends CodeBlock {
     @Override
     public int getReplacementIndex(Operation oldOp, Operation newOp) {
         int index = mChildren.indexOf(oldOp);
+        // name and parameters
         if (index < mParamTotal + 1) {
             // TODO: 10/05/2018 must be string
             return newOp instanceof Value ? index : -1;
         }
-        return index;
+        // others
+        return newOp.isStatement() && !(newOp instanceof FuncDeclaration) ? index : -1;
     }
 
     @Override

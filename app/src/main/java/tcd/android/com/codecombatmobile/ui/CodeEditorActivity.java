@@ -65,10 +65,12 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     private ScrollView mEditorScrollView;
     private CodeEditor mCodeEditor;
     private WebView mGameLevelWebView;
-    @NonNull
 
     private LinearLayout mButtonContainer;
+    @NonNull
     private List<SyntaxButton> mSyntaxButtons = new ArrayList<>();
+    @NonNull
+    private List<Pair<Integer, String>> mOpTypes = new ArrayList<>();
 
     @Nullable
     private Drawable mKeyboardDrawable;
@@ -183,37 +185,51 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initVirtualKeyboard() {
-        List<Pair<Integer, String>> opTypes = new ArrayList<>();
-        opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "if"));
-        opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "for"));
-        opTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "return"));
-        opTypes.add(new Pair<>(TYPE_DECLARATION, "var"));
-        opTypes.add(new Pair<>(TYPE_DECLARATION, "func"));
-        opTypes.add(new Pair<>(TYPE_VARIABLE, "hero"));
-        opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));
-        opTypes.add(new Pair<>(TYPE_FUNCTION, "drawBoxes()_3"));
-        opTypes.add(new Pair<>(TYPE_METHOD, ".moveRight()_2"));
-        opTypes.add(new Pair<>(TYPE_VALUE, "True"));
-        opTypes.add(new Pair<>(TYPE_VALUE, "False"));
-        opTypes.add(new Pair<>(TYPE_VALUE, "null"));
-        opTypes.add(new Pair<>(TYPE_VALUE, "___"));
-        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "="));
-        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "+="));
-        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "-="));
-        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "*="));
-        opTypes.add(new Pair<>(TYPE_ASSIGNMENT, "/="));
-        opTypes.add(new Pair<>(TYPE_OPERATOR, "+"));
-        opTypes.add(new Pair<>(TYPE_OPERATOR, "-"));
-        opTypes.add(new Pair<>(TYPE_OPERATOR, "*"));
-        opTypes.add(new Pair<>(TYPE_OPERATOR, "/"));
+        mOpTypes = new ArrayList<>();
+        mOpTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "if"));
+        mOpTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "for"));
+        mOpTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "return"));
+        mOpTypes.add(new Pair<>(TYPE_DECLARATION, "var"));
+        mOpTypes.add(new Pair<>(TYPE_DECLARATION, "func"));
+        mOpTypes.add(new Pair<>(TYPE_VARIABLE, "hero"));
+        mOpTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));
+        mOpTypes.add(new Pair<>(TYPE_FUNCTION, "drawBoxes()_3"));
+        mOpTypes.add(new Pair<>(TYPE_METHOD, ".moveRight()_2"));
+        mOpTypes.add(new Pair<>(TYPE_VALUE, "True"));
+        mOpTypes.add(new Pair<>(TYPE_VALUE, "False"));
+        mOpTypes.add(new Pair<>(TYPE_VALUE, "null"));
+        mOpTypes.add(new Pair<>(TYPE_VALUE, "___"));
+        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "="));
+        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "+="));
+        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "-="));
+        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "*="));
+        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "/="));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "+"));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "-"));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "*"));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "/"));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "=="));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "!="));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, ">"));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "<"));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, ">="));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "<="));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "&&"));
+        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "||"));
 
-        mSyntaxButtons = new ArrayList<>(opTypes.size());
-        for (Pair<Integer, String> type : opTypes) {
-            addNewButton(type);
-        }
+        displayButtons();
 
         setOnOperationChangedListener();
         displayStatementSyntaxButtons();
+    }
+
+    private void displayButtons() {
+        mButtonContainer.removeAllViews();
+
+        mSyntaxButtons = new ArrayList<>(mOpTypes.size());
+        for (Pair<Integer, String> type : mOpTypes) {
+            addNewButton(type);
+        }
     }
 
     private Object mObject;
@@ -313,8 +329,15 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void addVariableButton(String varName) {
-        Pair<Integer, String> varType = new Pair<>(TYPE_VARIABLE, varName);
-        addNewButton(varType);
+        Pair<Integer, String> newVarType = new Pair<>(TYPE_VARIABLE, varName);
+        for (int index = 0; index < mOpTypes.size(); index++) {
+            int type = mOpTypes.get(index).first;
+            if (type == TYPE_FUNCTION || type == TYPE_VALUE) {
+                mOpTypes.add(index, newVarType);
+                break;
+            }
+        }
+        displayButtons();
     }
 
     @Override

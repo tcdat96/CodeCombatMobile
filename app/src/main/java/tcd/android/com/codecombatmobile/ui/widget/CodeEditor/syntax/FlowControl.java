@@ -13,6 +13,6 @@ public class FlowControl extends CodeBlock {
             return newOp.returnsValue() ? index : -1;
         }
         // others
-        return index;
+        return newOp.isStatement() && !(newOp instanceof FuncDeclaration) ? index : -1;
     }
 }
