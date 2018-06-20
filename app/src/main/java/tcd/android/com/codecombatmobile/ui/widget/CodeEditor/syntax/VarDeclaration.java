@@ -10,7 +10,7 @@ public class VarDeclaration extends Operation {
         super("var", TYPE_DECLARATION);
 
         mChildren = new ArrayList<>(2);
-        mChildren.add(new Blank());
+        mChildren.add(new UserInput());
         mChildren.add(new Blank());
     }
 

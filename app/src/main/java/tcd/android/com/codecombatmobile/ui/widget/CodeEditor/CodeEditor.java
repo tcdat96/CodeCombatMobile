@@ -29,6 +29,7 @@ import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Blank;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.VarDeclaration;
+import tcd.android.com.codecombatmobile.util.DataUtil;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -148,7 +149,7 @@ public class CodeEditor extends FrameLayout {
                         displayUserInput(newOp);
                     }
                 } else {
-                    Toast.makeText(getContext(), R.string.cannot_insert_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.error_cannot_insert, Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -263,6 +264,7 @@ public class CodeEditor extends FrameLayout {
             mTextWatcher = new UserInputTextWatcher(inputOp, index);
             mUserInputEditText.addTextChangedListener(mTextWatcher);
 
+            final String oldVarName = inputOp.getButtonName();
             // done editing
             mUserInputEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
@@ -273,10 +275,19 @@ public class CodeEditor extends FrameLayout {
                         mUserInputEditText.setText(null);
                         mUserInputEditText.setVisibility(GONE);
 
-                        // add new variable
+                        // validate variable name
+                        String newVarName = inputOp.getButtonName();
+                        if (!DataUtil.isVarNameValid(newVarName)) {
+                            String invalidNameMsg = String.format(getContext().getString(R.string.error_invalid_variable_name), newVarName);
+                            Toast.makeText(getContext(), invalidNameMsg, Toast.LENGTH_LONG).show();
+                            inputOp.reset();
+                            return;
+                        }
+
+                        // update the variable list
                         if (root instanceof VarDeclaration) {
                             if (mActivity != null) {
-                                mActivity.addVariableButton(inputOp.getButtonName());
+                                mActivity.updateVariableButton(oldVarName, inputOp);
                             }
                         }
                     }

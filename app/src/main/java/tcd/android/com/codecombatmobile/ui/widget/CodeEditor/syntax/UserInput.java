@@ -7,18 +7,28 @@ public class UserInput extends Operation {
 
     private int mTop, mLeft;
 
-    public UserInput(String name) {
-        super(name, TYPE_VALUE);
-        mSpannable = new SpannableString(name);
+    public UserInput() {
+        super(BLANK_VALUE, TYPE_VALUE);
+        mSpannable = new SpannableString(mName);
 
         mIsStatement = false;
         mReturnsValue = true;
+    }
+
+    @Override
+    public String getButtonName() {
+        return super.getButtonName().equals(BLANK_VALUE) ? "" : super.getButtonName();
     }
 
     public void setName(String name) {
         mName = name;
         mSpannable = new SpannableString(name);
         setSpannableColor();
+        setOnClickListener(mCodeEditor);
+    }
+
+    public void reset() {
+        setName(BLANK_VALUE);
     }
 
     public int getTop() {

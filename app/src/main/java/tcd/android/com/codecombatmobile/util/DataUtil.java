@@ -113,6 +113,30 @@ public class DataUtil {
         }
     }
 
+    public static boolean isVarNameValid(String name) {
+        // first character
+        char firstChar = name.charAt(0);
+        if (!Character.isLetter(firstChar) && firstChar != '_') {
+            return false;
+        }
+
+        // other characters
+        for (int i = 1; i < name.length(); i++) {
+            char character = name.charAt(i);
+            if (!Character.isLetterOrDigit(character) && character != '_') {
+                return false;
+            }
+        }
+
+        // TODO: 20/06/2018 support for other languages
+        // reserved keywords
+        List<String> reservedKeywords = new ArrayList<>(Arrays.asList(
+                "False", "class", "finally", "is", "return", "None", "continue", "for", "lambda", "try", "True", "def", "from", "nonlocal",
+                "while", "and", "del", "global", "not", "with", "as", "elif", "if", "or", "yield", "assert", "else", "import", "pass",
+                "break", "except", "in", "raise"));
+        return !reservedKeywords.contains(name);
+    }
+
 
     // debug helper methods
     @SuppressWarnings("SameParameterValue")

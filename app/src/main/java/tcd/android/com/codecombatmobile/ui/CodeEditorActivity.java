@@ -11,7 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.util.Pair;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
@@ -24,6 +24,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Function;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Object;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory;
+import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory.OperationType;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
 import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
@@ -48,6 +50,7 @@ import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Opera
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_OPERATOR;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VALUE;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VARIABLE;
+
 
 public class CodeEditorActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -70,7 +73,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     @NonNull
     private List<SyntaxButton> mSyntaxButtons = new ArrayList<>();
     @NonNull
-    private List<Pair<Integer, String>> mOpTypes = new ArrayList<>();
+    private List<OperationType> mOpTypes = new ArrayList<>();
 
     @Nullable
     private Drawable mKeyboardDrawable;
@@ -145,7 +148,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
                 String msg = consoleMessage.message();
                 if (msg.contains("PlayLevelView: level started")) {
-                    ccWebClient.setPageFinished(true);
+                    ccWebClient.setPageFinished();
                 } else if (msg.contains("PlayLevelView: loaded session")) {
                     findViewById(R.id.ll_loading_message).setVisibility(View.GONE);
                     mGameLevelWebView.setVisibility(View.VISIBLE);
@@ -186,54 +189,55 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
     private void initVirtualKeyboard() {
         mOpTypes = new ArrayList<>();
-        mOpTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "if"));
-        mOpTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "for"));
-        mOpTypes.add(new Pair<>(TYPE_FLOW_CONTROL, "return"));
-        mOpTypes.add(new Pair<>(TYPE_DECLARATION, "var"));
-        mOpTypes.add(new Pair<>(TYPE_DECLARATION, "func"));
-        mOpTypes.add(new Pair<>(TYPE_VARIABLE, "hero"));
-        mOpTypes.add(new Pair<>(TYPE_FUNCTION, "drawBox()_0"));
-        mOpTypes.add(new Pair<>(TYPE_FUNCTION, "drawBoxes()_3"));
-        mOpTypes.add(new Pair<>(TYPE_METHOD, ".moveRight()_2"));
-        mOpTypes.add(new Pair<>(TYPE_VALUE, "True"));
-        mOpTypes.add(new Pair<>(TYPE_VALUE, "False"));
-        mOpTypes.add(new Pair<>(TYPE_VALUE, "null"));
-        mOpTypes.add(new Pair<>(TYPE_VALUE, "___"));
-        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "="));
-        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "+="));
-        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "-="));
-        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "*="));
-        mOpTypes.add(new Pair<>(TYPE_ASSIGNMENT, "/="));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "+"));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "-"));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "*"));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "/"));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "=="));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "!="));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, ">"));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "<"));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, ">="));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "<="));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "&&"));
-        mOpTypes.add(new Pair<>(TYPE_OPERATOR, "||"));
+        mOpTypes.add(new OperationType(TYPE_FLOW_CONTROL, "if"));
+        mOpTypes.add(new OperationType(TYPE_FLOW_CONTROL, "for"));
+        mOpTypes.add(new OperationType(TYPE_FLOW_CONTROL, "return"));
+        mOpTypes.add(new OperationType(TYPE_DECLARATION, "var"));
+        mOpTypes.add(new OperationType(TYPE_DECLARATION, "func"));
+        mOpTypes.add(new OperationType(TYPE_VARIABLE, "hero"));
+        mOpTypes.add(new OperationType(TYPE_FUNCTION, "drawBox()", new java.lang.Object[]{3}));
+        mOpTypes.add(new OperationType(TYPE_FUNCTION, "drawBoxes()", new java.lang.Object[]{3}));
+        mOpTypes.add(new OperationType(TYPE_METHOD, ".moveRight()", new java.lang.Object[]{2}));
+        mOpTypes.add(new OperationType(TYPE_VALUE, "True"));
+        mOpTypes.add(new OperationType(TYPE_VALUE, "False"));
+        mOpTypes.add(new OperationType(TYPE_VALUE, "null"));
+        mOpTypes.add(new OperationType(TYPE_VALUE, "___"));
+        mOpTypes.add(new OperationType(TYPE_ASSIGNMENT, "="));
+        mOpTypes.add(new OperationType(TYPE_ASSIGNMENT, "+="));
+        mOpTypes.add(new OperationType(TYPE_ASSIGNMENT, "-="));
+        mOpTypes.add(new OperationType(TYPE_ASSIGNMENT, "*="));
+        mOpTypes.add(new OperationType(TYPE_ASSIGNMENT, "/="));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "+"));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "-"));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "*"));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "/"));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "=="));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "!="));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, ">"));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "<"));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, ">="));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "<="));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "&&"));
+        mOpTypes.add(new OperationType(TYPE_OPERATOR, "||"));
 
         displayButtons();
 
         setOnOperationChangedListener();
-        displayStatementSyntaxButtons();
     }
 
     private void displayButtons() {
         mButtonContainer.removeAllViews();
 
         mSyntaxButtons = new ArrayList<>(mOpTypes.size());
-        for (Pair<Integer, String> type : mOpTypes) {
+        for (OperationType type : mOpTypes) {
             addNewButton(type);
         }
+
+        showOnlyStatementButtons();
     }
 
     private Object mObject;
-    private void addNewButton(@NonNull final Pair<Integer, String> opType) {
+    private void addNewButton(OperationType opType) {
         LinearLayout columnLayout = getLastColumn();
         if (columnLayout != null) {
             Operation operation = mFactory.getOperation(opType);
@@ -277,7 +281,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     @NonNull
-    private SyntaxButton createNewButton(@NonNull Operation operation, @NonNull final Pair<Integer, String> opType) {
+    private SyntaxButton createNewButton(@NonNull Operation operation, final OperationType opType) {
         operation.init(this);
         final SyntaxButton button = new SyntaxButton(this);
         button.setText(operation.getButtonName());
@@ -304,12 +308,16 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         return button;
     }
 
+    /**
+     * adjust variable state to the current selecting operation
+     * this method should be called when user select an operation
+     */
     private void setOnOperationChangedListener() {
         mCodeEditor.setOnOperationChangedListener(new CodeEditor.OnOperationChangedListener() {
             @Override
             public void onOperationChangedListener(@Nullable Operation operation) {
                 if (operation == null || operation.getContainer() == null) {
-                    displayStatementSyntaxButtons();
+                    showOnlyStatementButtons();
                 } else {
                     for (SyntaxButton button : mSyntaxButtons) {
                         boolean isReplaceable = operation.isReplaceableWith(button.getOperation());
@@ -320,7 +328,10 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    private void displayStatementSyntaxButtons() {
+    /**
+     * disable non-statement syntax buttons, including pure values, methods and operators
+     */
+    private void showOnlyStatementButtons() {
         for (SyntaxButton button : mSyntaxButtons) {
             Operation newOp = button.getOperation();
             boolean isInsertable = newOp != null && newOp.isStatement();
@@ -328,15 +339,49 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    public void addVariableButton(String varName) {
-        Pair<Integer, String> newVarType = new Pair<>(TYPE_VARIABLE, varName);
-        for (int index = 0; index < mOpTypes.size(); index++) {
-            int type = mOpTypes.get(index).first;
-            if (type == TYPE_FUNCTION || type == TYPE_VALUE) {
-                mOpTypes.add(index, newVarType);
-                break;
+    /**
+     * add new variable button, or replacing an old one
+     * this method should be called after user finishes editing a variable declaration operation
+     *
+     * @param oldVarName the previous variable name, this could be null or empty in case of new variable
+     * @param inputOp the UserInput operation (the whole operation must be included for resetting purpose)
+     */
+    public void updateVariableButton(String oldVarName, UserInput inputOp) {
+        // create new variable button
+        String newVarName = inputOp.getButtonName();
+        OperationType newVarType = new OperationType(TYPE_VARIABLE, newVarName);
+        newVarType.setBuiltIn(false);
+
+        // updating old one
+        if (!TextUtils.isEmpty(oldVarName)) {
+            for (int index = 0; index < mOpTypes.size(); index++) {
+                OperationType opType = mOpTypes.get(index);
+                if (opType.getSyntaxType() == TYPE_VARIABLE && opType.getName().equals(oldVarName)) {
+                    mOpTypes.set(index, newVarType);
+                    break;
+                }
+            }
+        } else {
+            // or adding new one
+            for (int index = 0; index < mOpTypes.size(); index++) {
+                OperationType opType = mOpTypes.get(index);
+                int type = opType.getSyntaxType();
+                // if it is already defined
+                if (type == TYPE_VARIABLE) {
+                    if (opType.getName().equals(newVarName)) {
+                        String duplicateMsg = String.format(getString(R.string.error_duplicate_variable), newVarName);
+                        Toast.makeText(this, duplicateMsg, Toast.LENGTH_LONG).show();
+                        inputOp.reset();
+                        break;
+                    }
+                } else if (type == TYPE_FUNCTION || type == TYPE_VALUE) {
+                    // valid variable
+                    mOpTypes.add(index, newVarType);
+                    break;
+                }
             }
         }
+
         displayButtons();
     }
 
@@ -378,6 +423,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.iv_reset_button:
                 mCodeEditor.clear();
+                removeUserDefinedOperations();
                 break;
             case R.id.iv_undo_button:
                 break;
@@ -391,6 +437,16 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    private void removeUserDefinedOperations() {
+        for (int i = 0; i < mOpTypes.size(); i++) {
+            if (!mOpTypes.get(i).isBuiltIn()) {
+                mOpTypes.remove(i);
+                i--;
+            }
+        }
+        displayButtons();
+    }
+
     private void runJsFunc(String function) {
         String url = "javascript:(function() { " + function + "})()";
         mGameLevelWebView.loadUrl(url);
@@ -400,8 +456,8 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
         private boolean mIsPageFinished = false;
 
-        void setPageFinished(boolean finished) {
-            mIsPageFinished = finished;
+        void setPageFinished() {
+            mIsPageFinished = true;
         }
 
         @Override

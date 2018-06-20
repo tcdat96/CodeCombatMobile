@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 public class Blank extends Operation {
     public Blank() {
-        super("___", TYPE_VARIABLE);
+        super(BLANK_VALUE, TYPE_VARIABLE);
         mSpannable = new SpannableString(mName);
     }
 

@@ -111,7 +111,9 @@
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
     <string name="backspace">Backspace</string>
-    <string name="cannot_insert_error">That cannot be inserted there.</string>
+    <string name="error_cannot_insert">That cannot be inserted there.</string>
+    <string name="error_duplicate_variable">Variable \'%s\' is already defined in this scope.</string>
+    <string name="error_invalid_variable_name">Invalid variable name \'%s\'.</string>
 
     <!--game level map-->
     <string name="play">Play</string>

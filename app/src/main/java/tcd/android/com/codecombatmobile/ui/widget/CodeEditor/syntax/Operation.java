@@ -26,6 +26,7 @@ import tcd.android.com.codecombatmobile.util.DisplayUtil;
 public abstract class Operation {
 
     protected static final String DEFAULT_INDENT = "    ";
+    protected static final String BLANK_VALUE = "___";
 
     public static final int TYPE_FLOW_CONTROL = 0,
             TYPE_DECLARATION = 1,
@@ -54,7 +55,7 @@ public abstract class Operation {
 
     @NonNull
     protected List<Operation> mChildren;
-    private CodeEditor mCodeEditor;
+    protected CodeEditor mCodeEditor;
     protected Operation mContainer;
 
 
