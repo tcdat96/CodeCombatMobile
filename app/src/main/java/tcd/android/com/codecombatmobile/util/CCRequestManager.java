@@ -321,8 +321,12 @@ public class CCRequestManager {
         return result;
     }
 
-    public JSONArray requestLevelSessionsSync(String instanceId) {
-        String path = "/db/course_instance/" + instanceId + "/my-course-level-sessions?project=state.complete%2Clevel.original%2Cplaytime";
+    public JSONArray requestLevelSessionsSync(String instanceId, String userId) {
+        String path = String.format(
+                "/db/course_instance/%s/course-level-sessions/%s?project=state.complete%%2Clevel.original%%2Cplaytime%%2Cchanged",
+                instanceId,
+                userId
+        );
         RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
         return getResponse(future);
     }

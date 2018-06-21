@@ -27,9 +27,11 @@ import java.util.concurrent.ExecutionException;
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
 import tcd.android.com.codecombatmobile.data.Level;
+import tcd.android.com.codecombatmobile.data.user.User;
 import tcd.android.com.codecombatmobile.ui.widget.GameMapView;
 import tcd.android.com.codecombatmobile.util.CCDataUtil;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
+import tcd.android.com.codecombatmobile.util.DataUtil;
 
 public class GameMapActivity extends AppCompatActivity {
     public static final String ARG_STUDENT_CLASSROOM = "argStudentClassroom";
@@ -136,9 +138,12 @@ public class GameMapActivity extends AppCompatActivity {
                     });
 
                     // level sessions
-                    JSONArray sessionsObj = manager.requestLevelSessionsSync(mClassroom.getInstanceId());
-                    if (sessionsObj != null) {
-                        mLevelSessions = CCDataUtil.getLevelSessions(sessionsObj);
+                    User user = DataUtil.getUserData(GameMapActivity.this);
+                    if (user != null) {
+                        JSONArray sessionsObj = manager.requestLevelSessionsSync(mClassroom.getInstanceId(), user.getId());
+                        if (sessionsObj != null) {
+                            mLevelSessions = CCDataUtil.getLevelSessions(sessionsObj);
+                        }
                     }
                     return mLevelSessions != null;
                 } catch (JSONException e) {

@@ -69,7 +69,8 @@
                     android:text="@string/your_code"
                     android:textAllCaps="true"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    android:textColor="@color/keyboard_button_color" />
+                    android:textColor="@color/keyboard_button_color"
+                    android:layout_marginBottom="4dp"/>
 
                 <tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor
                     android:id="@+id/code_editor"

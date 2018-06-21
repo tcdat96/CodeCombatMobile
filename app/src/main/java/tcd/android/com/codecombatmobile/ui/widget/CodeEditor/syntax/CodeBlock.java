@@ -1,7 +1,6 @@
 package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 
 import android.text.SpannableString;
-import android.widget.TextView;
 
 // TODO: 30/05/2018 this class (and FuncDeclaration) should be refactored ASAP
 public abstract class CodeBlock extends Operation {
@@ -62,17 +61,5 @@ public abstract class CodeBlock extends Operation {
 
     boolean isItemBlank(int position) {
         return position >= 0 && position < mChildren.size() && mChildren.get(position) instanceof Blank;
-    }
-
-    @Override
-    public void display(TextView container) {
-        container.append(mSpannable);
-        container.append(" ");
-        mChildren.get(0).display(container);
-        container.append(":");
-        for (int i = 1; i < mChildren.size(); i++) {
-            container.append("\n" + DEFAULT_INDENT);
-            mChildren.get(i).display(container);
-        }
     }
 }

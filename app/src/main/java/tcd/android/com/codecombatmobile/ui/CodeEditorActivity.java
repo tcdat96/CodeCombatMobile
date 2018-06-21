@@ -1,5 +1,6 @@
 package tcd.android.com.codecombatmobile.ui;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,8 +13,12 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -40,6 +45,7 @@ import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFac
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory.OperationType;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
 import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
+import tcd.android.com.codecombatmobile.util.CCRequestManager;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_ASSIGNMENT;
@@ -97,11 +103,12 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         getKeyboardDrawable();
         initUiComponents();
 
-//        initCookie();
-//        initWebView();
+        initCookie();
+        initWebView();
 //        String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
-//        String url = CCRequestManager.getInstance(this).getRequestUrl(path);
-//        mGameLevelWebView.loadUrl(url);
+        String path = "/play/level/gems-in-the-deep?course=560f1a9f22961295f9427742&course-instance=5b018b55137ddc2dc00c2407";
+        String url = CCRequestManager.getInstance(this).getRequestUrl(path);
+        mGameLevelWebView.loadUrl(url);
     }
 
     private void getKeyboardDrawable() {
@@ -169,6 +176,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         webSettings.setDomStorageEnabled(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
+        webSettings.setSupportZoom(false);
+        webSettings.setBuiltInZoomControls(false);
+        webSettings.setDisplayZoomControls(false);
     }
 
     @JavascriptInterface
@@ -195,9 +205,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         mOpTypes.add(new OperationType(TYPE_DECLARATION, "var"));
         mOpTypes.add(new OperationType(TYPE_DECLARATION, "func"));
         mOpTypes.add(new OperationType(TYPE_VARIABLE, "hero"));
-        mOpTypes.add(new OperationType(TYPE_FUNCTION, "drawBox()", new java.lang.Object[]{3}));
+        mOpTypes.add(new OperationType(TYPE_FUNCTION, "drawBox()", new java.lang.Object[]{0}));
         mOpTypes.add(new OperationType(TYPE_FUNCTION, "drawBoxes()", new java.lang.Object[]{3}));
-        mOpTypes.add(new OperationType(TYPE_METHOD, ".moveRight()", new java.lang.Object[]{2}));
+        mOpTypes.add(new OperationType(TYPE_METHOD, ".moveRight()", new java.lang.Object[]{0}));
         mOpTypes.add(new OperationType(TYPE_VALUE, "True"));
         mOpTypes.add(new OperationType(TYPE_VALUE, "False"));
         mOpTypes.add(new OperationType(TYPE_VALUE, "null"));
@@ -237,6 +247,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private Object mObject;
+
     private void addNewButton(OperationType opType) {
         LinearLayout columnLayout = getLastColumn();
         if (columnLayout != null) {
@@ -344,7 +355,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
      * this method should be called after user finishes editing a variable declaration operation
      *
      * @param oldVarName the previous variable name, this could be null or empty in case of new variable
-     * @param inputOp the UserInput operation (the whole operation must be included for resetting purpose)
+     * @param inputOp    the UserInput operation (the whole operation must be included for resetting purpose)
      */
     public void updateVariableButton(String oldVarName, UserInput inputOp) {
         // create new variable button
@@ -414,12 +425,10 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.fab_run:
-                String runFunc = "document.getElementsByClassName('cast-button')[0].click()";
-                runJsFunc(runFunc);
+                fillCodeEditor();
                 break;
             case R.id.iv_hide_keyboard_button:
-                TransitionManager.beginDelayedTransition(mRootLayout);
-                mKeyboardLayout.setVisibility(View.GONE);
+                setVirtualKeyboardVisibility(View.GONE);
                 break;
             case R.id.iv_reset_button:
                 mCodeEditor.clear();
@@ -447,6 +456,92 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         displayButtons();
     }
 
+    private List<String> mPrevCode = null;
+    private void fillCodeEditor() {
+        final List<String> code = mCodeEditor.getCode();
+        if (code == mPrevCode) {
+            String runFunc = "document.getElementsByClassName('cast-button')[0].click()";
+            runJsFunc(runFunc);
+        } else {
+            // click restart button
+            String restartFunc = "document.getElementsByClassName(\"reload-code\")[0].click()";
+            runJsFunc(restartFunc);
+            final Handler handler = new Handler();
+
+            int delayMillis = 250;
+            // then confirm restart all
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    String confirmFunc = "document.getElementById(\"restart-level-confirm-button\").click()";
+                    runJsFunc(confirmFunc);
+                    String clickEditorFunc = "document.getElementById('code-area').click()";
+                    runJsFunc(clickEditorFunc);
+                }
+            }, delayMillis);
+
+            // hide keyboard
+            for (int i = 1; i < 8; i++) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        hidePhysicalKeyboard();
+                        dispatchKeyStroke(KeyEvent.KEYCODE_DPAD_RIGHT);
+                    }
+                }, delayMillis * i);
+            }
+
+            // then...
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // deselect current code
+                    dispatchKeyStroke(KeyEvent.KEYCODE_DPAD_RIGHT);
+
+                    // then send user code to editor
+                    KeyCharacterMap charMap = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD);
+                    for (String line : code) {
+                        if (line != null) {
+                            char[] szRes = line.toCharArray();
+                            KeyEvent[] events = charMap.getEvents(szRes);
+                            for (KeyEvent event : events) {
+                                mGameLevelWebView.dispatchKeyEvent(event);
+                            }
+                        } else {
+                            dispatchKeyStroke(KeyEvent.KEYCODE_DEL);
+                        }
+                    }
+
+
+                }
+            }, delayMillis * 5);
+
+            // run the code
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    String runFunc = "document.getElementsByClassName('cast-button')[0].click()";
+                    runJsFunc(runFunc);
+                }
+            }, delayMillis * 6);
+        }
+
+        mPrevCode = code;
+    }
+
+    private void hidePhysicalKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(mGameLevelWebView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+
+    private void dispatchKeyStroke(final int code) {
+        mGameLevelWebView.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, code));
+        mGameLevelWebView.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, code));
+    }
+
     private void runJsFunc(String function) {
         String url = "javascript:(function() { " + function + "})()";
         mGameLevelWebView.loadUrl(url);
@@ -472,7 +567,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                         String url = "javascript:(function() { " +
                                 // hide unnecessary parts
                                 "document.getElementById('control-bar-view').style.display='none';" +
-                                "document.getElementById('code-area').style.display='none';" +
+                                "document.getElementById('code-area').style.opacity='0';" +
                                 "document.getElementById('spell-palette-view').style.display='none';" +
                                 "document.getElementsByClassName('toggle-fullscreen')[0].style.display='none';" +
                                 // resize game part
@@ -494,7 +589,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                         url = String.format("javascript:%s.%s(%s)", TAG, "resizeLevelWebView", function);
                         mGameLevelWebView.loadUrl(url);
 
-                        // show game buttons
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {

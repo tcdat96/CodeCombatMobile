@@ -44,6 +44,7 @@ public class CodeEditor extends FrameLayout {
 
     @Nullable
     private CodeEditorActivity mActivity = null;
+    private List<String> mCode;
 
     @NonNull
     private LinearLayout mCodeLines = new LinearLayout(getContext());
@@ -112,6 +113,42 @@ public class CodeEditor extends FrameLayout {
         return mSelectedOperation;
     }
 
+    /**
+     * get displaying code to send to the editor
+     * all indentation and blank will be trimmed off
+     *
+     * @return a list of code lines, with null indicating that the current line should be unindent-ed,
+     *          or null if code hasn't changed
+     */
+    @NonNull
+    public List<String> getCode() {
+        if (mCode != null) {
+            return mCode;
+        }
+
+        mCode = new ArrayList<>(mOperations.size());
+        int childCount = mCodeLines.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            TextView codeLine = (TextView) mCodeLines.getChildAt(i);
+            String code = codeLine.getText().toString();
+            if (i < childCount - 1) {
+                code += "\n";
+            }
+
+            code = code.replace(Operation.BLANK_VALUE, "");
+
+            // if it is CodeBlock
+            if (code.contains(Operation.INDENT_VALUE)) {
+                code = code.replace(Operation.INDENT_VALUE, "");
+                mCode.add(code);
+                mCode.add(null);
+            } else {
+                mCode.add(code);
+            }
+        }
+        return mCode;
+    }
+
 
     public void clear() {
         mCodeLines.removeAllViews();
@@ -125,6 +162,7 @@ public class CodeEditor extends FrameLayout {
     }
 
     private void addOperation(int index, @NonNull Operation newOp) {
+        mCode = null;
         newOp.setOnClickListener(this);
 
         if (mSelectedOperation == null) {
@@ -161,6 +199,7 @@ public class CodeEditor extends FrameLayout {
         if (mSelectedOperation == null) {
             return;
         }
+        mCode = null;
 
         // get operation index for later update
         Operation root = mSelectedOperation.getRoot();

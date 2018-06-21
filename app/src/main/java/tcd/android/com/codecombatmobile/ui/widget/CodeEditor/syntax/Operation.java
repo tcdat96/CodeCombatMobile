@@ -25,8 +25,8 @@ import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public abstract class Operation {
 
-    protected static final String DEFAULT_INDENT = "    ";
-    protected static final String BLANK_VALUE = "___";
+    public static final String INDENT_VALUE = "    ";
+    public static final String BLANK_VALUE = "___";
 
     public static final int TYPE_FLOW_CONTROL = 0,
             TYPE_DECLARATION = 1,

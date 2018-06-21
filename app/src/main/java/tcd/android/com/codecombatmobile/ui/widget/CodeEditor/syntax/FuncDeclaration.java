@@ -54,10 +54,10 @@ public class FuncDeclaration extends CodeBlock {
         }
         // end of header
         container.append("):");
-        // statements
+        // inner statements
         int startIndex = 1 + mParamTotal;
         for (int i = startIndex; i < mChildren.size(); i++) {
-            container.append("\n" + DEFAULT_INDENT);
+            container.append("\n" + INDENT_VALUE);
             mChildren.get(i).display(container);
         }
     }

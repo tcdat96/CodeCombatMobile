@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -174,7 +175,7 @@ public class SClassroomListActivity extends ClassroomListActivity {
                         classroom.setCampaignId(course.getCampaignId());
                         // progress
                         String instId = instObj.getString("_id");
-                        JSONArray sessionArr = mReqManager.requestLevelSessionsSync(instId);
+                        JSONArray sessionArr = mReqManager.requestLevelSessionsSync(instId, mUser.getId());
                         if (sessionArr != null) {
                             // count primary levels
                             Map<String, Boolean> levels = course.getLevelTypes();
