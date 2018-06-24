@@ -7,15 +7,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import tcd.android.com.codecombatmobile.data.Position;
 import tcd.android.com.codecombatmobile.data.course.Course;
+import tcd.android.com.codecombatmobile.data.game.Achievement;
+import tcd.android.com.codecombatmobile.data.game.Session;
 import tcd.android.com.codecombatmobile.data.course.TClassroom;
-import tcd.android.com.codecombatmobile.data.Level;
+import tcd.android.com.codecombatmobile.data.game.Level;
+import tcd.android.com.codecombatmobile.data.user.ProfileGeneral;
 
 public class CCDataUtil {
 
@@ -93,14 +94,70 @@ public class CCDataUtil {
     }
 
     @NonNull
-    public static Map<String, Boolean> getLevelSessions(@NonNull JSONArray sessionArr) throws JSONException {
-        Map<String, Boolean>  sessions = new HashMap<>();
+    public static List<Session> parseLevelSessions(@NonNull JSONArray sessionArr) throws JSONException {
+        List<Session> sessions = new ArrayList<>();
         for (int i = 0; i < sessionArr.length(); i++) {
             JSONObject sessionObj = sessionArr.getJSONObject(i);
-            String original = sessionObj.getJSONObject("level").getString("original");
-            boolean isComplete = sessionObj.getJSONObject("state").getBoolean("complete");
-            sessions.put(original, isComplete);
+            boolean isCompleted = sessionObj.getJSONObject("state").getBoolean("complete");
+            Session session = new Session(isCompleted);
+
+            if (sessionObj.has("level")) {
+                // normal
+                String original = sessionObj.getJSONObject("level").getString("original");
+                session.setOriginal(original);
+                String levelId = sessionObj.getString("levelID");
+                session.setLevelId(levelId);
+            } else {
+                // profile
+                if (!sessionObj.has("levelName") || !sessionObj.has("changed")) {
+                    continue;
+                }
+
+                String levelName = sessionObj.getString("levelName");
+                session.setLevelName(levelName);
+                String changed = sessionObj.getString("changed");
+                long timeChanged = TimeUtil.convertCcTimeToLong(changed);
+                session.setTimeChanged(timeChanged);
+                int playtime = sessionObj.getInt("playtime");
+                session.setPlaytime(playtime);
+
+                if (sessionObj.has("totalScore")) {
+                    int totalScore = (int) sessionObj.getDouble("totalScore");
+                    session.setTotalScore(totalScore);
+                }
+            }
+
+            sessions.add(session);
         }
         return sessions;
+    }
+
+    // profile
+    @NonNull
+    public static List<Achievement> parseAchievements(@NonNull JSONArray acmArr) throws JSONException {
+        List<Achievement> achievements = new ArrayList<>();
+        for (int i = 0; i < acmArr.length(); i++) {
+            JSONObject acmObj = acmArr.getJSONObject(i);
+
+            String name = acmObj.getString("achievementName");
+            int earnedGems = acmObj.getInt("earnedGems");
+
+            String changed = acmObj.getString("changed");
+            long lastEarned = TimeUtil.convertCcTimeToLong(changed);
+
+            Achievement achievement = new Achievement(name, lastEarned, earnedGems);
+
+            achievements.add(achievement);
+        }
+        return achievements;
+    }
+
+    @NonNull
+    public static ProfileGeneral parseProfileGeneral(@NonNull JSONObject profileObj) throws JSONException {
+        String name = profileObj.getString("name");
+        int spent = profileObj.has("spent") ? profileObj.getInt("spent") : 0;
+        int courseTotal = profileObj.getJSONArray("courseInstances").length();
+        // TODO: 22/06/2018 missing user level
+        return new ProfileGeneral(name, 0, spent, courseTotal);
     }
 }

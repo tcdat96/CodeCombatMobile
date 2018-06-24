@@ -25,4 +25,17 @@
     <!--code editor-->
     <dimen name="code_editor_margin">16dp</dimen>
     <dimen name="game_level_container_elevation">8dp</dimen>
+
+    <!--profile-->
+    <dimen name="hero_picture_size">108dp</dimen>
+    <dimen name="hero_picture_corner_radius">12dp</dimen>
+    <dimen name="profile_divider_outer_margin">32dp</dimen>
+    <dimen name="profile_divider_inner_margin">24dp</dimen>
+    <dimen name="profile_divider_height">1dp</dimen>
+    <dimen name="profile_card_padding">16dp</dimen>
+    <dimen name="profile_card_margin">16dp</dimen>
+    <dimen name="profile_card_corner_radius">8dp</dimen>
+    <dimen name="profile_card_elevation">12dp</dimen>
+    <dimen name="profile_playtime_graph_size">300dp</dimen>
+    <dimen name="profile_record_graph_size">180dp</dimen>
 </resources>

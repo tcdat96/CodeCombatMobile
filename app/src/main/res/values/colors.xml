@@ -35,7 +35,13 @@
     <color name="complete_level_color">#00A651</color>
     <color name="incomplete_level_color">#F5AA31</color>
     <color name="locked_level_color">#96928F</color>
-    <color name="current_level_color">#F5AA31</color>
     <color name="level_name_color">#E8D957</color>
-    <color name="incomplete_state_color">#ff5900</color>
+
+    <!--profile-->
+    <color name="playtime_graph_color">#68F1AF</color>
+    <color name="record_level_1">#EEEEEE</color>
+    <color name="record_level_2">#C6E48B</color>
+    <color name="record_level_3">#7BC96F</color>
+    <color name="record_level_4">#239A3B</color>
+    <color name="record_level_5">#196127</color>
 </resources>

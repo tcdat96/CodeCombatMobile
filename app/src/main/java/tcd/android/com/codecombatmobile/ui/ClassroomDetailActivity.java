@@ -126,7 +126,7 @@ public class ClassroomDetailActivity extends AppCompatActivity {
                 R.drawable.ic_latest_level_white_24dp, R.drawable.ic_avg_level_white_24dp, R.drawable.ic_av_timer_white_24dp
         };
         int[] titleResIds = new int[] {
-                R.string.total_student, R.string.total_level, R.string.total_play_time,
+                R.string.total_student, R.string.total_level, R.string.total_playtime,
                 R.string.latest_level, R.string.average_level, R.string.average_play_time
         };
         int[] values = new int[] {

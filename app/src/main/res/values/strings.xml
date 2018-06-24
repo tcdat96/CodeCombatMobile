@@ -73,7 +73,7 @@
 
     <!--class detail-->
     <string name="total_student">Student</string>
-    <string name="total_play_time">Playtime</string>
+    <string name="total_playtime">Playtime</string>
     <string name="total_level">Level</string>
     <string name="average_play_time">avg. playtime</string>
     <string name="average_level">avg. level</string>
@@ -102,7 +102,7 @@
     <string name="pref_last_name_key" translatable="false">prefLastNameKey</string>
 
     <!--game level-->
-    <string name="error_get_level_message">Sorry, there seems to be a problem. Please try again later.</string>
+    <string name="error_get_data_message">Sorry, there seems to be a problem. Please try again later.</string>
     <string name="level_loading_message">Loading level…</string>
 
     <!--code editor-->
@@ -118,4 +118,36 @@
     <!--game level map-->
     <string name="play">Play</string>
     <string name="your_code">Your code</string>
+
+    <!--profile-->
+    <string name="profile_title">Profile</string>
+    <string name="completed_levels">completed levels</string>
+    <string name="user_level">Level %1$d</string>
+    <plurals name="minute">
+        <item quantity="zero">minute</item>
+        <item quantity="one">minute</item>
+        <item quantity="other">minutes</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="zero">hour</item>
+        <item quantity="one">hour</item>
+        <item quantity="other">hours</item>
+    </plurals>
+    <plurals name="level_total">
+        <item quantity="zero">%1$d level</item>
+        <item quantity="one">%1$d level</item>
+        <item quantity="other">%1$d levels</item>
+    </plurals>
+    <string name="title_singleplayer">Singleplayer</string>
+    <string name="title_multiplayer">Multiplayer</string>
+    <string name="title_course_total">Course</string>
+    <string name="title_track_record">Track records</string>
+    <string name="title_achievement_total">Achievement</string>
+    <string name="completed">Completed</string>
+    <string name="unfinished">Unfinished</string>
+    <string name="title_level_sessions">Level sessions</string>
+    <plurals name="gem">
+        <item quantity="one">%1$d gem</item>
+        <item quantity="other">%1$d gems</item>
+    </plurals>
 </resources>

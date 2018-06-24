@@ -17,7 +17,6 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
@@ -99,14 +98,16 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 //            finish();
 //            return;
 //        }
+        String levelId = "gems-in-the-deep";
+        String courseId = "560f1a9f22961295f9427742";
+        String instanceId = "5b018b55137ddc2dc00c2407";
 
         getKeyboardDrawable();
         initUiComponents();
 
         initCookie();
         initWebView();
-//        String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
-        String path = "/play/level/gems-in-the-deep?course=560f1a9f22961295f9427742&course-instance=5b018b55137ddc2dc00c2407";
+        String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
         String url = CCRequestManager.getInstance(this).getRequestUrl(path);
         mGameLevelWebView.loadUrl(url);
     }

@@ -27,13 +27,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.Position;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
-import tcd.android.com.codecombatmobile.data.Level;
+import tcd.android.com.codecombatmobile.data.game.Level;
+import tcd.android.com.codecombatmobile.data.game.Session;
 import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
@@ -56,6 +56,8 @@ public class GameMapView extends SurfaceView implements Runnable {
     private SClassroom mClassroom;
     @NonNull
     private List<Level> mLevels = new ArrayList<>();
+    @NonNull
+    private List<Session> mSessions = new ArrayList<>();
     @NonNull
     private List<RectF> mLevelsPosition = new ArrayList<>();
     private Bitmap mLevelBannerBitmap;
@@ -171,19 +173,20 @@ public class GameMapView extends SurfaceView implements Runnable {
         }
     }
 
-    public void setLevelSessions(Map<String, Boolean> sessions) {
+    public void setLevelSessions(@NonNull List<Session> sessions) {
+        mSessions = sessions;
         // get the unlocked level with largest campaign index
         int curLevelIndex = 0;
         int curLevelCampaignIndex = -1;
-        for (Map.Entry<String, Boolean> session : sessions.entrySet()) {
+        for (Session session : sessions) {
             for (int i = 0; i < mLevels.size(); i++) {
                 Level level = mLevels.get(i);
-                if (session.getKey().equals(level.getOriginal())) {
+                if (session.getOriginal().equals(level.getOriginal())) {
                     if (level.getCampaignIndex() > curLevelCampaignIndex) {
                         curLevelCampaignIndex = level.getCampaignIndex();
                         curLevelIndex = i;
                     }
-                    level.setLevelState(session.getValue() ? Level.STATE_COMPLETE : Level.STATE_INCOMPLETE);
+                    level.setLevelState(session.isCompleted() ? Level.STATE_COMPLETE : Level.STATE_INCOMPLETE);
                     break;
                 }
             }
@@ -281,7 +284,7 @@ public class GameMapView extends SurfaceView implements Runnable {
         }
     }
 
-    private void showLevelInfoDialog(int position) {
+    private void showLevelInfoDialog(final int position) {
         final Context context = getContext();
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -295,8 +298,7 @@ public class GameMapView extends SurfaceView implements Runnable {
             public void onClick(View v) {
                 dialog.dismiss();
                 Intent intent = new Intent(context, CodeEditorActivity.class);
-                String levelId = level.getName().toLowerCase().replace(" ", "-");       // TODO: 02/06/2018 temporary workaround
-                intent.putExtra(CodeEditorActivity.ARG_LEVEL_ID_DATA, levelId);
+                intent.putExtra(CodeEditorActivity.ARG_LEVEL_ID_DATA, mSessions.get(position).getLevelId());
                 intent.putExtra(CodeEditorActivity.ARG_COURSE_ID_DATA, mClassroom.getId());
                 intent.putExtra(CodeEditorActivity.ARG_INSTANCE_ID_DATA, mClassroom.getInstanceId());
                 context.startActivity(intent);

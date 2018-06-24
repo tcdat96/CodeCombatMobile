@@ -323,7 +323,7 @@ public class CCRequestManager {
 
     public JSONArray requestLevelSessionsSync(String instanceId, String userId) {
         String path = String.format(
-                "/db/course_instance/%s/course-level-sessions/%s?project=state.complete%%2Clevel.original%%2Cplaytime%%2Cchanged",
+                "/db/course_instance/%s/course-level-sessions/%s?project=state.complete%%2Clevel.original%%2ClevelID",
                 instanceId,
                 userId
         );
@@ -335,5 +335,32 @@ public class CCRequestManager {
         String path = "/db/campaign/" + campaignId;
         RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
         return getResponse(future);
+    }
+
+    public JSONArray requestLevelSessionsSync(String userId) {
+        String path = String.format(Locale.getDefault(),
+                "/db/user/%s/level.sessions?project=state.complete,levelName,changed,playtime,totalScore&order=-1&_=%d",
+                userId,
+                System.currentTimeMillis()
+        );
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    public JSONArray requestAchievementsSync(String userId) {
+        String path = String.format(Locale.getDefault(), "/db/user/%s/achievements?_=%d", userId, System.currentTimeMillis());
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    public JSONObject requestUserProfile(String userId) {
+        String path = String.format(Locale.getDefault(), "/db/user/%s?_=%d", userId, System.currentTimeMillis());
+        RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
+        return getResponse(future);
+    }
+
+    public String getUserAvatar(String userId) {
+        String path = String.format("/db/user/%s/avatar?s=80", userId);
+        return getRequestUrl(path);
     }
 }

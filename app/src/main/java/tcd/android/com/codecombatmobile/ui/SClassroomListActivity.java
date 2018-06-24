@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +19,7 @@ import java.util.Map;
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.course.Course;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
+import tcd.android.com.codecombatmobile.data.game.Session;
 import tcd.android.com.codecombatmobile.data.user.User;
 import tcd.android.com.codecombatmobile.ui.adapter.SClassroomAdapter;
 import tcd.android.com.codecombatmobile.util.CCDataUtil;
@@ -188,10 +188,10 @@ public class SClassroomListActivity extends ClassroomListActivity {
                             }
                             // count completed primary levels
                             int completedLevelCount = 0;
-                            Map<String, Boolean> sessions = CCDataUtil.getLevelSessions(sessionArr);
-                            for (Map.Entry<String, Boolean> session : sessions.entrySet()) {
-                                boolean isPrimary = levels.get(session.getKey());
-                                boolean isCompleted = session.getValue();
+                            List<Session> sessions = CCDataUtil.parseLevelSessions(sessionArr);
+                            for (Session session : sessions) {
+                                boolean isPrimary = levels.get(session.getOriginal());
+                                boolean isCompleted = session.isCompleted();
                                 if (isPrimary && isCompleted) {
                                     completedLevelCount++;
                                 }

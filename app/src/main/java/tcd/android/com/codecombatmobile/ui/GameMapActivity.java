@@ -21,12 +21,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.course.SClassroom;
-import tcd.android.com.codecombatmobile.data.Level;
+import tcd.android.com.codecombatmobile.data.game.Level;
+import tcd.android.com.codecombatmobile.data.game.Session;
 import tcd.android.com.codecombatmobile.data.user.User;
 import tcd.android.com.codecombatmobile.ui.widget.GameMapView;
 import tcd.android.com.codecombatmobile.util.CCDataUtil;
@@ -97,7 +97,7 @@ public class GameMapActivity extends AppCompatActivity {
         private Bitmap mBackground;
         @NonNull
         private List<Level> mLevels = new ArrayList<>();
-        private Map<String, Boolean> mLevelSessions;
+        private List<Session> mLevelSessions;
 
         @Override
         protected Boolean doInBackground(Void... voids) {
@@ -142,7 +142,7 @@ public class GameMapActivity extends AppCompatActivity {
                     if (user != null) {
                         JSONArray sessionsObj = manager.requestLevelSessionsSync(mClassroom.getInstanceId(), user.getId());
                         if (sessionsObj != null) {
-                            mLevelSessions = CCDataUtil.getLevelSessions(sessionsObj);
+                            mLevelSessions = CCDataUtil.parseLevelSessions(sessionsObj);
                         }
                     }
                     return mLevelSessions != null;
@@ -171,7 +171,7 @@ public class GameMapActivity extends AppCompatActivity {
                 mMapView.setVisibility(View.VISIBLE);
             } else {
                 finish();
-                Toast.makeText(getApplicationContext(), R.string.error_get_level_message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.error_get_data_message, Toast.LENGTH_SHORT).show();
             }
         }
 

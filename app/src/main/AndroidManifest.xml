@@ -27,8 +27,8 @@
             android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.LoginActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_login" />
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.SClassroomListActivity"
             android:theme="@style/NoActionBar" />
@@ -37,17 +37,20 @@
             android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.ClassroomDetailActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".ui.MoreInfoTeacherActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.GameMapActivity"
             android:screenOrientation="landscape"
             android:theme="@style/GameTheme" />
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

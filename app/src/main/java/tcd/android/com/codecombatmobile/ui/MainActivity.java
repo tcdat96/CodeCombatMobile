@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
                     ClassroomDetailActivity.class,
                     CodeEditorActivity.class,
                     SettingsActivity.class,
-                    GameMapActivity.class
+                    GameMapActivity.class,
+                    ProfileActivity.class
             };
             for (final Class activity : activities) {
                 Button button = new Button(this);
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 rootContainer.addView(button);
             }
 
-            startActivity(new Intent(this, CodeEditorActivity.class));
+//            startActivity(new Intent(this, ProfileActivity.class));
         }
     }
 
