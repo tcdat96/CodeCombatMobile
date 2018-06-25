@@ -9,6 +9,7 @@ import tcd.android.com.codecombatmobile.data.Position;
 public class Level implements Serializable {
     private String mOriginal;
     private String mName;
+    private String mSlug;
     private String mDescription;
     private int mCampaignIndex;
     private boolean mIsPrimary;
@@ -22,9 +23,10 @@ public class Level implements Serializable {
     @LevelState
     private int mLevelState = STATE_LOCKED;
 
-    public Level(String original, String name, String description, int campaignIndex, boolean isPrimary, Position position) {
+    public Level(String original, String name, String slug, String description, int campaignIndex, boolean isPrimary, Position position) {
         mOriginal = original;
         mName = name;
+        mSlug = slug;
         mDescription = description;
         mCampaignIndex = campaignIndex;
         mIsPrimary = isPrimary;
@@ -37,6 +39,10 @@ public class Level implements Serializable {
 
     public String getName() {
         return mName;
+    }
+
+    public String getSlug() {
+        return mSlug;
     }
 
     public String getDescription() {

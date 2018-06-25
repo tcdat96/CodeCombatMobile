@@ -298,7 +298,7 @@ public class GameMapView extends SurfaceView implements Runnable {
             public void onClick(View v) {
                 dialog.dismiss();
                 Intent intent = new Intent(context, CodeEditorActivity.class);
-                intent.putExtra(CodeEditorActivity.ARG_LEVEL_ID_DATA, mSessions.get(position).getLevelId());
+                intent.putExtra(CodeEditorActivity.ARG_LEVEL_ID_DATA, level.getSlug());
                 intent.putExtra(CodeEditorActivity.ARG_COURSE_ID_DATA, mClassroom.getId());
                 intent.putExtra(CodeEditorActivity.ARG_INSTANCE_ID_DATA, mClassroom.getInstanceId());
                 context.startActivity(intent);

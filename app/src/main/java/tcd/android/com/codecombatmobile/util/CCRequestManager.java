@@ -325,7 +325,7 @@ public class CCRequestManager {
 
     public JSONArray requestLevelSessionsSync(String instanceId, String userId) {
         String path = String.format(
-                "/db/course_instance/%s/course-level-sessions/%s?project=state.complete%%2Clevel.original%%2ClevelID",
+                "/db/course_instance/%s/course-level-sessions/%s?project=state.complete%%2Clevel.original",
                 instanceId,
                 userId
         );

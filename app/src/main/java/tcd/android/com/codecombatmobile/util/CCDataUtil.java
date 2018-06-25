@@ -164,6 +164,7 @@ public class CCDataUtil {
     public static Level getLevel(JSONObject levelObj) throws JSONException {
         String id = levelObj.getString("original");
         String name = levelObj.getString("name");
+        String slug = levelObj.getString("slug");
         String description = levelObj.getString("description");
         int campaignIndex = levelObj.getInt("campaignIndex");
         // practice
@@ -174,7 +175,7 @@ public class CCDataUtil {
         float y = (float) posObj.getDouble("y");
         Position position = new Position(x, y);
 
-        return new Level(id, name, description, campaignIndex, isPrimary, position);
+        return new Level(id, name, slug, description, campaignIndex, isPrimary, position);
     }
 
     @NonNull
@@ -189,8 +190,6 @@ public class CCDataUtil {
                 // normal
                 String original = sessionObj.getJSONObject("level").getString("original");
                 session.setOriginal(original);
-                String levelId = sessionObj.getString("levelID");
-                session.setLevelId(levelId);
             } else {
                 // profile
                 if (!sessionObj.has("levelName") || !sessionObj.has("changed")) {

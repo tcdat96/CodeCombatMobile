@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -98,7 +99,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 //        String courseId = data != null && data.hasExtra(ARG_COURSE_ID_DATA) ? data.getStringExtra(ARG_COURSE_ID_DATA) : null;
 //        String instanceId = data != null && data.hasExtra(ARG_INSTANCE_ID_DATA) ? data.getStringExtra(ARG_INSTANCE_ID_DATA) : null;
 //        if (levelId == null || courseId == null || instanceId == null) {
-//            Toast.makeText(this, R.string.error_get_level_message, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, R.string.error_get_data_message, Toast.LENGTH_SHORT).show();
 //            finish();
 //            return;
 //        }
@@ -434,6 +435,13 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.fab_run:
                 fillCodeEditor();
+                mRunFab.setVisibility(View.GONE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRunFab.setVisibility(View.VISIBLE);
+                    }
+                }, 5000);
                 break;
             case R.id.iv_hide_keyboard_button:
                 setVirtualKeyboardVisibility(View.GONE);

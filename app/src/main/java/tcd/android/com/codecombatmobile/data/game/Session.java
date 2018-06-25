@@ -3,7 +3,6 @@ package tcd.android.com.codecombatmobile.data.game;
 public class Session {
     private String mLevelName;
     private String mOriginal;
-    private String mLevelId;
     private long mTimeChanged;
     private int mTotalScore;
     private int mPlaytime;
@@ -21,10 +20,6 @@ public class Session {
 
     public void setOriginal(String original) {
         mOriginal = original;
-    }
-
-    public void setLevelId(String levelId) {
-        mLevelId = levelId;
     }
 
     public void setTimeChanged(long timeChanged) {
@@ -49,10 +44,6 @@ public class Session {
 
     public String getOriginal() {
         return mOriginal;
-    }
-
-    public String getLevelId() {
-        return mLevelId;
     }
 
     public long getTimeChanged() {
