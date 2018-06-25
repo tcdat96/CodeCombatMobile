@@ -1,7 +1,11 @@
 package tcd.android.com.codecombatmobile.ui;
 
+import android.annotation.TargetApi;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -164,6 +168,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 return super.onConsoleMessage(consoleMessage);
             }
         });
+
+        mGameLevelWebView.setFocusable(false);
+        mGameLevelWebView.setFocusableInTouchMode(false);
 
         // for getting values from javascript
         mGameLevelWebView.addJavascriptInterface(this, TAG);
@@ -458,6 +465,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private List<String> mPrevCode = null;
+
     private void fillCodeEditor() {
         final List<String> code = mCodeEditor.getCode();
         if (code == mPrevCode) {
@@ -481,7 +489,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 }
             }, delayMillis);
 
-            // hide keyboard
+            // hide keyboard and suggestions
             for (int i = 1; i < 8; i++) {
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -499,21 +507,11 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                     // deselect current code
                     dispatchKeyStroke(KeyEvent.KEYCODE_DPAD_RIGHT);
 
-                    // then send user code to editor
-                    KeyCharacterMap charMap = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD);
-                    for (String line : code) {
-                        if (line != null) {
-                            char[] szRes = line.toCharArray();
-                            KeyEvent[] events = charMap.getEvents(szRes);
-                            for (KeyEvent event : events) {
-                                mGameLevelWebView.dispatchKeyEvent(event);
-                            }
-                        } else {
-                            dispatchKeyStroke(KeyEvent.KEYCODE_DEL);
-                        }
-                    }
-
-
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                        sendWithClipboard(code);
+//                        return;
+//                    }
+                    sendWithCharacterMap(code);
                 }
             }, delayMillis * 5);
 
@@ -530,10 +528,38 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         mPrevCode = code;
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    private void sendWithClipboard(@NonNull List<String> code) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard != null) {
+            StringBuilder finalCode = new StringBuilder();
+            for (String line : code) {
+                finalCode.append(line);
+            }
+            clipboard.setPrimaryClip(ClipData.newPlainText("text", finalCode.toString()));
+            dispatchKeyStroke(KeyEvent.KEYCODE_PASTE);
+        }
+    }
+
+    private void sendWithCharacterMap(@NonNull List<String> code) {
+        KeyCharacterMap charMap = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD);
+        for (String line : code) {
+            if (line != null) {
+                char[] szRes = line.toCharArray();
+                KeyEvent[] events = charMap.getEvents(szRes);
+                for (KeyEvent event : events) {
+                    mGameLevelWebView.dispatchKeyEvent(event);
+                }
+            } else {
+                dispatchKeyStroke(KeyEvent.KEYCODE_DEL);
+            }
+        }
+    }
+
     private void hidePhysicalKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
-            imm.hideSoftInputFromWindow(mGameLevelWebView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            imm.hideSoftInputFromWindow(mGameLevelWebView.getWindowToken(), 0);
         }
     }
 
