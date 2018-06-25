@@ -164,7 +164,7 @@ public class CCRequestManager {
     }
 
 
-    // helper methods
+    // sign in / sign up
     @Nullable
     public JSONObject logInSync(@NonNull String username, @NonNull String password) {
         // construct request data
@@ -225,7 +225,7 @@ public class CCRequestManager {
             if (accInfoObj != null) {
                 // trial request
                 if (user instanceof Teacher) {
-                    sendTrialRequest((Teacher)user);
+                    sendTrialRequest((Teacher) user);
                 }
                 // sign up with password
                 JSONObject jsonReq = getSignUpJsonRequest(user, password);
@@ -248,7 +248,7 @@ public class CCRequestManager {
         if (user instanceof Student) {
             idObj.put("role", "student");
         } else {
-            Teacher teacher  = (Teacher) user;
+            Teacher teacher = (Teacher) user;
             idObj.put("role", "teacher");
             idObj.put("firstName", teacher.getFirstName());
             idObj.put("lastName", teacher.getLastName());
@@ -279,16 +279,18 @@ public class CCRequestManager {
         jsonReq.put("email", user.getEmail());
         jsonReq.put("password", password);
         if (user instanceof Student) {
-            jsonReq.put("name", ((Student)user).getUsername());
+            jsonReq.put("name", ((Student) user).getUsername());
         }
         return jsonReq;
     }
 
+    // teacher classroom list
     public void requestTeacherClassList(String teacherId, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         String path = "/db/classroom?ownerID=" + teacherId;
         sendRequestAsync(GET, path, listener, errorListener);
     }
 
+    // student classroom list
     public JSONArray requestStudentClassListSync(String studentId) {
         String path = String.format(Locale.getDefault(), "/db/classroom?memberID=%s&_=%d", studentId, System.currentTimeMillis());
         RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
@@ -331,12 +333,33 @@ public class CCRequestManager {
         return getResponse(future);
     }
 
+    // teacher classroom detail
+    public JSONArray requestMemberSessionsSync(String classroomId) {
+        String path = String.format("/db/classroom/%s/member-sessions?memberLimit=10&memberSkip=0", classroomId);
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    public JSONArray requestMembersSync(String classroomId) {
+        String path = String.format("/db/classroom/%s/members?project=name%%2Cemail%%2C&memberLimit=10&memberSkip=0", classroomId);
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    public JSONArray requestClassroomLevels(String classroomId) {
+        String path = String.format("/db/classroom/%s/levels?project=original%%2Cname%%2Cpractice%%2Ci18n%%2Cassessment", classroomId);
+        RequestFuture<JSONArray> future = sendRequestSync(GET, path, new JSONArray());
+        return getResponse(future);
+    }
+
+    // game map
     public JSONObject requestCampaignSync(String campaignId) {
         String path = "/db/campaign/" + campaignId;
         RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
         return getResponse(future);
     }
 
+    // profile
     public JSONArray requestLevelSessionsSync(String userId) {
         String path = String.format(Locale.getDefault(),
                 "/db/user/%s/level.sessions?project=state.complete,levelName,changed,playtime,totalScore&order=-1&_=%d",

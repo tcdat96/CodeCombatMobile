@@ -8,6 +8,7 @@ public class Session {
     private int mTotalScore;
     private int mPlaytime;
     private boolean mIsCompleted;
+    private String mCreator;
 
     public Session(boolean isCompleted) {
         mIsCompleted = isCompleted;
@@ -38,6 +39,10 @@ public class Session {
         mTotalScore = totalScore;
     }
 
+    public void setCreator(String creator) {
+        mCreator = creator;
+    }
+
     public String getLevelName() {
         return mLevelName;
     }
@@ -64,5 +69,9 @@ public class Session {
 
     public boolean isCompleted() {
         return mIsCompleted;
+    }
+
+    public String getCreator() {
+        return mCreator;
     }
 }

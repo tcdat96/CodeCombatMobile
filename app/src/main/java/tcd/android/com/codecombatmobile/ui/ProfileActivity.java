@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.game.Achievement;
+import tcd.android.com.codecombatmobile.data.game.Playtime;
 import tcd.android.com.codecombatmobile.data.game.Session;
 import tcd.android.com.codecombatmobile.data.user.ProfileGeneral;
 import tcd.android.com.codecombatmobile.data.user.User;
@@ -116,19 +117,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         String completedLevelTotal = String.valueOf(mProfileGeneral.getSingleplayer() + mProfileGeneral.getMultiplayer());
         completedLevelsTextView.setText(completedLevelTotal);
 
-        int minuteUpperBound = 360;
-        float playtime = mProfileGeneral.getPlaytime() / 60;
-        // unit
-        int unitResId = playtime > minuteUpperBound ? R.plurals.hour : R.plurals.minute;
-        String unit = getResources().getQuantityString(unitResId, (int) playtime);
-        TextView unitTextView = findViewById(R.id.tv_playtime_unit);
-        unitTextView.setOnClickListener(this);
-        unitTextView.setText(unit);
+        Playtime playtime = TimeUtil.getDisplayPlaytime(this, mProfileGeneral.getPlaytime());
         // total playtime
-        playtime = playtime > minuteUpperBound ? playtime / 60f : playtime;
         TextView playtimeTextView = findViewById(R.id.tv_playtime);
         playtimeTextView.setOnClickListener(this);
-        playtimeTextView.setText(String.valueOf(playtime));
+        playtimeTextView.setText(String.valueOf(playtime.getValue()));
+        // playtime unit
+        TextView unitTextView = findViewById(R.id.tv_playtime_unit);
+        unitTextView.setOnClickListener(this);
+        unitTextView.setText(playtime.getUnit());
 
         // achievement total
         TextView acmTextView = findViewById(R.id.tv_achievement_total);

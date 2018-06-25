@@ -87,7 +87,7 @@ public class TClassroomAdapter extends RecyclerView.Adapter<TClassroomAdapter.TC
         holder.mLanguageTextView.setText(DisplayUtil.capitalize(classroom.getLanguage()));
 
         // total number of students
-        int studentTotal = classroom.getStudentTotal();
+        int studentTotal = classroom.getMemberTotal();
         String studentTotalStr = mContext.getResources().getQuantityString(R.plurals.student_total, studentTotal, studentTotal);
         holder.mStudentTotalTextView.setText(studentTotalStr);
 

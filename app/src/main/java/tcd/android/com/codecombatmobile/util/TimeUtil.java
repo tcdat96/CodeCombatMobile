@@ -1,11 +1,16 @@
 package tcd.android.com.codecombatmobile.util;
 
+import android.content.Context;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import tcd.android.com.codecombatmobile.R;
+import tcd.android.com.codecombatmobile.data.game.Playtime;
 
 public class TimeUtil {
     private static String[] mMonthNames = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -38,5 +43,16 @@ public class TimeUtil {
 
     public static String getMonthName(int month) {
         return mMonthNames[month];
+    }
+
+    public static Playtime getDisplayPlaytime(Context context, long millis) {
+        int minuteUpperBound = 100;
+        float playtime = millis / 60;
+        // unit
+        int unitResId = playtime > minuteUpperBound ? R.plurals.hour : R.plurals.minute;
+        String unit = context.getResources().getQuantityString(unitResId, (int) playtime);
+        // total playtime
+        playtime = playtime > minuteUpperBound ? playtime / 60f : playtime;
+        return new Playtime(playtime, unit);
     }
 }

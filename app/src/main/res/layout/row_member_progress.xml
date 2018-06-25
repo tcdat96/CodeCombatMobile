@@ -10,10 +10,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.7" />
+        app:layout_constraintGuide_percent="0.8" />
 
     <TextView
-        android:id="@+id/tv_level_name"
+        android:id="@+id/tv_student_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="4"
@@ -25,19 +25,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_time_changed"
+        android:id="@+id/tv_student_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="3"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        app:layout_constraintLeft_toLeftOf="@id/tv_level_name"
-        app:layout_constraintRight_toRightOf="@id/tv_level_name"
-        app:layout_constraintTop_toBottomOf="@id/tv_level_name" />
+        app:layout_constraintLeft_toLeftOf="@id/tv_student_name"
+        app:layout_constraintRight_toRightOf="@id/tv_student_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_student_name" />
 
     <TextView
-        android:id="@+id/tv_level_status"
+        android:id="@+id/tv_completed_level_total"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="3"

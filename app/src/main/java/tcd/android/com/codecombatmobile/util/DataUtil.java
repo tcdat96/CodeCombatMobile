@@ -15,12 +15,9 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.course.CourseProgress;
-import tcd.android.com.codecombatmobile.data.course.SClassroom;
 import tcd.android.com.codecombatmobile.data.course.TClassroom;
 import tcd.android.com.codecombatmobile.data.user.Student;
 import tcd.android.com.codecombatmobile.data.user.Teacher;
@@ -135,53 +132,5 @@ public class DataUtil {
                 "while", "and", "del", "global", "not", "with", "as", "elif", "if", "or", "yield", "assert", "else", "import", "pass",
                 "break", "except", "in", "raise"));
         return !reservedKeywords.contains(name);
-    }
-
-
-    // debug helper methods
-    @SuppressWarnings("SameParameterValue")
-    public static List<SClassroom> getDebugSClassroomList(int total) {
-        Random random = new Random();
-        String[] languages = new String[]{"python", "javascript", "python"};
-        String[] classNames = new String[]{"Python Introduction", "Python Syntax", "Introduction to Python"};
-        String[] teachers = new String[]{"Michael Keaton", "Alex Garland", "Emma Stone"};
-
-        List<SClassroom> classes = new ArrayList<>();
-        for (int i = 0; i < total; i++) {
-            int idx = i % classNames.length;
-            SClassroom newClass = new SClassroom(String.valueOf(idx), languages[idx], classNames[idx], teachers[idx]);
-            newClass.setCourseName("Introduction to Computer Science");
-            newClass.setProgress(random.nextInt(Integer.MAX_VALUE) % 100);
-            classes.add(newClass);
-        }
-        return classes;
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    public static List<TClassroom> getDebugTClassroomList(int total) {
-        Random random = new Random();
-        String[] languages = new String[]{"python", "javascript", "python"};
-        String[] classNames = new String[]{"Python Introduction", "Python Syntax", "Introduction to Python"};
-        List<CourseProgress> students = new ArrayList<>(Arrays.asList(
-                new CourseProgress("Thai Dat", "tcdat96@gmail.com", 59, "Introduction to Computer Science: Level20"),
-                new CourseProgress("Cao Dung", "caodung@gmail.com", 76, "Introduction to Computer Science: Level20"),
-                new CourseProgress("dc vh", "dungchoviechoc@gmail.com", 23, "Introduction to Computer Science: Level20")
-        ));
-        students.addAll(new ArrayList<>(students));
-        students.addAll(new ArrayList<>(students));
-
-        List<TClassroom> classes = new ArrayList<>();
-        for (int i = 0; i < total; i++) {
-            int idx = i % classNames.length;
-            int progress = random.nextInt(Integer.MAX_VALUE) % 100;
-            int studentTotal = random.nextInt(100);
-            int playtimeTotal = random.nextInt(180);
-            int levelTotal = random.nextInt(12);
-            TClassroom newClass = new TClassroom(languages[idx], classNames[idx], "FunnyNameMore", progress, studentTotal,
-                    "4/16/2018", playtimeTotal, levelTotal);
-            newClass.setStudentList(students);
-            classes.add(newClass);
-        }
-        return classes;
     }
 }

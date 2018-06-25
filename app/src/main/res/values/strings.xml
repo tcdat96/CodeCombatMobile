@@ -77,7 +77,6 @@
     <string name="total_level">Level</string>
     <string name="average_play_time">avg. playtime</string>
     <string name="average_level">avg. level</string>
-    <string name="latest_level">Latest level</string>
     <string name="description_icon">icon</string>
     <string name="course_progress">Course progress</string>
     <string name="no_student_message">This classroom has no students yet.</string>

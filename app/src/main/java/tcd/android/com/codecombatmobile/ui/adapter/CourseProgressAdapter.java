@@ -7,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dinuscxj.progressbar.CircleProgressBar;
-
-import java.util.List;
+import java.util.Locale;
 
 import tcd.android.com.codecombatmobile.R;
-import tcd.android.com.codecombatmobile.data.course.CourseProgress;
+import tcd.android.com.codecombatmobile.data.course.MemberProgress;
 
 /**
  * Created by ADMIN on 30/04/2018.
@@ -20,46 +18,48 @@ import tcd.android.com.codecombatmobile.data.course.CourseProgress;
 
 public class CourseProgressAdapter extends RecyclerView.Adapter<CourseProgressAdapter.StudentViewHolder> {
 
-    private List<CourseProgress> mStudents;
+    @NonNull
+    private MemberProgress[] mMembers;
+    private int mLevelTotal;
 
-    public CourseProgressAdapter(List<CourseProgress> students) {
-        mStudents = students;
+    public CourseProgressAdapter(@NonNull MemberProgress[] members, int levelTotal) {
+        mMembers = members;
+        mLevelTotal = levelTotal;
     }
 
     @NonNull
     @Override
     public StudentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_progress_row, parent, false);
+                .inflate(R.layout.row_member_progress, parent, false);
         return new StudentViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull StudentViewHolder holder, int position) {
-        CourseProgress student = mStudents.get(position);
-        holder.mNameTextView.setText(student.getName());
-        holder.mEmailTextView.setText(student.getEmail());
-        holder.mProgressBar.setProgress(student.getProgress());
-        holder.mLastLevelTextView.setText(student.getLatestLevel());
+        MemberProgress member = mMembers[position];
+        holder.mNameTextView.setText(member.getName());
+        holder.mEmailTextView.setText(member.getEmail());
+
+        String completedLevels = String.format(Locale.getDefault(), "%d/%d", member.getCompletedLevels(), mLevelTotal);
+        holder.mCompletedLevelsTextView.setText(completedLevels);
     }
 
     @Override
     public int getItemCount() {
-        return mStudents.size();
+        return mMembers.length;
     }
 
     class StudentViewHolder extends RecyclerView.ViewHolder {
         private TextView mNameTextView;
         private TextView mEmailTextView;
-        private TextView mLastLevelTextView;
-        private CircleProgressBar mProgressBar;
+        private TextView mCompletedLevelsTextView;
 
         StudentViewHolder(View itemView) {
             super(itemView);
             mNameTextView = itemView.findViewById(R.id.tv_student_name);
             mEmailTextView = itemView.findViewById(R.id.tv_student_email);
-            mLastLevelTextView = itemView.findViewById(R.id.tv_last_level);
-            mProgressBar = itemView.findViewById(R.id.cpb_class_progress);
+            mCompletedLevelsTextView = itemView.findViewById(R.id.tv_completed_level_total);
         }
     }
 }

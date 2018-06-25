@@ -1,21 +1,25 @@
 package tcd.android.com.codecombatmobile.util;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import tcd.android.com.codecombatmobile.data.Position;
 import tcd.android.com.codecombatmobile.data.course.Course;
-import tcd.android.com.codecombatmobile.data.game.Achievement;
-import tcd.android.com.codecombatmobile.data.game.Session;
+import tcd.android.com.codecombatmobile.data.course.MemberProgress;
 import tcd.android.com.codecombatmobile.data.course.TClassroom;
+import tcd.android.com.codecombatmobile.data.game.Achievement;
 import tcd.android.com.codecombatmobile.data.game.Level;
+import tcd.android.com.codecombatmobile.data.game.Session;
 import tcd.android.com.codecombatmobile.data.user.ProfileGeneral;
 
 public class CCDataUtil {
@@ -36,6 +40,7 @@ public class CCDataUtil {
     }
 
     private static TClassroom getTClassroom(JSONObject classObj) throws JSONException {
+        String id = classObj.getString("_id");
         String name = classObj.getString("name");
         String code = classObj.getString("codeCamel");
 
@@ -43,14 +48,21 @@ public class CCDataUtil {
         JSONObject aceConfig = classObj.getJSONObject("aceConfig");
         String language = aceConfig != null ? aceConfig.getString("language") : "python";
 
-        // number of students
-        JSONArray members = classObj.getJSONArray("members");
-        int studentTotal = members != null ? members.length() : 0;
+        // number of members
+        JSONArray memberArr = classObj.getJSONArray("members");
+        int members = memberArr != null ? memberArr.length() : 0;
+
+        // date created
+        JSONArray courseArr = classObj.has("courses") ? classObj.getJSONArray("courses") : null;
+        String updated = courseArr != null && courseArr.length() > 0 ?
+                classObj.getJSONArray("courses").getJSONObject(0).getString("updated") :
+                "";
+        long dateCreated = !TextUtils.isEmpty(updated) ? TimeUtil.convertCcTimeToLong(updated) : 0;
 
         // TODO: 20/05/2018 do something with this
         int progress = new Random().nextInt(100);
 
-        return new TClassroom(language, name, code, studentTotal, progress);
+        return new TClassroom(id, language, name, code, members, dateCreated, progress);
     }
 
     // student classroom list
@@ -74,6 +86,78 @@ public class CCDataUtil {
         return !levelObj.has("assessment")
                 && (!levelObj.has("practice") || !levelObj.getBoolean("practice"))
                 && !levelObj.getString("type").equals("course-ladder");
+    }
+
+    // teacher classroom detail
+    public static List<Session> parseMemberSessions(@NonNull JSONArray sessionArr) throws JSONException {
+        List<Session> sessions = new ArrayList<>();
+        for (int i = 0; i < sessionArr.length(); i++) {
+            JSONObject sessionObj = sessionArr.getJSONObject(i);
+            boolean isCompleted = sessionObj.getJSONObject("state").getBoolean("complete");
+            Session session = new Session(isCompleted);
+
+            String original = sessionObj.getJSONObject("level").getString("original");
+            session.setOriginal(original);
+            String creator = sessionObj.getString("creator");
+            session.setCreator(creator);
+            int playtime = sessionObj.has("playtime") ? sessionObj.getInt("playtime") : 0;
+            session.setPlaytime(playtime);
+
+            sessions.add(session);
+        }
+        return sessions;
+    }
+
+    public static MemberProgress[] parseTClassroomMembers(@NonNull JSONArray memberArr) throws JSONException {
+        MemberProgress[] members = new MemberProgress[memberArr.length()];
+        for (int i = 0; i < memberArr.length(); i++) {
+            JSONObject memberObj = memberArr.getJSONObject(i);
+            String id = memberObj.getString("_id");
+            String name = memberObj.getString("name");
+            String email = memberObj.getString("email");
+            members[i] = new MemberProgress(id, name, email);
+        }
+        return members;
+    }
+
+    public static void updateMembersWithSessions(@NonNull MemberProgress[] members, @NonNull List<Session> sessions) {
+        for (Session session : sessions) {
+            if (!session.isCompleted()) {
+                continue;
+            }
+
+            // find the correct member
+            MemberProgress member = null;
+            for (MemberProgress member1 : members) {
+                if (session.getCreator().equals(member1.getId())) {
+                    member = member1;
+                    break;
+                }
+            }
+            // increase the completed level
+            if (member != null) {
+                int prevCompletedLevels = member.getCompletedLevels();
+                member.setCompletedLevels(prevCompletedLevels + 1);
+            }
+        }
+    }
+
+    public static int sumPlaytimeTotal(@NonNull List<Session> sessions) {
+        int playtime = 0;
+        for (Session session : sessions) {
+            playtime += session.getPlaytime();
+        }
+        return playtime;
+    }
+
+    public static int countCompletedLevels(@NonNull List<Session> sessions) {
+        Set<String> ids = new HashSet<>();
+        for (Session session : sessions) {
+            if (session.isCompleted()) {
+                ids.add(session.getOriginal());
+            }
+        }
+        return ids.size();
     }
 
     // game map
