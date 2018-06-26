@@ -9,21 +9,15 @@ import java.util.List;
 public class Object extends Variable {
 
     @NonNull
-    private List<Function> mMethods = new ArrayList<>();
+    private List<String> mMethods = new ArrayList<>();
 
     public Object(@NonNull String name) {
         super(name);
         mChildren.add(new Variable(name));
     }
 
-
-    public void addMethods(@NonNull List<Function> methods) {
+    public void addMethods(@NonNull List<String> methods) {
         mMethods.addAll(new ArrayList<>(methods));
-    }
-
-    @NonNull
-    public List<Function> getMethods() {
-        return mMethods;
     }
 
     private void setMethod(Function method) {
@@ -49,8 +43,11 @@ public class Object extends Variable {
         // TODO: 13/06/2018 should not depend on container type
         if (newOp instanceof Function && !(mContainer instanceof Assignment)) {
             int index = mChildren.indexOf(oldOp);
-            for (Function method : mMethods) {
-                if (newOp.equals(method)) {
+            for (String method : mMethods) {
+                String[] parts = method.split("/");
+                boolean isSameName = newOp.getButtonName().equals(parts[0]);
+                boolean isSameParam = ((Function)newOp).getParamTotal() == Integer.valueOf(parts[1]);
+                if (isSameName && isSameParam) {
                     return index;
                 }
             }

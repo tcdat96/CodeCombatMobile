@@ -21,23 +21,8 @@ public class Function extends Operation {
         }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Function)) {
-            return false;
-        }
-        Function function = (Function) obj;
-
-        if (!mName.equals(function.mName) || mChildren.size() != function.mChildren.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < mChildren.size(); i++) {
-            if (!mChildren.get(i).mName.equals(function.mChildren.get(i).mName)) {
-                return false;
-            }
-        }
-        return true;
+    public int getParamTotal() {
+        return mChildren.size();
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +17,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,6 +27,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -36,13 +37,11 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor;
-import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Function;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Object;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory;
@@ -50,6 +49,7 @@ import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFac
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
 import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
+import tcd.android.com.codecombatmobile.util.CodeConverter;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_ASSIGNMENT;
@@ -168,6 +168,12 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 }
                 return super.onConsoleMessage(consoleMessage);
             }
+
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                Log.d(TAG, "onJsAlert: " + message);
+                return super.onJsAlert(view, url, message, result);
+            }
         });
 
         mGameLevelWebView.setFocusable(false);
@@ -208,15 +214,10 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
     private void initVirtualKeyboard() {
         mOpTypes = new ArrayList<>();
-        mOpTypes.add(new OperationType(TYPE_FLOW_CONTROL, "if"));
-        mOpTypes.add(new OperationType(TYPE_FLOW_CONTROL, "for"));
         mOpTypes.add(new OperationType(TYPE_FLOW_CONTROL, "return"));
         mOpTypes.add(new OperationType(TYPE_DECLARATION, "var"));
         mOpTypes.add(new OperationType(TYPE_DECLARATION, "func"));
         mOpTypes.add(new OperationType(TYPE_VARIABLE, "hero"));
-        mOpTypes.add(new OperationType(TYPE_FUNCTION, "drawBox()", new java.lang.Object[]{0}));
-        mOpTypes.add(new OperationType(TYPE_FUNCTION, "drawBoxes()", new java.lang.Object[]{3}));
-        mOpTypes.add(new OperationType(TYPE_METHOD, ".moveRight()", new java.lang.Object[]{0}));
         mOpTypes.add(new OperationType(TYPE_VALUE, "True"));
         mOpTypes.add(new OperationType(TYPE_VALUE, "False"));
         mOpTypes.add(new OperationType(TYPE_VALUE, "null"));
@@ -262,20 +263,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         if (columnLayout != null) {
             Operation operation = mFactory.getOperation(opType);
             if (operation != null) {
-                // add new button
                 SyntaxButton button = createNewButton(operation, opType);
                 columnLayout.addView(button);
                 mSyntaxButtons.add(button);
-
-                // TODO: 13/06/2018 temporary workaround for debug purpose
-                if (operation instanceof Object) {
-                    mObject = (Object) operation;
-                } else if (operation instanceof Function && operation.getButtonName().startsWith(".")) {
-                    if (mObject != null) {
-                        Function function = (Function) operation;
-                        mObject.addMethods(Collections.singletonList(function));
-                    }
-                }
             }
         }
     }
@@ -312,12 +302,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 Operation newOp = mFactory.getOperation(opType);
                 if (newOp != null) {
                     mCodeEditor.addOperation(newOp);
-                }
-
-                Operation source = button.getOperation();
-                if (source != null && source instanceof Object && newOp != null) {
-                    List<Function> methods = ((Object) source).getMethods();
-                    ((Object) newOp).addMethods(methods);
                 }
             }
         });
@@ -571,7 +555,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-
     private void dispatchKeyStroke(final int code) {
         mGameLevelWebView.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, code));
         mGameLevelWebView.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, code));
@@ -580,6 +563,48 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     private void runJsFunc(String function) {
         String url = "javascript:(function() { " + function + "})()";
         mGameLevelWebView.loadUrl(url);
+    }
+
+    @JavascriptInterface
+    public void retrieveMethods(String functions) {
+        String[] lines = functions.split("\\r?\\n");
+        List<OperationType> types = CodeConverter.getTypesFromString(lines);
+
+        // get hero object
+        OperationType heroType = null;
+        for (OperationType type : mOpTypes) {
+            if (type.getSyntaxType() == TYPE_VARIABLE && type.getName().equals("hero")) {
+                heroType = type;
+            }
+        }
+
+        // add methods to hero object
+        if (heroType != null) {
+            List<java.lang.Object> methods = new ArrayList<>();
+            for (OperationType type : types) {
+                if (type.getSyntaxType() == TYPE_METHOD) {
+                    methods.add(type.getName() + "/" + type.getData().get(0));
+                }
+            }
+            heroType.setData(methods);
+        }
+
+        // add to current types
+        int i = 0;
+        for (; i < mOpTypes.size(); i++) {
+            int syntaxType = mOpTypes.get(i).getSyntaxType();
+            if (syntaxType == TYPE_VALUE) {
+                break;
+            }
+        }
+        mOpTypes.addAll(i, types);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                displayButtons();
+            }
+        });
     }
 
     private class CCWebClient extends WebViewClient {
@@ -627,6 +652,18 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                // get default functions
+                                mGameLevelWebView.loadUrl("javascript:" + TAG + ".retrieveMethods((function() {\n" +
+                                        "document.getElementById('spell-palette-view').style.opacity='0';" +
+                                        "var elements = document.getElementsByClassName(\"spell-palette-entry-view\");\n" +
+                                        "var result = \"\";\n" +
+                                        "for (var i = 0; i < elements.length; i++) {\n" +
+                                        "result += elements[i].textContent + '\\n';\n" +
+                                        "}\n" +
+                                        "return result;\n" +
+                                        "})()" +
+                                        ")");
+
                                 // sometimes the spell panel doesn't hide in the first time
                                 String function = "document.getElementById('spell-palette-view').style.display='none';";
                                 runJsFunc(function);

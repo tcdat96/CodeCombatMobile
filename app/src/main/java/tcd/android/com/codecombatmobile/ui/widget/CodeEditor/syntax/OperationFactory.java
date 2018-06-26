@@ -4,6 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by ADMIN on 25/04/2018.
  */
@@ -37,10 +41,18 @@ public class OperationFactory {
                         return new FuncDeclaration();
                 }
             case Operation.TYPE_VARIABLE:
-                return new Object(name);
+                Object object = new Object(name);
+                if (type.getData() != null) {
+                    List<String> methods = new ArrayList<>();
+                    for (java.lang.Object method : type.getData()) {
+                        methods.add((String) method);
+                    }
+                    object.addMethods(methods);
+                }
+                return object;
             case Operation.TYPE_FUNCTION:
             case Operation.TYPE_METHOD:
-                int paramTotal = (int) type.getData()[0];
+                int paramTotal = (int) (type.getData().get(0));
                 return type.getSyntaxType() == Operation.TYPE_FUNCTION ?
                         new Function(name, paramTotal) :
                         new Method(name, paramTotal);
@@ -61,7 +73,7 @@ public class OperationFactory {
         @Operation.SyntaxType
         private int mSyntaxType;
         private String mName;
-        private java.lang.Object[] mData;
+        private List<java.lang.Object> mData;
         private boolean mIsBuiltIn = true;
 
         public OperationType(@Operation.SyntaxType int syntaxType, String name) {
@@ -69,8 +81,16 @@ public class OperationFactory {
             mName = name;
         }
 
-        public OperationType(@Operation.SyntaxType int syntaxType, String name, @NonNull java.lang.Object[] data) {
+        public OperationType(@Operation.SyntaxType int syntaxType, String name, @NonNull List<java.lang.Object> data) {
             this(syntaxType, name);
+            mData = data;
+        }
+
+        public OperationType(@Operation.SyntaxType int syntaxType, String name, java.lang.Object data) {
+            this(syntaxType, name, new ArrayList<>(Collections.singletonList(data)));
+        }
+
+        public void setData(@NonNull List<java.lang.Object> data) {
             mData = data;
         }
 
@@ -82,7 +102,7 @@ public class OperationFactory {
             return mName;
         }
 
-        java.lang.Object[] getData() {
+        public List<java.lang.Object> getData() {
             return mData;
         }
 
