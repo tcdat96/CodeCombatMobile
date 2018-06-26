@@ -1,5 +1,6 @@
 package tcd.android.com.codecombatmobile.ui.widget;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import tcd.android.com.codecombatmobile.data.course.SClassroom;
 import tcd.android.com.codecombatmobile.data.game.Level;
 import tcd.android.com.codecombatmobile.data.game.Session;
 import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
+import tcd.android.com.codecombatmobile.ui.GameMapActivity;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 public class GameMapView extends SurfaceView implements Runnable {
@@ -57,9 +59,8 @@ public class GameMapView extends SurfaceView implements Runnable {
     @NonNull
     private List<Level> mLevels = new ArrayList<>();
     @NonNull
-    private List<Session> mSessions = new ArrayList<>();
-    @NonNull
     private List<RectF> mLevelsPosition = new ArrayList<>();
+
     private Bitmap mLevelBannerBitmap;
     private Position mCurLevelPos = null;
 
@@ -174,7 +175,6 @@ public class GameMapView extends SurfaceView implements Runnable {
     }
 
     public void setLevelSessions(@NonNull List<Session> sessions) {
-        mSessions = sessions;
         // get the unlocked level with largest campaign index
         int curLevelIndex = 0;
         int curLevelCampaignIndex = -1;
@@ -232,6 +232,7 @@ public class GameMapView extends SurfaceView implements Runnable {
             if (mCurLevelPos != null) {
                 canvas.drawBitmap(mLevelBannerBitmap, mCurLevelPos.x, mCurLevelPos.y, mPaint);
             }
+
 
             mHolder.unlockCanvasAndPost(canvas);
         }
@@ -301,7 +302,7 @@ public class GameMapView extends SurfaceView implements Runnable {
                 intent.putExtra(CodeEditorActivity.ARG_LEVEL_ID_DATA, level.getSlug());
                 intent.putExtra(CodeEditorActivity.ARG_COURSE_ID_DATA, mClassroom.getId());
                 intent.putExtra(CodeEditorActivity.ARG_INSTANCE_ID_DATA, mClassroom.getInstanceId());
-                context.startActivity(intent);
+                ((Activity)context).startActivityForResult(intent, GameMapActivity.RC_GAME_LEVEL);
             }
         });
 

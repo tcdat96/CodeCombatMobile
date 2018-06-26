@@ -23,8 +23,7 @@
         </activity>
         <activity
             android:name=".ui.CodeEditorActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/NoActionBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"

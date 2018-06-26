@@ -17,7 +17,6 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,7 +26,6 @@ import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -87,6 +85,8 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     @Nullable
     private Drawable mKeyboardDrawable;
 
+    private boolean mIsCompleted = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +129,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         mKeyboardLayout = findViewById(R.id.ll_keyboard_layout);
         mEditorScrollView = findViewById(R.id.sv_editor_container);
         mButtonContainer = findViewById(R.id.ll_button_container);
+        mGameLevelWebView = findViewById(R.id.wv_game_level);
 
         mCodeEditor = findViewById(R.id.code_editor);
         mCodeEditor.setOnClickListener(this);
@@ -142,7 +143,15 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.iv_redo_button).setOnClickListener(this);
         findViewById(R.id.iv_backspace_button).setOnClickListener(this);
 
+        hideActionBar();
+
         initVirtualKeyboard();
+    }
+
+    private void hideActionBar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
     }
 
     private void initCookie() {
@@ -152,28 +161,11 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void initWebView() {
-        mGameLevelWebView = findViewById(R.id.wv_game_level);
         final CCWebClient ccWebClient = new CCWebClient();
         mGameLevelWebView.setWebViewClient(ccWebClient);
-        mGameLevelWebView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                String msg = consoleMessage.message();
-                if (msg.contains("PlayLevelView: level started")) {
-                    ccWebClient.setPageFinished();
-                } else if (msg.contains("PlayLevelView: loaded session")) {
-                    findViewById(R.id.ll_loading_message).setVisibility(View.GONE);
-                    mGameLevelWebView.setVisibility(View.VISIBLE);
-                }
-                return super.onConsoleMessage(consoleMessage);
-            }
 
-            @Override
-            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-                Log.d(TAG, "onJsAlert: " + message);
-                return super.onJsAlert(view, url, message, result);
-            }
-        });
+        CCWebChromeClient ccWebChromeClient = new CCWebChromeClient(ccWebClient);
+        mGameLevelWebView.setWebChromeClient(ccWebChromeClient);
 
         mGameLevelWebView.setFocusable(false);
         mGameLevelWebView.setFocusableInTouchMode(false);
@@ -392,6 +384,10 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
             setVirtualKeyboardVisibility(View.GONE);
             return;
         }
+        // return to game map
+        if (mIsCompleted) {
+            setResult(RESULT_OK);
+        }
         super.onBackPressed();
     }
 
@@ -415,6 +411,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.fab_run:
+                mIsCompleted = false;
                 fillCodeEditor();
                 mRunFab.setVisibility(View.GONE);
                 new Handler().postDelayed(new Runnable() {
@@ -602,6 +599,31 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 displayButtons();
             }
         });
+    }
+
+    private class CCWebChromeClient extends WebChromeClient {
+        CCWebClient mCcWebClient;
+
+        CCWebChromeClient(CCWebClient ccWebClient) {
+            this.mCcWebClient = ccWebClient;
+        }
+
+        @Override
+        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+            String msg = consoleMessage.message();
+            if (msg.contains("PlayLevelView: level started")) {
+                // level is starting to load
+                mCcWebClient.setPageFinished();
+            } else if (msg.contains("PlayLevelView: loaded session")) {
+                // level is loaded
+                findViewById(R.id.ll_loading_message).setVisibility(View.GONE);
+                mGameLevelWebView.setVisibility(View.VISIBLE);
+            } else if (msg.contains("The world ended in won")) {
+                // the code is correct
+                mIsCompleted = true;
+            }
+            return super.onConsoleMessage(consoleMessage);
+        }
     }
 
     private class CCWebClient extends WebViewClient {

@@ -6,8 +6,10 @@ import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -35,10 +37,13 @@ import tcd.android.com.codecombatmobile.util.DataUtil;
 
 public class GameMapActivity extends AppCompatActivity {
     public static final String ARG_STUDENT_CLASSROOM = "argStudentClassroom";
+    public static final int RC_GAME_LEVEL = 0;
 
+    private ProgressBar mLoadingProgressBar;
     private GameMapView mMapView;
 
-    private GetMapTask mAuthTask = null;
+    private CCRequestManager mManager;
+    private AsyncTask<Void, Void, Boolean> mAsyncTask = null;
     private SClassroom mClassroom;
 
     @Override
@@ -55,17 +60,29 @@ public class GameMapActivity extends AppCompatActivity {
         mClassroom = (SClassroom) data.getSerializableExtra(ARG_STUDENT_CLASSROOM);
 
         initUiComponents();
+        mManager = CCRequestManager.getInstance(this);
 
         // retrieve map from server
-        mAuthTask = new GetMapTask();
-        mAuthTask.execute();
+        mAsyncTask = new GetMapTask();
+        mAsyncTask.execute();
 
         // for user to be able to change the volume of the proper stream
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     private void initUiComponents() {
+        mLoadingProgressBar = findViewById(R.id.pb_loading);
         mMapView = findViewById(R.id.game_map_view);
+    }
+
+    private void updateLoadingUi(boolean isLoading) {
+        if (isLoading) {
+            mMapView.setVisibility(View.INVISIBLE);
+            mLoadingProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mMapView.setVisibility(View.VISIBLE);
+            mLoadingProgressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -83,7 +100,9 @@ public class GameMapActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mAuthTask.cancel(true);
+        if (mAsyncTask != null) {
+            mAsyncTask.cancel(true);
+        }
     }
 
     @Override
@@ -92,23 +111,41 @@ public class GameMapActivity extends AppCompatActivity {
         mMapView.destroy();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case RC_GAME_LEVEL:
+                if (resultCode == RESULT_OK) {
+                    if (mAsyncTask != null) {
+                        mAsyncTask.cancel(true);
+                    }
+                    mAsyncTask = new GetLevelSessions();
+                    mAsyncTask.execute();
+                }
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     private class GetMapTask extends AsyncTask<Void, Void, Boolean> {
 
         private Bitmap mBackground;
         @NonNull
         private List<Level> mLevels = new ArrayList<>();
-        private List<Session> mLevelSessions;
+
+        GetMapTask() {
+            updateLoadingUi(true);
+        }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            CCRequestManager manager = CCRequestManager.getInstance(GameMapActivity.this);
-            JSONObject campaignObj = manager.requestCampaignSync(mClassroom.getCampaignId());
+            JSONObject campaignObj = mManager.requestCampaignSync(mClassroom.getCampaignId());
             if (campaignObj != null) {
                 try {
                     // map background
                     JSONArray bgrUrls = campaignObj.getJSONArray("backgroundImage");
                     String path = bgrUrls.getJSONObject(0).getString("image");
-                    String bgrUrl = manager.getFileUrl(path);
+                    String bgrUrl = mManager.getFileUrl(path);
                     mBackground = Glide.with(GameMapActivity.this).asBitmap().load(bgrUrl).submit().get();
                     if (mBackground == null) {
                         return false;
@@ -137,15 +174,7 @@ public class GameMapActivity extends AppCompatActivity {
                         }
                     });
 
-                    // level sessions
-                    User user = DataUtil.getUserData(GameMapActivity.this);
-                    if (user != null) {
-                        JSONArray sessionsObj = manager.requestLevelSessionsSync(mClassroom.getInstanceId(), user.getId());
-                        if (sessionsObj != null) {
-                            mLevelSessions = CCDataUtil.parseLevelSessions(sessionsObj);
-                        }
-                    }
-                    return mLevelSessions != null;
+                    return true;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -160,15 +189,15 @@ public class GameMapActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean success) {
             super.onPostExecute(success);
+            mAsyncTask = null;
 
             if (success) {
                 mMapView.setClassroom(mClassroom);
                 mMapView.setMapBackground(mBackground);
                 mMapView.setLevels(mLevels);
-                mMapView.setLevelSessions(mLevelSessions);
 
-                findViewById(R.id.pb_game_map).setVisibility(View.GONE);
-                mMapView.setVisibility(View.VISIBLE);
+                mAsyncTask = new GetLevelSessions();
+                mAsyncTask.execute();
             } else {
                 finish();
                 Toast.makeText(getApplicationContext(), R.string.error_get_data_message, Toast.LENGTH_SHORT).show();
@@ -178,7 +207,52 @@ public class GameMapActivity extends AppCompatActivity {
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            mAuthTask = null;
+            mAsyncTask = null;
+        }
+    }
+
+    private class GetLevelSessions extends AsyncTask<Void, Void, Boolean> {
+
+        @Nullable
+        private List<Session> mLevelSessions;
+
+        GetLevelSessions() {
+            updateLoadingUi(true);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                User user = DataUtil.getUserData(GameMapActivity.this);
+                if (user != null) {
+                    JSONArray sessionsObj = mManager.requestLevelSessionsSync(mClassroom.getInstanceId(), user.getId());
+                    if (sessionsObj != null) {
+                        mLevelSessions = CCDataUtil.parseLevelSessions(sessionsObj);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return mLevelSessions != null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+
+            if (success && mLevelSessions != null) {
+                mMapView.setLevelSessions(mLevelSessions);
+                updateLoadingUi(false);
+            } else {
+                finish();
+                Toast.makeText(getApplicationContext(), R.string.error_get_data_message, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            mAsyncTask = null;
         }
     }
 }
