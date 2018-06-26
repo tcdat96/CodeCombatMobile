@@ -1,11 +1,18 @@
 package tcd.android.com.codecombatmobile.ui;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,10 +33,19 @@ import tcd.android.com.codecombatmobile.util.CCDataUtil;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 
-public class SClassroomListActivity extends ClassroomListActivity {
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
+public class SClassroomListActivity extends ClassroomListActivity implements View.OnClickListener {
 
     private List<SClassroom> mClassrooms = new ArrayList<>();
     private SClassroomAdapter mAdapter;
+    @Nullable
+    private AsyncTask<Void, Void, Boolean> mAsyncTask = null;
+
+    private RecyclerView mClassroomListRv;
+    private FloatingActionButton mAddClassroomFab;
+    private ProgressBar mLoadingProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,23 +53,87 @@ public class SClassroomListActivity extends ClassroomListActivity {
         setContentView(R.layout.activity_sclassroom_list);
         configureActionBar();
 
-        initClassList();
-        requestClassList();
+        initUiComponents();
+        requestSClassroomList();
     }
 
-    private void initClassList() {
-        RecyclerView classroomListRv = findViewById(R.id.rv_student_classes);
-        classroomListRv.setLayoutManager(new LinearLayoutManager(this));
-        classroomListRv.setItemAnimator(new DefaultItemAnimator());
+    private void initUiComponents() {
+        mClassroomListRv = findViewById(R.id.rv_student_classes);
+        mAddClassroomFab = findViewById(R.id.fab_add_classroom);
+        mLoadingProgressBar = findViewById(R.id.pb_loading);
+
+        mAddClassroomFab.setOnClickListener(this);
+
+        initClassroomRecyclerView();
+    }
+
+    private void initClassroomRecyclerView() {
+        mClassroomListRv.setLayoutManager(new LinearLayoutManager(this));
+        mClassroomListRv.setItemAnimator(new DefaultItemAnimator());
 
         mAdapter = new SClassroomAdapter(this, mClassrooms);
-        classroomListRv.setAdapter(mAdapter);
+        mClassroomListRv.setAdapter(mAdapter);
     }
 
-    private void requestClassList() {
+    private void requestSClassroomList() {
         final User user = DataUtil.getUserData(this);
         if (user != null) {
             new GetStudentClassListTask(user).execute();
+        }
+    }
+
+    private void updateLoadingUi(boolean isLoading) {
+        if (isLoading) {
+            mClassroomListRv.setVisibility(View.INVISIBLE);
+            mAddClassroomFab.setVisibility(View.INVISIBLE);
+            mLoadingProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            mClassroomListRv.setVisibility(View.VISIBLE);
+            mAddClassroomFab.setVisibility(View.VISIBLE);
+            mLoadingProgressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fab_add_classroom:
+                showAddClassroomDialog();
+        }
+    }
+
+    private void showAddClassroomDialog() {
+        final EditText classCodeEditText = new EditText(this);
+        classCodeEditText.setSingleLine(true);
+        FrameLayout container = new FrameLayout(this);
+        FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        params.setMargins(48, 0, 48, 0);
+        classCodeEditText.setLayoutParams(params);
+        container.addView(classCodeEditText);
+
+        AlertDialog.Builder addFriendDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert);
+        addFriendDialog
+                .setTitle(getResources().getString(R.string.title_enter_classroom_code))
+                .setView(container)
+                .setNegativeButton(getResources().getString(R.string.cancel), null)
+                .setPositiveButton(getResources().getString(R.string.add), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (mAsyncTask == null) {
+                            mAsyncTask = new AddClassroomTask(classCodeEditText.getText().toString());
+                            mAsyncTask.execute();
+                        }
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAsyncTask != null) {
+            mAsyncTask.cancel(true);
+            mAsyncTask = null;
         }
     }
 
@@ -66,6 +146,7 @@ public class SClassroomListActivity extends ClassroomListActivity {
         GetStudentClassListTask(User user) {
             mUser = user;
             mReqManager = CCRequestManager.getInstance(SClassroomListActivity.this);
+            updateLoadingUi(true);
         }
 
         @Override
@@ -83,6 +164,7 @@ public class SClassroomListActivity extends ClassroomListActivity {
                     return false;
                 }
                 List<SClassroom> classrooms = parseClasses(classroomArr);
+                mClassrooms.clear();
                 mClassrooms.addAll(classrooms);
                 // get class instances
                 JSONArray instanceArr = mReqManager.requestCourseInstancesSync(mUser.getId());
@@ -215,10 +297,45 @@ public class SClassroomListActivity extends ClassroomListActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean isSuccessful) {
-            if (isSuccessful) {
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            mAsyncTask = null;
+            if (success) {
                 mAdapter.notifyDataSetChanged();
+                updateLoadingUi(false);
             }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            mAsyncTask = null;
+        }
+    }
+
+    private class AddClassroomTask extends AsyncTask<Void, Void, Boolean> {
+
+        private String mClassCode;
+        AddClassroomTask(String classCode) {
+            this.mClassCode = classCode;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            CCRequestManager.getInstance(SClassroomListActivity.this).addSClassroom(mClassCode);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            requestSClassroomList();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            mAsyncTask = null;
         }
     }
 }

@@ -81,6 +81,9 @@
     <string name="course_progress">Course progress</string>
     <string name="no_student_message">This classroom has no students yet.</string>
     <string name="cover_transition_name" translatable="false">coverTrans</string>
+    <string name="title_enter_classroom_code">Enter the classroom code</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
 
     <!-- settings -->
     <string name="title_activity_settings">Settings</string>

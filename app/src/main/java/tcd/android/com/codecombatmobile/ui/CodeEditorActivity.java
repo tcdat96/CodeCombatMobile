@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor;
-import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Object;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory.OperationType;
@@ -255,8 +254,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
         showOnlyStatementButtons();
     }
-
-    private Object mObject;
 
     private void addNewButton(OperationType opType) {
         LinearLayout columnLayout = getLastColumn();

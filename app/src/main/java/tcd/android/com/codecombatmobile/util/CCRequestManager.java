@@ -333,6 +333,18 @@ public class CCRequestManager {
         return getResponse(future);
     }
 
+    // join class
+    public void addSClassroom(@NonNull final String code) {
+        try {
+            String path = "/db/classroom/~/members";
+            JSONObject jsonReq = new JSONObject();
+            jsonReq.put("code", code);
+            sendRequestSync(POST, path, jsonReq);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     // teacher classroom detail
     public JSONArray requestMemberSessionsSync(String classroomId) {
         String path = String.format("/db/classroom/%s/member-sessions?memberLimit=10&memberSkip=0", classroomId);
