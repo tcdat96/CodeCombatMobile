@@ -315,7 +315,7 @@ public class CCRequestManager {
             JSONObject jsonReq = new JSONObject();
             jsonReq.put("ids[]", userId);
             String path = "/db/user/x/names";
-            RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
+            RequestFuture<JSONObject> future = sendRequestSync(POST, path, jsonReq);
             result = getResponse(future);
         } catch (JSONException e) {
             e.printStackTrace();

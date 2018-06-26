@@ -31,11 +31,11 @@ public class TClassroomListActivity extends ClassroomListActivity {
         setContentView(R.layout.activity_tclassroom_list);
         configureActionBar();
 
-        initClassListView();
-        requestClassList();
+        initClassroomRecyclerView();
+        requestClassroomList();
     }
 
-    private void initClassListView() {
+    private void initClassroomRecyclerView() {
         RecyclerView teacherClassListRv = findViewById(R.id.rv_student_classes);
         teacherClassListRv.setLayoutManager(new LinearLayoutManager(this));
         teacherClassListRv.setItemAnimator(new DefaultItemAnimator());
@@ -44,7 +44,7 @@ public class TClassroomListActivity extends ClassroomListActivity {
         teacherClassListRv.setAdapter(mAdapter);
     }
 
-    private void requestClassList() {
+    private void requestClassroomList() {
         User user = DataUtil.getUserData(this);
         if (user != null) {
             CCRequestManager.getInstance(this).requestTeacherClassList(user.getId(), new Response.Listener<JSONArray>() {

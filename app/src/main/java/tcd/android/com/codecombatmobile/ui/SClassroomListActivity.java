@@ -111,7 +111,7 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
         classCodeEditText.setLayoutParams(params);
         container.addView(classCodeEditText);
 
-        AlertDialog.Builder addFriendDialog = new AlertDialog.Builder(this, R.style.Theme_AppCompat_Light_Dialog_Alert);
+        AlertDialog.Builder addFriendDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
         addFriendDialog
                 .setTitle(getResources().getString(R.string.title_enter_classroom_code))
                 .setView(container)
@@ -190,8 +190,7 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
                 String language = aceConfig != null ? aceConfig.getString("language") : "python";
                 // get owner's name
                 String ownerId = classObj.getString("ownerID");
-//                String teacher = getOwnerName(ownerId);
-                String teacher = "";
+                String teacher = getOwnerName(ownerId);
                 // course's levels
                 JSONArray courseArr = classObj.getJSONArray("courses");
                 parseCourseLevels(courseArr);
@@ -204,10 +203,9 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
 
         private String getOwnerName(String ownerId) throws JSONException {
             // TODO: 24/05/2018 not working
-            CCRequestManager util = CCRequestManager.getInstance(SClassroomListActivity.this);
-            JSONObject nameResponse = util.requestNamesSync(ownerId);
+            JSONObject nameResponse = mReqManager.requestNamesSync(ownerId);
             String owner = "";
-            if (nameResponse != null) {
+            if (nameResponse != null && nameResponse.length() > 0) {
                 JSONObject obj = nameResponse.getJSONObject(ownerId);
                 String firstName = obj.getString("firstName");
                 String lastName = obj.getString("lastName");
