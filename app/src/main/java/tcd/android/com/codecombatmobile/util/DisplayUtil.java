@@ -13,6 +13,8 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Display;
 import android.widget.LinearLayout;
@@ -117,6 +119,13 @@ public class DisplayUtil {
         Point size = new Point();
         display.getSize(size);
         return size;
+    }
+
+    public static void hideActionBar(@NonNull AppCompatActivity activity) {
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
     }
 
     public static int getStatusBarHeight(Resources resources) {

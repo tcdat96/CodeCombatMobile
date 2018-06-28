@@ -1,21 +1,26 @@
-package tcd.android.com.codecombatmobile.ui;
+package tcd.android.com.codecombatmobile.ui.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -34,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,9 +60,9 @@ import tcd.android.com.codecombatmobile.util.CCRequestManager;
 import tcd.android.com.codecombatmobile.util.DataUtil;
 import tcd.android.com.codecombatmobile.util.TimeUtil;
 
-public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProfileFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = ProfileActivity.class.getSimpleName();
+    private static final String TAG = ProfileFragment.class.getSimpleName();
     private static final int CHART_ANIMATION_DURATION = (int) TimeUnit.SECONDS.toMillis(1);
 
     private NestedScrollView mRootNsv;
@@ -64,6 +70,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private RecyclerView mSessionListRv;
     private BarChart mChart;
 
+    private Context mContext;
+    
     @Nullable
     private GetProfileTask mInitProfileTask;
 
@@ -73,29 +81,39 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @NonNull
     List<Achievement> mAchievements = new ArrayList<>();
 
+    public static ProfileFragment newInstance() {
+        Bundle args = new Bundle();
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        mContext = view.getContext();
 
-        initUiComponents();
-        initActionBar();
+        initUiComponents(view);
 
         mInitProfileTask = new GetProfileTask();
         mInitProfileTask.execute();
+
+        return view;
     }
 
-    private void initUiComponents() {
-        mRootNsv = findViewById(R.id.nsv_root);
-        mChart = findViewById(R.id.bc_playtime);
+    private void initUiComponents(View view) {
+        mRootNsv = view.findViewById(R.id.nsv_root);
+        mChart = view.findViewById(R.id.bc_playtime);
+
+        configureActionBar(view);
     }
 
-    private void initActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.profile_title);
+    private void configureActionBar(View view) {
+        Activity activity = (Activity) view.getContext();
+        Toolbar toolbar = activity.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.profile_title);
         }
     }
 
@@ -103,58 +121,59 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         showHeroAvatar();
 
         // username
-        TextView firstNameTextView = findViewById(R.id.tv_user_first_name);
+        TextView firstNameTextView = mRootNsv.findViewById(R.id.tv_user_first_name);
         firstNameTextView.setText(mProfileGeneral.getUsername());
 
         // current user level
-        TextView levelTextView = findViewById(R.id.tv_user_level);
+        TextView levelTextView = mRootNsv.findViewById(R.id.tv_user_level);
         String level = String.format(getString(R.string.user_level), mProfileGeneral.getLevel());
         levelTextView.setText(level);
 
         // total completed levels
-        TextView completedLevelsTextView = findViewById(R.id.tv_completed_level_total);
+        TextView completedLevelsTextView = mRootNsv.findViewById(R.id.tv_completed_level_total);
         completedLevelsTextView.setOnClickListener(this);
         String completedLevelTotal = String.valueOf(mProfileGeneral.getSingleplayer() + mProfileGeneral.getMultiplayer());
         completedLevelsTextView.setText(completedLevelTotal);
 
-        Playtime playtime = TimeUtil.getDisplayPlaytime(this, mProfileGeneral.getPlaytime());
+        Playtime playtime = TimeUtil.getDisplayPlaytime(mContext, mProfileGeneral.getPlaytime());
         // total playtime
-        TextView playtimeTextView = findViewById(R.id.tv_playtime);
+        TextView playtimeTextView = mRootNsv.findViewById(R.id.tv_playtime);
         playtimeTextView.setOnClickListener(this);
-        playtimeTextView.setText(String.valueOf(playtime.getValue()));
+        String playtimeVal = new DecimalFormat("#.#").format(playtime.getValue());
+        playtimeTextView.setText(playtimeVal);
         // playtime unit
-        TextView unitTextView = findViewById(R.id.tv_playtime_unit);
+        TextView unitTextView = mRootNsv.findViewById(R.id.tv_playtime_unit);
         unitTextView.setOnClickListener(this);
         unitTextView.setText(playtime.getUnit());
 
         // achievement total
-        TextView acmTextView = findViewById(R.id.tv_achievement_total);
+        TextView acmTextView = mRootNsv.findViewById(R.id.tv_achievement_total);
         String acmTotal = String.valueOf(mProfileGeneral.getAchievementTotal());
         acmTextView.setText(acmTotal);
 
         // course total
-        TextView courseTextView = findViewById(R.id.tv_course_total);
+        TextView courseTextView = mRootNsv.findViewById(R.id.tv_course_total);
         String courseTotal = String.valueOf(mProfileGeneral.getCourseTotal());
         courseTextView.setText(courseTotal);
 
         // singleplayer level count
-        TextView spCountTextView = findViewById(R.id.tv_singleplayer_level_count);
+        TextView spCountTextView = mRootNsv.findViewById(R.id.tv_singleplayer_level_count);
         String singleplayerCount = getResources().getQuantityString(R.plurals.level_total,
                 mProfileGeneral.getSingleplayer(), mProfileGeneral.getSingleplayer());
         spCountTextView.setText(singleplayerCount);
 
         // multiplayer level count
-        TextView mpCountTextView = findViewById(R.id.tv_multiplayer_level_count);
+        TextView mpCountTextView = mRootNsv.findViewById(R.id.tv_multiplayer_level_count);
         String multiplayerCount = getResources().getQuantityString(R.plurals.level_total,
                 mProfileGeneral.getMultiplayer(), mProfileGeneral.getMultiplayer());
         mpCountTextView.setText(multiplayerCount);
 
         // onClickListener
-        findViewById(R.id.cv_achievement_total_container).setOnClickListener(this);
+        mRootNsv.findViewById(R.id.cv_achievement_total_container).setOnClickListener(this);
     }
 
     private void showHeroAvatar() {
-        final ImageView heroPictureImageView = findViewById(R.id.iv_hero_avatar);
+        final ImageView heroPictureImageView = mRootNsv.findViewById(R.id.iv_hero_avatar);
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -168,8 +187,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initAchievementList() {
-        mAcmListRv = findViewById(R.id.rv_achievement_list);
-        mAcmListRv.setLayoutManager(new LinearLayoutManager(this));
+        mAcmListRv = mRootNsv.findViewById(R.id.rv_achievement_list);
+        mAcmListRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mAcmListRv.setItemAnimator(new DefaultItemAnimator());
         mAcmListRv.setNestedScrollingEnabled(false);
 
@@ -178,8 +197,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initLevelSessionList() {
-        mSessionListRv = findViewById(R.id.rv_session_list);
-        mSessionListRv.setLayoutManager(new LinearLayoutManager(this));
+        mSessionListRv = mRootNsv.findViewById(R.id.rv_session_list);
+        mSessionListRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mSessionListRv.setItemAnimator(new DefaultItemAnimator());
         mSessionListRv.setNestedScrollingEnabled(false);
 
@@ -193,7 +212,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initTrackRecordGraph() {
-        CalendarGraph graph = findViewById(R.id.cg_track_record);
+        CalendarGraph graph = mRootNsv.findViewById(R.id.cg_track_record);
         graph.setLevelSessions(mSessions);
     }
 
@@ -256,6 +275,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         List<String> labels = new ArrayList<>();
         List<BarEntry> entries = new ArrayList<>();
 
+        Collections.sort(mSessions, new Comparator<Session>() {
+            @Override
+            public int compare(Session o1, Session o2) {
+                return compare(o1.getTimeChanged(), o2.getTimeChanged());
+            }
+            @SuppressWarnings("UseCompareMethod")
+            private int compare(long x, long y) {
+                return (x < y) ? -1 : ((x == y) ? 0 : 1);
+            }
+        });
+
         // create graph values
         String prevDate = TimeUtil.getDayMonthString(mSessions.get(0).getTimeChanged());
         int yVal = 0;
@@ -286,7 +316,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private BarDataSet getDataSet(List<BarEntry> entries) {
         BarDataSet set = new BarDataSet(entries, TAG);
 
-        int color = ContextCompat.getColor(this, R.color.playtime_graph_color);
+        int color = ContextCompat.getColor(mContext, R.color.playtime_graph_color);
         set.setColor(color);
 
         set.setColors(ColorTemplate.VORDIPLOM_COLORS);
@@ -301,7 +331,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         if (mInitProfileTask != null) {
             mInitProfileTask.cancel(true);
@@ -332,12 +362,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         CCRequestManager mManager;
 
         GetProfileTask() {
-            mManager = CCRequestManager.getInstance(ProfileActivity.this);
+            mManager = CCRequestManager.getInstance(getContext());
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            User user = DataUtil.getUserData(ProfileActivity.this);
+            User user = DataUtil.getUserData(getContext());
             if (user != null && mManager != null) {
                 try {
                     // level sessions
@@ -416,7 +446,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 initAchievementList();
                 initLevelSessionList();
             } else {
-                finish();
+                Toast.makeText(mContext, R.string.error_get_data_message, Toast.LENGTH_SHORT).show();
             }
         }
 

@@ -38,13 +38,8 @@ import static com.android.volley.Request.Method.PUT;
 
 public class CCRequestManager {
     private static final String TAG = CCRequestManager.class.getSimpleName();
-    private static final String AVD_EMULATOR_IP_ADDRESS = "10.0.2.2";
-    private static final String GENY_MOTION_IP_ADDRESS = "10.0.3.2";
-    private static final String READ_DEVICE_IP_ADDRESS = "127.0.0.1";
-//    private static final String READ_DEVICE_IP_ADDRESS = "192.168.0.109";
 
     private static CCRequestManager mInstance = null;
-    private ImageLoader mImageLoader;
     private RequestQueue mRequestQueue;
     private static Context mContext;
 
@@ -52,23 +47,6 @@ public class CCRequestManager {
     private CCRequestManager(Context context) {
         mContext = context;
         mRequestQueue = getRequestQueue();
-        mImageLoader = new ImageLoader(mRequestQueue,
-                new ImageLoader.ImageCache() {
-                    private final LruCache<String, Bitmap> mCache = new LruCache<>(20);
-
-                    @Override
-                    public Bitmap getBitmap(String url) {
-                        return mCache.get(url);
-                    }
-
-                    @Override
-                    public void putBitmap(String url, Bitmap bitmap) {
-                        mCache.put(url, bitmap);
-                    }
-                });
-
-//        CookieManager manager = new CookieManager();
-//        CookieHandler.setDefault(manager);
 
         CookieUtil.getCookieUtil(context).initCookieHandler();
     }
@@ -91,7 +69,7 @@ public class CCRequestManager {
     // fundamental methods
     public String getRequestUrl(String path) {
         String protocol = "http://";
-        String domainName = getIpAddress() + ":3000";
+        String domainName = "codecombat.eastus.cloudapp.azure.com:3000";
         return protocol + domainName + path;
     }
 
@@ -99,21 +77,6 @@ public class CCRequestManager {
         return getRequestUrl("/file/" + path);
     }
 
-    private String getIpAddress() {
-        if (Build.MANUFACTURER.contains("Genymotion")) {
-            return GENY_MOTION_IP_ADDRESS;
-        } else if (Build.FINGERPRINT.startsWith("generic")
-                || Build.FINGERPRINT.startsWith("unknown")
-                || Build.MODEL.contains("google_sdk")
-                || Build.MODEL.contains("Emulator")
-                || Build.MODEL.contains("Android SDK built for x86")
-                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
-                || "google_sdk".equals(Build.PRODUCT)) {
-            return AVD_EMULATOR_IP_ADDRESS;
-        } else {
-            return READ_DEVICE_IP_ADDRESS;
-        }
-    }
 
     private RequestFuture<JSONObject> sendRequestSync(int method, String path, JSONObject jsonRequest) {
         String reqUrl = getRequestUrl(path);
@@ -163,6 +126,10 @@ public class CCRequestManager {
         getRequestQueue().add(request);
     }
 
+    // main activity
+    public String getAboutUrl() {
+        return getRequestUrl("/about");
+    }
 
     // sign in / sign up
     @Nullable

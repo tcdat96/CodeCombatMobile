@@ -51,12 +51,10 @@ import tcd.android.com.codecombatmobile.data.user.Student;
 import tcd.android.com.codecombatmobile.data.user.Teacher;
 import tcd.android.com.codecombatmobile.data.user.User;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
+import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AccountRequestActivity implements LoaderCallbacks<Cursor>, OnClickListener {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
@@ -86,10 +84,7 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         setContentView(R.layout.activity_login);
 
-        // hide action bar
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        DisplayUtil.hideActionBar(this);
 
         initUiComponents();
 
@@ -102,8 +97,8 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
     @Override
     protected void onStart() {
         super.onStart();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
+//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+//        updateUI(account);
     }
 
     private void initUiComponents() {
@@ -149,15 +144,6 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
 
         // default options
         toggleSignInOption();
-
-        // debug
-        boolean isStudent = true;
-        String studentName = "student";
-        mEmailView.setText(isStudent ? studentName + "@gmail.com" : "teacher@gmail.com");
-        mPasswordView.setText(isStudent ? studentName : "teacher");
-        mUsernameView.setText(isStudent ? studentName : "ndhuy");
-        mFirstNameView.setText(isStudent ? "" : "Duc Huy");
-        mLastNameView.setText(isStudent ? "" : "Nguyen");
 
         SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in);
         googleSignInButton.setOnClickListener(this);
@@ -307,11 +293,11 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
         String lastName = mLastNameView.getText().toString();
 
         // enforce all required fields
-        boolean cancel = validateEmptyEmail(email)
-                || validateEmptyNames(username, firstName, lastName)
-                || validateEmptyPassword(password);
+        boolean isInfoValid = isEmailValid(email)
+                || areNamesValid(username, firstName, lastName)
+                || isPasswordValid(password);
 
-        if (cancel) {
+        if (!isInfoValid) {
             // show error
             mErrorView.requestFocus();
         } else {
@@ -331,62 +317,62 @@ public class LoginActivity extends AccountRequestActivity implements LoaderCallb
         }
     }
 
-    private boolean validateEmptyPassword(String password) {
+    private boolean isPasswordValid(String password) {
         if (TextUtils.isEmpty(password)) {
             mErrorView = mPasswordView;
             mErrorView.setError(getString(R.string.error_field_required));
-            return true;
-        } else if (!isPasswordValid(password)) {
+            return false;
+        } else if (!validatePassword(password)) {
             mErrorView = mPasswordView;
             mErrorView.setError(getString(R.string.error_invalid_password));
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    private boolean validateEmptyEmail(String email) {
+    private boolean isEmailValid(String email) {
         if (TextUtils.isEmpty(email)) {
             mErrorView = mEmailView;
             mEmailView.setError(getString(R.string.error_field_required));
-            return true;
-        } else if (!isEmailValid(email)) {
+            return false;
+        } else if (!validateEmail(email)) {
             mErrorView = mEmailView;
             mEmailView.setError(getString(R.string.error_invalid_email));
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    private boolean validateEmptyNames(String username, String firstName, String lastName) {
+    private boolean areNamesValid(String username, String firstName, String lastName) {
         if (mIsSignInSelected) {
-            return false;
+            return true;
         }
 
         if (mIsStudentSelected) {
             if (TextUtils.isEmpty(username)) {
                 mErrorView = mUsernameView;
                 mUsernameView.setError(getString(R.string.error_field_required));
-                return true;
+                return false;
             }
         } else {
             if (TextUtils.isEmpty(firstName)) {
                 mErrorView = mFirstNameView;
                 mFirstNameView.setError(getString(R.string.error_field_required));
-                return true;
+                return false;
             } else if (TextUtils.isEmpty(lastName)) {
                 mErrorView = mLastNameView;
                 mLastNameView.setError(getString(R.string.error_field_required));
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
-    private boolean isEmailValid(String email) {
+    private boolean validateEmail(String email) {
         return email.contains("@");
     }
 
-    private boolean isPasswordValid(String password) {
+    private boolean validatePassword(String password) {
         return password.length() >= 6;
     }
 

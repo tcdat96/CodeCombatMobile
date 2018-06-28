@@ -1,5 +1,6 @@
 package tcd.android.com.codecombatmobile.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -85,6 +86,29 @@ public class DataUtil {
             user.setId(uid);
         }
         return user;
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public static void removeUserData(Context context) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.remove(context.getString(R.string.pref_user_id_key));
+        editor.remove(context.getString(R.string.pref_email_key));
+
+        String roleKey = context.getString(R.string.pref_user_role_key);
+        String role = sharedPref.getString(roleKey, "");
+        editor.remove(roleKey);
+
+        if (role.equalsIgnoreCase(Teacher.class.getSimpleName())) {
+            editor.remove(context.getString(R.string.pref_first_name_key));
+            editor.remove(context.getString(R.string.pref_last_name_key));
+        } else if (role.equalsIgnoreCase(Student.class.getSimpleName())) {
+            editor.remove(context.getString(R.string.pref_username_key));
+        }
+
+        // commit is required to take effect immediately
+        editor.commit();
     }
 
 

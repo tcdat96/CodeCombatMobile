@@ -143,15 +143,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.iv_redo_button).setOnClickListener(this);
         findViewById(R.id.iv_backspace_button).setOnClickListener(this);
 
-        hideActionBar();
+        DisplayUtil.hideActionBar(this);
 
         initVirtualKeyboard();
-    }
-
-    private void hideActionBar() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
     }
 
     private void initCookie() {
@@ -414,12 +408,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 mIsCompleted = false;
                 fillCodeEditor();
                 mRunFab.setVisibility(View.GONE);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRunFab.setVisibility(View.VISIBLE);
-                    }
-                }, 5000);
                 break;
             case R.id.iv_hide_keyboard_button:
                 setVirtualKeyboardVisibility(View.GONE);
@@ -618,10 +606,14 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 // level is loaded
                 findViewById(R.id.ll_loading_message).setVisibility(View.GONE);
                 mGameLevelWebView.setVisibility(View.VISIBLE);
-            } else if (msg.contains("The world ended in won")) {
+            } else if (msg.contains("The world ended in")) {
+                mRunFab.setVisibility(View.VISIBLE);
                 // the code is correct
-                mIsCompleted = true;
+                if (msg.contains("won")) {
+                    mIsCompleted = true;
+                }
             }
+
             return super.onConsoleMessage(consoleMessage);
         }
     }

@@ -10,7 +10,7 @@
     android:transitionName="@string/cover_transition_name"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    android:layout_marginTop="16dp">
+    android:layout_marginBottom="16dp">
 
     <tcd.android.com.codecombatmobile.ui.widget.RatioImageView
         android:id="@+id/iv_language_cover"

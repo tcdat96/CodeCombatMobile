@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:scrollbars="none"
-    tools:context=".ui.ProfileActivity">
+    tools:context=".ui.fragment.ProfileFragment">
 
     <LinearLayout
         android:id="@+id/ll_profile_container"

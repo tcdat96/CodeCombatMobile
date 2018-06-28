@@ -2,7 +2,17 @@
     <string name="app_name">CodeCombatMobile</string>
 
     <!--main activity-->
+    <string name="description_splash_logo">Splash screen logo</string>
     <string name="error_login">There was a problem logging in CodeCombat. Please try again later.</string>
+
+    <!--navigation drawer-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_title_classrooms">Classrooms</string>
+    <string name="nav_title_profile">User profile</string>
+    <string name="nav_title_more">More</string>
+    <string name="nav_title_settings">Settings</string>
+    <string name="nav_title_about">About</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_login">Sign in</string>

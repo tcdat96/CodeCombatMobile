@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import tcd.android.com.codecombatmobile.R;
 import tcd.android.com.codecombatmobile.data.Position;
@@ -42,7 +41,7 @@ import tcd.android.com.codecombatmobile.util.DisplayUtil;
 public class GameMapView extends SurfaceView implements Runnable {
     private static final String TAG = GameMapView.class.getSimpleName();
     private static final int LEVEL_BANNER_WIDTH = 50;
-    private static final long VALID_CLICK_TIME_DIFFERENCE = TimeUnit.SECONDS.toMillis(1);
+    private static final long VALID_CLICK_TIME_DIFFERENCE = 500;
 
     @Nullable
     private Thread mGameThread = null;
@@ -59,7 +58,9 @@ public class GameMapView extends SurfaceView implements Runnable {
     @NonNull
     private List<Level> mLevels = new ArrayList<>();
     @NonNull
-    private List<RectF> mLevelsPosition = new ArrayList<>();
+    private List<RectF> mLevelBounds = new ArrayList<>();
+    @NonNull
+    private List<RectF> mLevelClickBounds = new ArrayList<>();
 
     private Bitmap mLevelBannerBitmap;
     private Position mCurLevelPos = null;
@@ -165,12 +166,18 @@ public class GameMapView extends SurfaceView implements Runnable {
                 position.x *= scaleX + left;
                 position.y = height - position.y * scaleY;
 
-                float semiMajor = 12f;
-                float semiMinor = 10f;
+                float semiMajor = 14f;
+                float semiMinor = 11f;
                 RectF rectF = new RectF(position.x - semiMajor, position.y - semiMinor,
                         position.x + semiMajor, position.y + semiMinor);
-                mLevelsPosition.add(rectF);
+                mLevelBounds.add(rectF);
             }
+        }
+
+        int extra = 15;
+        for (RectF bound : mLevelBounds) {
+            RectF clickBound = new RectF(bound.left - extra, bound.top - extra, bound.right + extra, bound.bottom + extra);
+            mLevelClickBounds.add(clickBound);
         }
     }
 
@@ -225,7 +232,7 @@ public class GameMapView extends SurfaceView implements Runnable {
 
             // levels
             for (int i = 0; i < mLevels.size(); i++) {
-                canvas.drawOval(mLevelsPosition.get(i), getLevelStatePaint(mLevels.get(i).getLevelState()));
+                canvas.drawOval(mLevelBounds.get(i), getLevelStatePaint(mLevels.get(i).getLevelState()));
             }
 
             // mark current level
@@ -251,25 +258,23 @@ public class GameMapView extends SurfaceView implements Runnable {
         return mLockedLevelPaint;
     }
 
-    private boolean isPressed = false;
+    private boolean mIsPressed = false;
     private long mLastClickTime = 0;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                isPressed = true;
+                mIsPressed = true;
                 return true;
             case MotionEvent.ACTION_UP:
                 long difference = System.currentTimeMillis() - mLastClickTime;
-                if (isPressed && difference > VALID_CLICK_TIME_DIFFERENCE) {
+                if (mIsPressed && difference > VALID_CLICK_TIME_DIFFERENCE) {
                     mLastClickTime = System.currentTimeMillis();
                     float x = event.getX();
                     float y = event.getRawY();
-                    Log.d(TAG, "onTouchEvent: ");
-                    // TODO: 27/05/2018 fix the coordinate precision issue
-                    for (int i = 0; i < mLevelsPosition.size(); i++) {
-                        if (mLevelsPosition.get(i).contains(x, y)) {
+                    for (int i = 0; i < mLevelClickBounds.size(); i++) {
+                        if (mLevelClickBounds.get(i).contains(x, y)) {
                             Log.d(TAG, "onTouchEvent: " + i);
                             if (mLevels.get(i).getLevelState() != Level.STATE_LOCKED) {
                                 showLevelInfoDialog(i);
@@ -278,7 +283,7 @@ public class GameMapView extends SurfaceView implements Runnable {
                         }
                     }
                 }
-                isPressed = false;
+                mIsPressed = false;
                 return false;
             default:
                 return super.onTouchEvent(event);

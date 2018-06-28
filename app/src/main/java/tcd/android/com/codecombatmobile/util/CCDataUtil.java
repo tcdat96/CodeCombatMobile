@@ -85,7 +85,7 @@ public class CCDataUtil {
     public static boolean isPrimaryLevel(JSONObject levelObj) throws JSONException {
         return !levelObj.has("assessment")
                 && (!levelObj.has("practice") || !levelObj.getBoolean("practice"))
-                && !levelObj.getString("type").equals("course-ladder");
+                && (levelObj.has("type") && !levelObj.getString("type").equals("course-ladder"));
     }
 
     // teacher classroom detail

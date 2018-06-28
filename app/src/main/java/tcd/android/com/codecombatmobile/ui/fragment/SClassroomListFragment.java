@@ -1,15 +1,19 @@
-package tcd.android.com.codecombatmobile.ui;
+package tcd.android.com.codecombatmobile.ui.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -36,10 +40,11 @@ import tcd.android.com.codecombatmobile.util.DataUtil;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-public class SClassroomListActivity extends ClassroomListActivity implements View.OnClickListener {
-
+public class SClassroomListFragment extends ClassroomListFragment implements View.OnClickListener {
+    
     private List<SClassroom> mClassrooms = new ArrayList<>();
     private SClassroomAdapter mAdapter;
+    private Context mContext;
     @Nullable
     private AsyncTask<Void, Void, Boolean> mAsyncTask = null;
 
@@ -47,20 +52,31 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
     private FloatingActionButton mAddClassroomFab;
     private ProgressBar mLoadingProgressBar;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sclassroom_list);
-        configureActionBar();
-
-        initUiComponents();
-        requestSClassroomList();
+    public static SClassroomListFragment newInstance() {
+        Bundle args = new Bundle();
+        SClassroomListFragment fragment = new SClassroomListFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
-    private void initUiComponents() {
-        mClassroomListRv = findViewById(R.id.rv_student_classes);
-        mAddClassroomFab = findViewById(R.id.fab_add_classroom);
-        mLoadingProgressBar = findViewById(R.id.pb_loading);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_classroom_list, container, false);
+        configureActionBar(view);
+        
+        mContext = view.getContext();
+
+        initUiComponents(view);
+        requestSClassroomList();
+
+        return view;
+    }
+
+    private void initUiComponents(View view) {
+        mClassroomListRv = view.findViewById(R.id.rv_student_classes);
+        mAddClassroomFab = view.findViewById(R.id.fab_add);
+        mLoadingProgressBar = view.findViewById(R.id.pb_loading);
 
         mAddClassroomFab.setOnClickListener(this);
 
@@ -68,15 +84,15 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
     }
 
     private void initClassroomRecyclerView() {
-        mClassroomListRv.setLayoutManager(new LinearLayoutManager(this));
+        mClassroomListRv.setLayoutManager(new LinearLayoutManager(mContext));
         mClassroomListRv.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new SClassroomAdapter(this, mClassrooms);
+        mAdapter = new SClassroomAdapter(mContext, mClassrooms);
         mClassroomListRv.setAdapter(mAdapter);
     }
 
     private void requestSClassroomList() {
-        final User user = DataUtil.getUserData(this);
+        final User user = DataUtil.getUserData(mContext);
         if (user != null) {
             new GetStudentClassListTask(user).execute();
         }
@@ -97,21 +113,21 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.fab_add_classroom:
+            case R.id.fab_add:
                 showAddClassroomDialog();
         }
     }
 
     private void showAddClassroomDialog() {
-        final EditText classCodeEditText = new EditText(this);
+        final EditText classCodeEditText = new EditText(mContext);
         classCodeEditText.setSingleLine(true);
-        FrameLayout container = new FrameLayout(this);
+        FrameLayout container = new FrameLayout(mContext);
         FrameLayout.LayoutParams params = new  FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
         params.setMargins(48, 0, 48, 0);
         classCodeEditText.setLayoutParams(params);
         container.addView(classCodeEditText);
 
-        AlertDialog.Builder addFriendDialog = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        AlertDialog.Builder addFriendDialog = new AlertDialog.Builder(mContext, R.style.AlertDialogTheme);
         addFriendDialog
                 .setTitle(getResources().getString(R.string.title_enter_classroom_code))
                 .setView(container)
@@ -129,7 +145,7 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         if (mAsyncTask != null) {
             mAsyncTask.cancel(true);
@@ -145,7 +161,7 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
 
         GetStudentClassListTask(User user) {
             mUser = user;
-            mReqManager = CCRequestManager.getInstance(SClassroomListActivity.this);
+            mReqManager = CCRequestManager.getInstance(mContext);
             updateLoadingUi(true);
         }
 
@@ -163,7 +179,7 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
                 if (classroomArr == null) {
                     return false;
                 }
-                List<SClassroom> classrooms = parseClasses(classroomArr);
+                List<SClassroom> classrooms = parseClassrooms(classroomArr);
                 mClassrooms.clear();
                 mClassrooms.addAll(classrooms);
                 // get class instances
@@ -178,7 +194,7 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
             return true;
         }
 
-        private List<SClassroom> parseClasses(JSONArray classroomsJsonArr) throws JSONException {
+        private List<SClassroom> parseClassrooms(JSONArray classroomsJsonArr) throws JSONException {
             int length = classroomsJsonArr.length();
             List<SClassroom> classrooms = new ArrayList<>(length);
             for (int i = 0; i < length; i++) {
@@ -315,12 +331,12 @@ public class SClassroomListActivity extends ClassroomListActivity implements Vie
 
         private String mClassCode;
         AddClassroomTask(String classCode) {
-            this.mClassCode = classCode;
+            mClassCode = classCode;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            CCRequestManager.getInstance(SClassroomListActivity.this).addSClassroom(mClassCode);
+            CCRequestManager.getInstance(mContext).addSClassroom(mClassCode);
             return true;
         }
 

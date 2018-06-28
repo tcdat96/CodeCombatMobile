@@ -14,7 +14,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity
+            android:name=".ui.MainActivity"
+            android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,18 +24,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.SplashScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.CodeEditorActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.SClassroomListActivity"
-            android:theme="@style/NoActionBar" />
-        <activity
-            android:name=".ui.TClassroomListActivity"
-            android:theme="@style/NoActionBar" />
         <activity
             android:name=".ui.ClassroomDetailActivity"
             android:screenOrientation="portrait" />
@@ -47,9 +46,6 @@
             android:name=".ui.GameMapActivity"
             android:screenOrientation="landscape"
             android:theme="@style/GameTheme" />
-        <activity
-            android:name=".ui.ProfileActivity"
-            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_classrooms"
+            android:icon="@drawable/ic_classroom_white_24dp"
+            android:title="@string/nav_title_classrooms" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_details_white_24dp"
+            android:title="@string/nav_title_profile" />
+    </group>
+
+    <item android:title="@string/nav_title_more">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings_white_24dp"
+                android:title="@string/nav_title_settings" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_about_white_24dp"
+                android:title="@string/nav_title_about" />
+        </menu>
+    </item>
+
+</menu>
