@@ -159,7 +159,7 @@ public abstract class Operation {
     public void removeOperation(Operation op) {
         int index = mChildren.indexOf(op);
         if (index >= 0) {
-            if (mChildren.get(index) instanceof Blank) {
+            if (op instanceof Blank) {
                 removeFromContainer();
             } else {
                 mChildren.set(index, new Blank());

@@ -221,7 +221,7 @@ public class CodeEditor extends FrameLayout {
         Operation container = mSelectedOperation.getContainer();
         if (container == null) {
             mOperations.remove(mSelectedOperation);
-            removeViewAt(index);
+            mCodeLines.removeViewAt(index);
         } else {
             container.removeOperation(mSelectedOperation);
             container.setOnClickListener(this);
@@ -278,7 +278,7 @@ public class CodeEditor extends FrameLayout {
     }
 
     private void updateOperationAt(int index) {
-        if (index < 0) {
+        if (index < 0 || index >= mOperations.size()) {
             return;
         }
 
