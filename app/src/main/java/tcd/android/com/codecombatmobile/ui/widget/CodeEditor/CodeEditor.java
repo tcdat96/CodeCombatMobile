@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.TextViewCompat;
@@ -13,7 +14,6 @@ import android.text.method.LinkMovementMethod;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -28,8 +28,8 @@ import tcd.android.com.codecombatmobile.ui.CodeEditorActivity;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Blank;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
-import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.VarDeclaration;
 import tcd.android.com.codecombatmobile.util.DataUtil;
+import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -51,12 +51,19 @@ public class CodeEditor extends FrameLayout {
     private EditText mUserInputEditText;
     private UserInputTextWatcher mTextWatcher;
 
+    /**
+     * an interface to update subscribers about the change of current selected operation
+     */
     public interface OnOperationChangedListener {
         void onOperationChangedListener(@Nullable Operation operation);
     }
 
     @Nullable
     private OnOperationChangedListener mOnOperationChangedListener = null;
+
+    // for keeping track of touch event
+    private boolean mIsPressing = false;
+
 
     public CodeEditor(Context context) {
         super(context);
@@ -113,12 +120,13 @@ public class CodeEditor extends FrameLayout {
         return mSelectedOperation;
     }
 
+
     /**
      * get displaying code to send to the editor
      * all indentation and blank will be trimmed off
      *
      * @return a list of code lines, with null indicating that the current line should be unindent-ed,
-     *          or null if code hasn't changed
+     * or null if code hasn't changed
      */
     @NonNull
     public List<String> getCode() {
@@ -150,13 +158,7 @@ public class CodeEditor extends FrameLayout {
     }
 
 
-    public void clear() {
-        mCodeLines.removeAllViews();
-        setSelectedOperation(null);
-        mOperations.clear();
-        display();
-    }
-
+    // CRUD operations
     public void addOperation(@NonNull Operation newOp) {
         addOperation(mOperations.size(), newOp);
     }
@@ -184,7 +186,7 @@ public class CodeEditor extends FrameLayout {
                     setSelectedOperation(null);
 
                     if (newOp instanceof UserInput) {
-                        displayUserInput(newOp);
+                        showUserInputDelayed(newOp);
                     }
                 } else {
                     Toast.makeText(getContext(), R.string.error_cannot_insert, Toast.LENGTH_SHORT).show();
@@ -193,6 +195,16 @@ public class CodeEditor extends FrameLayout {
             }
             updateOperationAt(curOpIndex);
         }
+    }
+
+    private void showUserInputDelayed(final Operation userInput) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setSelectedOperation(userInput);
+                displayUserInput(userInput);
+            }
+        }, 200);
     }
 
     public void removeOperation() {
@@ -218,13 +230,22 @@ public class CodeEditor extends FrameLayout {
         setSelectedOperation(null);
     }
 
+
+    // update operations on screen
+    public void clear() {
+        mCodeLines.removeAllViews();
+        setSelectedOperation(null);
+        mOperations.clear();
+        display();
+    }
+
     public void display() {
         for (int i = 0; i < mOperations.size(); i++) {
             updateOperationAt(i);
         }
     }
 
-    private void removeSelection() {
+    private void removeCurrentSelection() {
         if (mSelectedOperation != null) {
             Operation root = mSelectedOperation.getRoot();
             root.setOnClickListener(this);
@@ -240,6 +261,11 @@ public class CodeEditor extends FrameLayout {
             Operation root = prevOp.getRoot();
             int index = mOperations.indexOf(root);
             updateOperationAt(index);
+
+            // get out of input mode
+            if (prevOp instanceof UserInput) {
+                requestUserInputFocus(false);
+            }
         }
 
         Operation root = curOp.getRoot();
@@ -268,14 +294,6 @@ public class CodeEditor extends FrameLayout {
         mOperations.get(index).display(container);
     }
 
-    private void insertBlankOperationAt(int index) {
-        TextView container = getEditorTextView();
-        mCodeLines.addView(container, index);
-
-        Blank blank = new Blank();
-        addOperation(index, blank);
-    }
-
     private TextView getEditorTextView() {
         TextView textView = new TextView(getContext());
         textView.setLayoutParams(new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
@@ -285,7 +303,16 @@ public class CodeEditor extends FrameLayout {
         return textView;
     }
 
+    private void insertBlankOperationAt(int index) {
+        TextView container = getEditorTextView();
+        mCodeLines.addView(container, index);
 
+        Blank blank = new Blank();
+        addOperation(index, blank);
+    }
+
+
+    // user input operation
     private void displayUserInput(Operation operation) {
         if (operation instanceof UserInput) {
             final UserInput inputOp = (UserInput) operation;
@@ -296,7 +323,7 @@ public class CodeEditor extends FrameLayout {
             mUserInputEditText.setX(inputOp.getLeft());
             mUserInputEditText.setY(inputOp.getTop());
 
-            focusUserInput();
+            requestUserInputFocus(true);
             mUserInputEditText.setVisibility(VISIBLE);
 
             mUserInputEditText.removeTextChangedListener(mTextWatcher);
@@ -314,42 +341,51 @@ public class CodeEditor extends FrameLayout {
                         mUserInputEditText.setText(null);
                         mUserInputEditText.setVisibility(GONE);
 
-                        // validate variable name
-                        String newVarName = inputOp.getButtonName();
-                        if (!DataUtil.isVarNameValid(newVarName)) {
-                            String invalidNameMsg = String.format(getContext().getString(R.string.error_invalid_variable_name), newVarName);
-                            Toast.makeText(getContext(), invalidNameMsg, Toast.LENGTH_LONG).show();
-                            inputOp.reset();
-                            return;
-                        }
+                        if (inputOp.isVarDeclaration()) {
+                            // validate variable name
+                            String newVarName = inputOp.getButtonName();
+                            if (!validateVariableName(newVarName)) {
+                                return;
+                            }
 
-                        // update the variable list
-                        if (root instanceof VarDeclaration) {
+                            // update the variable list
                             if (mActivity != null) {
                                 mActivity.updateVariableButton(oldVarName, inputOp);
                             }
                         }
                     }
                 }
+
+                private boolean validateVariableName(String varName) {
+                    if (DataUtil.isVarNameValid(varName)) {
+                        return true;
+                    }
+
+                    String invalidNameMsg = String.format(getContext().getString(R.string.error_invalid_variable_name), varName);
+                    Toast.makeText(getContext(), invalidNameMsg, Toast.LENGTH_LONG).show();
+                    inputOp.reset();
+                    return true;
+                }
             });
         }
     }
 
-    private void focusUserInput() {
-        // show physical keyboard
-        mUserInputEditText.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
-        }
-
-        // hide virtual keyboard
-        if (mActivity != null) {
-            mActivity.setVirtualKeyboardVisibility(View.GONE);
+    private void requestUserInputFocus(boolean focus) {
+        if (focus) {
+            DisplayUtil.showPhysicalKeyboard(mUserInputEditText);
+            // hide virtual keyboard
+            if (mActivity != null) {
+                mActivity.setVirtualKeyboardVisibility(View.GONE);
+            }
+        } else {
+            DisplayUtil.hidePhysicalKeyboard(mUserInputEditText);
+            if (mActivity != null) {
+                mActivity.showVirtualKeyboard();
+            }
         }
     }
 
-    private boolean mIsPressing = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
@@ -358,29 +394,15 @@ public class CodeEditor extends FrameLayout {
                 return true;
             case MotionEvent.ACTION_UP:
                 if (mIsPressing) {
-                    // hide physical keyboard
-                    mUserInputEditText.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null) {
-                        imm.hideSoftInputFromWindow(mUserInputEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    }
-                    // pass click event to parent view
-                    if (getContext() instanceof OnClickListener) {
-                        ((OnClickListener) getContext()).onClick(this);
-                    }
+                    requestUserInputFocus(false);
 
                     // if user tap outside code
-                    Rect bounds = new Rect();
-                    int y = (int) event.getY();
-                    // TODO: 08/06/2018 should implement binary search instead of sequential search
-                    for (int i = 0; i < mCodeLines.getChildCount(); i++) {
-                        View view = mCodeLines.getChildAt(i);
-                        view.getHitRect(bounds);
-                        if (y > bounds.top && y < bounds.bottom) {
-                            // add new line
-                            removeSelection();
-                            insertBlankOperationAt(i + 1);
+                    int lineIndex = getUserTouchLineIndex(event);
+                    if (lineIndex >= 0) {
+                        if (!(mSelectedOperation instanceof UserInput)) {
+                            insertBlankOperationAt(lineIndex + 1);
                         }
+                        removeCurrentSelection();
                     }
 
                     mIsPressing = false;
@@ -392,6 +414,20 @@ public class CodeEditor extends FrameLayout {
             default:
         }
         return super.onTouchEvent(event);
+    }
+
+    private int getUserTouchLineIndex(MotionEvent event) {
+        Rect bounds = new Rect();
+        int y = (int) event.getY();
+        // TODO: 08/06/2018 should implement binary search instead of sequential search
+        for (int lineIndex = 0; lineIndex < mCodeLines.getChildCount(); lineIndex++) {
+            View view = mCodeLines.getChildAt(lineIndex);
+            view.getHitRect(bounds);
+            if (y > bounds.top && y < bounds.bottom) {
+                return lineIndex;
+            }
+        }
+        return -1;
     }
 
     private class UserInputTextWatcher implements TextWatcher {

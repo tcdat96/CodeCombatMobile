@@ -58,20 +58,20 @@
                         android:id="@+id/wv_game_level"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:visibility="invisible"
-                        android:focusable="false"/>
+                        android:focusable="false"
+                        android:visibility="invisible" />
 
                 </android.support.v7.widget.CardView>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/your_code"
                     android:textAllCaps="true"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    android:textColor="@color/keyboard_button_color"
-                    android:layout_marginBottom="4dp"/>
+                    android:textColor="@color/keyboard_button_color" />
 
                 <tcd.android.com.codecombatmobile.ui.widget.CodeEditor.CodeEditor
                     android:id="@+id/code_editor"
@@ -87,12 +87,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_play_arrow_white_24dp"
             android:tint="@android:color/white"
-            app:backgroundTint="@color/colorAccent"
-            app:fabSize="auto"
             android:visibility="invisible"
-            android:layout_margin="@dimen/fab_margin"/>
+            app:backgroundTint="@color/colorAccent"
+            app:fabSize="auto" />
 
     </FrameLayout>
 

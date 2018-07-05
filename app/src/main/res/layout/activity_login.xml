@@ -254,13 +254,15 @@
                 android:text="@string/or"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/white"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                android:visibility="gone" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/btn_google_sign_in"
                 android:layout_width="@dimen/sign_in_button_width"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone" />
 
         </LinearLayout>
 

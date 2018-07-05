@@ -36,9 +36,10 @@ public abstract class Operation {
             TYPE_VALUE = 5,
             TYPE_ASSIGNMENT = 6,
             TYPE_OPERATOR = 7,
-            TYPE_BLANK = 8;
+            TYPE_BLANK = 8,
+            TYPE_COMMENT = 9;
 
-    @IntDef({TYPE_FLOW_CONTROL, TYPE_DECLARATION, TYPE_VARIABLE, TYPE_FUNCTION, TYPE_METHOD, TYPE_VALUE, TYPE_ASSIGNMENT, TYPE_OPERATOR, TYPE_BLANK})
+    @IntDef({TYPE_FLOW_CONTROL, TYPE_DECLARATION, TYPE_VARIABLE, TYPE_FUNCTION, TYPE_METHOD, TYPE_VALUE, TYPE_ASSIGNMENT, TYPE_OPERATOR, TYPE_BLANK, TYPE_COMMENT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface SyntaxType {
     }
@@ -48,7 +49,7 @@ public abstract class Operation {
     private int mSyntaxType;
     protected Spannable mSpannable;
     private int mButtonColor = Color.BLACK;
-    private int mCodeColor = Color.BLACK;
+    protected int mCodeColor = Color.BLACK;
 
     protected boolean mReturnsValue = false;
     protected boolean mIsStatement = true;

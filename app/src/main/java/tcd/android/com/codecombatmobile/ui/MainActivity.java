@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         initUiComponents();
 
-        boolean isDebugging = false;
+        boolean isDebugging = true;
         if (!isDebugging) {
             Intent intent = new Intent(this, SplashScreenActivity.class);
             startActivityForResult(intent, RC_LOGIN_ATTEMPT);
@@ -59,13 +59,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Class[] activities = new Class[]{
                 LoginActivity.class,
                 MoreInfoTeacherActivity.class,
-                SClassroomListFragment.class,
-                TClassroomListFragment.class,
                 ClassroomDetailActivity.class,
                 CodeEditorActivity.class,
                 SettingsActivity.class,
-                GameMapActivity.class,
-                ProfileFragment.class
+                GameMapActivity.class
         };
         for (final Class activity : activities) {
             Button button = new Button(this);
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             rootContainer.addView(button);
         }
 
-//            startActivity(new Intent(this, ProfileFragment.class));
+            startActivity(new Intent(this, CodeEditorActivity.class));
     }
 
     private void initUiComponents() {

@@ -62,6 +62,8 @@ public class OperationFactory {
                 return new Assignment(name);
             case Operation.TYPE_OPERATOR:
                 return new Operator(name);
+            case Operation.TYPE_COMMENT:
+                return new Comment();
             case Operation.TYPE_BLANK:
                 throw new IllegalArgumentException("Blank type should not be used here");
             default:

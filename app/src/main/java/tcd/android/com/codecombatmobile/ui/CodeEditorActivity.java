@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
@@ -21,7 +20,6 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -50,6 +48,7 @@ import tcd.android.com.codecombatmobile.util.CodeConverter;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
 
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_ASSIGNMENT;
+import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_COMMENT;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_DECLARATION;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_FLOW_CONTROL;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_FUNCTION;
@@ -67,8 +66,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     public static final String ARG_COURSE_ID_DATA = "argCourseId";
     public static final String ARG_INSTANCE_ID_DATA = "argInstanceId";
 
-    private static OperationFactory mFactory = new OperationFactory();
-
     private ViewGroup mRootLayout;
     private FloatingActionButton mRunFab;
     private LinearLayout mKeyboardLayout;
@@ -76,6 +73,8 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     private CodeEditor mCodeEditor;
     private WebView mGameLevelWebView;
 
+    // syntax buttons
+    private static OperationFactory mFactory = new OperationFactory();
     private LinearLayout mButtonContainer;
     @NonNull
     private List<SyntaxButton> mSyntaxButtons = new ArrayList<>();
@@ -85,7 +84,11 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     @Nullable
     private Drawable mKeyboardDrawable;
 
-    private boolean mIsCompleted = false;
+    private boolean mIsLevelCompleted = false;
+
+    // for detecting changes in code
+    private List<String> mPrevCode = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,22 +109,16 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         String courseId = "560f1a9f22961295f9427742";
         String instanceId = "5b018b55137ddc2dc00c2407";
 
-        getKeyboardDrawable();
+        // get keyboard drawable
+        int tintColor = ContextCompat.getColor(this, R.color.keyboard_button_color);
+        mKeyboardDrawable = DisplayUtil.getDrawable(this, R.drawable.ic_keyboard_white_24, tintColor);
+
         initUiComponents();
 
-        initCookie();
         initWebView();
         String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
         String url = CCRequestManager.getInstance(this).getRequestUrl(path);
         mGameLevelWebView.loadUrl(url);
-    }
-
-    private void getKeyboardDrawable() {
-        mKeyboardDrawable = ContextCompat.getDrawable(this, R.drawable.ic_keyboard_white_24);
-        if (mKeyboardDrawable != null) {
-            mKeyboardDrawable = DrawableCompat.wrap(mKeyboardDrawable);
-            DrawableCompat.setTint(mKeyboardDrawable, ContextCompat.getColor(this, R.color.keyboard_button_color));
-        }
     }
 
     private void initUiComponents() {
@@ -148,13 +145,11 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         initVirtualKeyboard();
     }
 
-    private void initCookie() {
-        CookieManager.getInstance().setAcceptCookie(true);
-        CookieSyncManager.createInstance(this);
-        CookieSyncManager.getInstance().startSync();
-    }
 
+    // game webview
     private void initWebView() {
+        initCookie();
+
         final CCWebClient ccWebClient = new CCWebClient();
         mGameLevelWebView.setWebViewClient(ccWebClient);
 
@@ -170,6 +165,12 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         initWebSettings();
     }
 
+    private void initCookie() {
+        CookieManager.getInstance().setAcceptCookie(true);
+        CookieSyncManager.createInstance(this);
+        CookieSyncManager.getInstance().startSync();
+    }
+
     private void initWebSettings() {
         WebSettings webSettings = mGameLevelWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -181,22 +182,13 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         webSettings.setDisplayZoomControls(false);
     }
 
-    @JavascriptInterface
-    public void resizeLevelWebView(final float height) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // resize level WebView
-                CardView container = findViewById(R.id.cv_level_container);
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) container.getLayoutParams();
-                params.height = (int) height;
-                container.setLayoutParams(params);
-                // show run FAB
-                mRunFab.setVisibility(View.VISIBLE);
-            }
-        });
+    private void runJsFunc(String function) {
+        String url = "javascript:(function() { " + function + "})()";
+        mGameLevelWebView.loadUrl(url);
     }
 
+
+    // virtual keyboard
     private void initVirtualKeyboard() {
         mOpTypes = new ArrayList<>();
         mOpTypes.add(new OperationType(TYPE_FLOW_CONTROL, "return"));
@@ -224,6 +216,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         mOpTypes.add(new OperationType(TYPE_OPERATOR, "<="));
         mOpTypes.add(new OperationType(TYPE_OPERATOR, "&&"));
         mOpTypes.add(new OperationType(TYPE_OPERATOR, "||"));
+        mOpTypes.add(new OperationType(TYPE_COMMENT, "comment"));
 
         displayButtons();
 
@@ -372,6 +365,8 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         displayButtons();
     }
 
+
+    // built-in
     @Override
     public void onBackPressed() {
         if (mKeyboardLayout.getVisibility() == View.VISIBLE) {
@@ -379,7 +374,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
             return;
         }
         // return to game map
-        if (mIsCompleted) {
+        if (mIsLevelCompleted) {
             setResult(RESULT_OK);
         }
         super.onBackPressed();
@@ -394,19 +389,11 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.code_editor:
-                if (mKeyboardLayout.getVisibility() == View.GONE) {
-                    setVirtualKeyboardVisibility(View.VISIBLE);
-                    mKeyboardLayout.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mEditorScrollView.smoothScrollTo(0, mEditorScrollView.getHeight());
-                        }
-                    }, 500);
-                }
+                showVirtualKeyboard();
                 break;
             case R.id.fab_run:
-                mIsCompleted = false;
-                fillCodeEditor();
+                mIsLevelCompleted = false;
+                fillWebviewCodeEditor();
                 mRunFab.setVisibility(View.GONE);
                 break;
             case R.id.iv_hide_keyboard_button:
@@ -428,6 +415,18 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    public void showVirtualKeyboard() {
+        if (mKeyboardLayout.getVisibility() == View.GONE) {
+            setVirtualKeyboardVisibility(View.VISIBLE);
+            mKeyboardLayout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mEditorScrollView.smoothScrollTo(0, mEditorScrollView.getHeight());
+                }
+            }, 500);
+        }
+    }
+
     private void removeUserDefinedOperations() {
         for (int i = 0; i < mOpTypes.size(); i++) {
             if (!mOpTypes.get(i).isBuiltIn()) {
@@ -438,9 +437,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         displayButtons();
     }
 
-    private List<String> mPrevCode = null;
 
-    private void fillCodeEditor() {
+    // webview code editor
+    private void fillWebviewCodeEditor() {
         final List<String> code = mCodeEditor.getCode();
         if (code == mPrevCode) {
             String runFunc = "document.getElementsByClassName('cast-button')[0].click()";
@@ -468,7 +467,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        hidePhysicalKeyboard();
+                        DisplayUtil.hidePhysicalKeyboard(mGameLevelWebView);
                         dispatchKeyStroke(KeyEvent.KEYCODE_DPAD_RIGHT);
                     }
                 }, delayMillis * i);
@@ -479,7 +478,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public void run() {
                     // deselect current code
-                    dispatchKeyStroke(KeyEvent.KEYCODE_DPAD_RIGHT);
+                    dispatchKeyStroke(KeyEvent.KEYCODE_DEL);
 
 //                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //                        sendWithClipboard(code);
@@ -530,21 +529,27 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void hidePhysicalKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(mGameLevelWebView.getWindowToken(), 0);
-        }
-    }
-
     private void dispatchKeyStroke(final int code) {
         mGameLevelWebView.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, code));
         mGameLevelWebView.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, code));
     }
 
-    private void runJsFunc(String function) {
-        String url = "javascript:(function() { " + function + "})()";
-        mGameLevelWebView.loadUrl(url);
+
+    // webview client
+    @JavascriptInterface
+    public void resizeLevelWebView(final float height) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // resize level WebView
+                CardView container = findViewById(R.id.cv_level_container);
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) container.getLayoutParams();
+                params.height = (int) height;
+                container.setLayoutParams(params);
+                // show run FAB
+                mRunFab.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @JavascriptInterface
@@ -610,7 +615,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 mRunFab.setVisibility(View.VISIBLE);
                 // the code is correct
                 if (msg.contains("won")) {
-                    mIsCompleted = true;
+                    mIsLevelCompleted = true;
                 }
             }
 

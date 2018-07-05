@@ -1,5 +1,6 @@
 package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 
+import android.content.Context;
 import android.text.SpannableString;
 import android.widget.TextView;
 
@@ -20,11 +21,24 @@ public class UserInput extends Operation {
         return super.getButtonName().equals(BLANK_VALUE) ? "" : super.getButtonName();
     }
 
+    @Override
+    public void init(Context context) {
+        super.init(context);
+        if (mContainer != null) {
+            mCodeColor = mContainer.getCodeColor();
+        }
+        setSpannableColor();
+    }
+
     public void setName(String name) {
         mName = name;
         mSpannable = new SpannableString(name);
         setSpannableColor();
         setOnClickListener(mCodeEditor);
+    }
+
+    public boolean isVarDeclaration() {
+        return mContainer != null && mContainer instanceof VarDeclaration && mContainer.mChildren.indexOf(this) == 0;
     }
 
     public void reset() {
