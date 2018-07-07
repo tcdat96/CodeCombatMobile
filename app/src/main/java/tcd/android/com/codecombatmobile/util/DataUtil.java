@@ -12,6 +12,7 @@ import android.text.style.CharacterStyle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import tcd.android.com.codecombatmobile.R;
@@ -107,6 +108,51 @@ public class DataUtil {
         editor.commit();
     }
 
+
+    // string helper
+    public static boolean containsAll(String string, String... values) {
+        for (String value : values) {
+            if (!string.contains(value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean containsAtLeast(String string, String... values) {
+        for (String value : values) {
+            if (string.contains(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<String> split(String string, String... delimiters) {
+        StringBuilder builder = new StringBuilder("[");
+        for (String delimiter : delimiters) {
+            builder.append(delimiter);
+        }
+        builder.append("]");
+        return split(string, builder.toString());
+    }
+
+    public static List<String> split(String string, String regex) {
+        String[] tokens = string.split(regex);
+        List<String> parts = new ArrayList<>(Arrays.asList(tokens));
+        parts.removeAll(Collections.singleton(""));
+        return parts;
+    }
+
+    public static int indexOfAny(String line, String... values) {
+        for (String value : values) {
+            int index = line.indexOf(value);
+            if (index > -1) {
+                return index;
+            }
+        }
+        return -1;
+    }
 
     // misc
     public static void removeAllSpans(Spannable spannable) {

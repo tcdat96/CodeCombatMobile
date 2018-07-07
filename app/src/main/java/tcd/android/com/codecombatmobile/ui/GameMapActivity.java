@@ -227,7 +227,7 @@ public class GameMapActivity extends AppCompatActivity {
             try {
                 User user = DataUtil.getUserData(GameMapActivity.this);
                 if (user != null) {
-                    JSONArray sessionsObj = mManager.requestLevelSessionsSync(mClassroom.getInstanceId(), user.getId());
+                    JSONArray sessionsObj = mManager.requestCourseLevelSessionsSync(mClassroom.getInstanceId(), user.getId());
                     if (sessionsObj != null) {
                         mLevelSessions = CCDataUtil.parseLevelSessions(sessionsObj);
                     }

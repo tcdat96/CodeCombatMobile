@@ -308,7 +308,7 @@ public class CCRequestManager {
         return result;
     }
 
-    public JSONArray requestLevelSessionsSync(String instanceId, String userId) {
+    public JSONArray requestCourseLevelSessionsSync(String instanceId, String userId) {
         String path = String.format(
                 "/db/course_instance/%s/course-level-sessions/%s?project=state.complete%%2Clevel.original",
                 instanceId,
@@ -352,6 +352,17 @@ public class CCRequestManager {
     // game map
     public JSONObject requestCampaignSync(String campaignId) {
         String path = "/db/campaign/" + campaignId;
+        RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
+        return getResponse(future);
+    }
+
+    // game level
+    public JSONObject requestLevelSessionSync(String levelId, String courseId, String instanceId) {
+        String path = String.format(Locale.getDefault(), "/db/level/%s/session?course=%s&courseInstance=%s&_=%d",
+                levelId,
+                courseId,
+                instanceId,
+                System.currentTimeMillis());
         RequestFuture<JSONObject> future = sendRequestSync(GET, path, new JSONObject());
         return getResponse(future);
     }

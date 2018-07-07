@@ -4,7 +4,9 @@ import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,8 +34,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +48,7 @@ import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFac
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.OperationFactory.OperationType;
 import tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.UserInput;
 import tcd.android.com.codecombatmobile.ui.widget.SyntaxButton;
+import tcd.android.com.codecombatmobile.util.CCDataUtil;
 import tcd.android.com.codecombatmobile.util.CCRequestManager;
 import tcd.android.com.codecombatmobile.util.CodeConverter;
 import tcd.android.com.codecombatmobile.util.DisplayUtil;
@@ -53,7 +58,6 @@ import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Opera
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_DECLARATION;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_FLOW_CONTROL;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_FUNCTION;
-import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_METHOD;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_OPERATOR;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VALUE;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VARIABLE;
@@ -87,6 +91,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 
     private boolean mIsLevelCompleted = false;
 
+    @Nullable
+    private GetCodeSnippetTask mAsyncTask;
+
     // for detecting changes in code
     private List<String> mPrevCode = null;
 
@@ -97,18 +104,18 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_code_editor);
 
         // get level data
-//        Intent data = getIntent();
-//        String levelId = data != null && data.hasExtra(ARG_LEVEL_ID_DATA) ? data.getStringExtra(ARG_LEVEL_ID_DATA) : null;
-//        String courseId = data != null && data.hasExtra(ARG_COURSE_ID_DATA) ? data.getStringExtra(ARG_COURSE_ID_DATA) : null;
-//        String instanceId = data != null && data.hasExtra(ARG_INSTANCE_ID_DATA) ? data.getStringExtra(ARG_INSTANCE_ID_DATA) : null;
-//        if (levelId == null || courseId == null || instanceId == null) {
-//            Toast.makeText(this, R.string.error_get_data_message, Toast.LENGTH_SHORT).show();
-//            finish();
-//            return;
-//        }
-        String levelId = "gems-in-the-deep";
-        String courseId = "560f1a9f22961295f9427742";
-        String instanceId = "5b018b55137ddc2dc00c2407";
+        Intent data = getIntent();
+        String levelId = data != null && data.hasExtra(ARG_LEVEL_ID_DATA) ? data.getStringExtra(ARG_LEVEL_ID_DATA) : null;
+        String courseId = data != null && data.hasExtra(ARG_COURSE_ID_DATA) ? data.getStringExtra(ARG_COURSE_ID_DATA) : null;
+        String instanceId = data != null && data.hasExtra(ARG_INSTANCE_ID_DATA) ? data.getStringExtra(ARG_INSTANCE_ID_DATA) : null;
+        if (levelId == null || courseId == null || instanceId == null) {
+            Toast.makeText(this, R.string.error_get_data_message, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+//        String levelId = "gems-in-the-deep";
+//        String courseId = "560f1a9f22961295f9427742";
+//        String instanceId = "5b018b55137ddc2dc00c2407";
 
         // get keyboard drawable
         int tintColor = ContextCompat.getColor(this, R.color.keyboard_button_color);
@@ -120,6 +127,9 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         String path = String.format("/play/level/%s?course=%s&course-instance=%s", levelId, courseId, instanceId);
         String url = CCRequestManager.getInstance(this).getRequestUrl(path);
         mGameLevelWebView.loadUrl(url);
+
+        mAsyncTask = new GetCodeSnippetTask(levelId, courseId, instanceId);
+        mAsyncTask.execute();
     }
 
     private void initUiComponents() {
@@ -450,7 +460,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
             runJsFunc(restartFunc);
             final Handler handler = new Handler();
 
-            int delayMillis = 250;
             // then confirm restart all
             handler.postDelayed(new Runnable() {
                 @Override
@@ -460,18 +469,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                     String clickEditorFunc = "document.getElementById('code-area').click()";
                     runJsFunc(clickEditorFunc);
                 }
-            }, delayMillis);
-
-            // hide keyboard and suggestions
-            for (int i = 1; i < 8; i++) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        DisplayUtil.hidePhysicalKeyboard(mGameLevelWebView);
-                        dispatchKeyStroke(KeyEvent.KEYCODE_DPAD_RIGHT);
-                    }
-                }, delayMillis * i);
-            }
+            }, 250);
 
             // then...
             handler.postDelayed(new Runnable() {
@@ -485,8 +483,16 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
 //                        return;
 //                    }
                     sendWithCharacterMap(code);
+
+                    // hide suggestions
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            dispatchKeyStroke(KeyEvent.KEYCODE_ESCAPE);
+                        }
+                    }, 1000);
                 }
-            }, delayMillis * 5);
+            }, 2000);
 
             // run the code
             handler.postDelayed(new Runnable() {
@@ -495,7 +501,7 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                     String runFunc = "document.getElementsByClassName('cast-button')[0].click()";
                     runJsFunc(runFunc);
                 }
-            }, delayMillis * 6);
+            }, 3000);
         }
 
         mPrevCode = code;
@@ -670,6 +676,62 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
                 }
             };
             handler.post(runnable);
+        }
+    }
+
+
+    // get code snippet
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAsyncTask != null) {
+            mAsyncTask.cancel(true);
+        }
+    }
+
+    private class GetCodeSnippetTask extends AsyncTask<Void, Void, List<Operation>> {
+
+        private String mLevelId, mCourseId, mInstId;
+
+        GetCodeSnippetTask(String levelId, String courseId, String instanceId) {
+            this.mLevelId = levelId;
+            this.mCourseId = courseId;
+            this.mInstId = instanceId;
+        }
+
+        @Override
+        protected List<Operation> doInBackground(Void... voids) {
+            CCRequestManager manager = CCRequestManager.getInstance(CodeEditorActivity.this);
+            try {
+                JSONObject session = manager.requestLevelSessionSync(mLevelId, mCourseId, mInstId);
+                if (session != null) {
+                    String snippet = CCDataUtil.getInitialCodeSnippet(session);
+                    if (snippet != null) {
+                        String[] lines = snippet.split("\\r?\\n");
+                        return CodeConverter.getOperationsFromString(lines);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Operation> operations) {
+            super.onPostExecute(operations);
+            mAsyncTask = null;
+            if (operations != null) {
+                for (Operation operation : operations) {
+                    mCodeEditor.addOperation(operation);
+                }
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            mAsyncTask = null;
         }
     }
 }

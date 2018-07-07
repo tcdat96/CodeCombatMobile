@@ -117,6 +117,9 @@ public abstract class Operation {
 
 
     public void setOnClickListener(CodeEditor codeEditor) {
+        if (codeEditor == null) {
+            return;
+        }
         mCodeEditor = codeEditor;
         init(codeEditor.getContext());
 

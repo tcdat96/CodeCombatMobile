@@ -2,6 +2,9 @@ package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 
 import android.widget.TextView;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by ADMIN on 23/04/2018.
  */
@@ -12,6 +15,11 @@ public class Expression extends Operation {
         // TODO: 28/05/2018 why value type?
         super("Expression", TYPE_VALUE);
         mChildren.add(operation);
+    }
+
+    public Expression(List<Operation> operands) {
+        super("Expression", TYPE_VALUE);
+        mChildren.addAll(operands);
     }
 
     private void add(int index, Operator operator) {

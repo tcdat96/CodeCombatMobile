@@ -4,6 +4,8 @@ import android.text.SpannableString;
 import android.widget.TextView;
 
 import java.lang.Object;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by ADMIN on 26/04/2018.
@@ -19,6 +21,13 @@ public class Function extends Operation {
         for (int i = 0; i < paramTotal; i++) {
             mChildren.add(new Blank());
         }
+    }
+
+    public Function(String name, Operation[] parameters) {
+        this(name, parameters.length);
+
+        mChildren.clear();
+        mChildren.addAll(Arrays.asList(parameters));
     }
 
     public int getParamTotal() {

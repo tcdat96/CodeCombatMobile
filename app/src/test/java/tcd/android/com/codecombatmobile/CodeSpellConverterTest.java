@@ -15,7 +15,7 @@ import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Opera
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_METHOD;
 import static tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax.Operation.TYPE_VARIABLE;
 
-public class CodeConverterTest {
+public class CodeSpellConverterTest {
     @Test
     public void convert_withoutVar() {
         String lines[] = new String[]{

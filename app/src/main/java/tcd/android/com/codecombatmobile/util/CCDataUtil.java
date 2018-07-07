@@ -1,6 +1,7 @@
 package tcd.android.com.codecombatmobile.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -213,6 +214,21 @@ public class CCDataUtil {
             sessions.add(session);
         }
         return sessions;
+    }
+
+    // game level
+    @Nullable
+    public static String getInitialCodeSnippet(@NonNull JSONObject session) throws JSONException {
+        if (session.has("code")) {
+            JSONObject code = session.getJSONObject("code");
+            if (code.has("hero-placeholder")) {
+                JSONObject placeholder = code.getJSONObject("hero-placeholder");
+                if (placeholder.has("plan")) {
+                    return placeholder.getString("plan");
+                }
+            }
+        }
+        return null;
     }
 
     // profile

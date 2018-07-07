@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 public class Operator extends Operation {
 
+    public static String[] OPERATORS = new String[] {"+", "-", /*"*",*/ "/", "%", "^", "&", "|"};
+
     public Operator(String operator) {
         super(operator, TYPE_OPERATOR);
         mSpannable = new SpannableString(operator);

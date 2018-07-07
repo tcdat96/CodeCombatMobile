@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 public class Assignment extends Operation {
 
+    public static String[] ASSIGMENT_OPERATORS = new String[] {"=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^="};
+
     public Assignment(String assignment) {
         super(assignment, TYPE_ASSIGNMENT);
         mSpannable = new SpannableString(assignment);
@@ -18,6 +20,14 @@ public class Assignment extends Operation {
         mChildren = new ArrayList<>(2);
         mChildren.add(new Blank());
         mChildren.add(new Blank());
+    }
+
+    public Assignment(String assignment, Variable variable, Expression expression) {
+        this(assignment);
+
+        mChildren.clear();
+        mChildren.add(variable);
+        mChildren.add(expression);
     }
 
     public void modifyAssignment(String assignment) {

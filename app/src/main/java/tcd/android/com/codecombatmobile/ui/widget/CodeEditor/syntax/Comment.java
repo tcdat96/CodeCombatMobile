@@ -11,6 +11,11 @@ public class Comment extends Operation {
         mChildren.add(new UserInput());
     }
 
+    public Comment(String comment) {
+        this();
+        ((UserInput)mChildren.get(0)).setName(comment);
+    }
+
     @Override
     public void display(TextView container) {
         container.append(mSpannable);

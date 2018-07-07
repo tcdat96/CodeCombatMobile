@@ -16,23 +16,31 @@ public class Object extends Variable {
         mChildren.add(new Variable(name));
     }
 
-    public void addMethods(@NonNull List<String> methods) {
+    public Object(@NonNull String name, @NonNull Method method) {
+        this(name);
+        mChildren.add(method);
+    }
+
+    public void addMethodSignature(@NonNull List<String> methods) {
         mMethods.addAll(new ArrayList<>(methods));
     }
 
-    private void setMethod(Function method) {
+    public void setCurrentMethod(Function method) {
         if (mChildren.size() > 1) {
             mChildren.remove(1);
         }
         mChildren.add(method);
     }
 
+    public Method getCurrentMethod() {
+        return (Method) mChildren.get(0);
+    }
 
     @Override
     public boolean replaceOperation(Operation oldOp, Operation newOp) {
         int index = getReplacementIndex(oldOp, newOp);
         if (index >= 0 && newOp instanceof Function) {
-            setMethod((Function) newOp);
+            setCurrentMethod((Function) newOp);
             return true;
         }
         return false;
