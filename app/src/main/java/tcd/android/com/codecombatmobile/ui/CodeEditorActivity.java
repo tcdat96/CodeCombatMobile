@@ -33,6 +33,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -194,7 +195,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
         mOpTypes.add(new OperationType(TYPE_FLOW_CONTROL, "return"));
         mOpTypes.add(new OperationType(TYPE_DECLARATION, "var"));
         mOpTypes.add(new OperationType(TYPE_DECLARATION, "func"));
-        mOpTypes.add(new OperationType(TYPE_VARIABLE, "hero"));
         mOpTypes.add(new OperationType(TYPE_VALUE, "True"));
         mOpTypes.add(new OperationType(TYPE_VALUE, "False"));
         mOpTypes.add(new OperationType(TYPE_VALUE, "null"));
@@ -556,25 +556,6 @@ public class CodeEditorActivity extends AppCompatActivity implements View.OnClic
     public void retrieveMethods(String functions) {
         String[] lines = functions.split("\\r?\\n");
         List<OperationType> types = CodeConverter.getTypesFromString(lines);
-
-        // get hero object
-        OperationType heroType = null;
-        for (OperationType type : mOpTypes) {
-            if (type.getSyntaxType() == TYPE_VARIABLE && type.getName().equals("hero")) {
-                heroType = type;
-            }
-        }
-
-        // add methods to hero object
-        if (heroType != null) {
-            List<java.lang.Object> methods = new ArrayList<>();
-            for (OperationType type : types) {
-                if (type.getSyntaxType() == TYPE_METHOD) {
-                    methods.add(type.getName() + "/" + type.getData().get(0));
-                }
-            }
-            heroType.setData(methods);
-        }
 
         // add to current types
         int i = 0;

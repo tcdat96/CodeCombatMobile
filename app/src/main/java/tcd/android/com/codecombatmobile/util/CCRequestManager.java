@@ -70,8 +70,26 @@ public class CCRequestManager {
     public String getRequestUrl(String path) {
         String protocol = "http://";
         String domainName = "codecombat.eastus.cloudapp.azure.com:3000";
+//        String domainName = getIpAddress() + ":3000";
         return protocol + domainName + path;
     }
+
+    private String getIpAddress() {
+        if (Build.MANUFACTURER.contains("Genymotion")) {
+            return "10.0.3.2";
+        } else if (Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                || "google_sdk".equals(Build.PRODUCT)) {
+            return "10.0.2.2";
+        } else {
+            return "127.0.0.1";
+        }
+    }
+
 
     public String getFileUrl(String path) {
         return getRequestUrl("/file/" + path);

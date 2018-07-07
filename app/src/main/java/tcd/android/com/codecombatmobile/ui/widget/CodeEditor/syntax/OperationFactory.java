@@ -3,6 +3,7 @@ package tcd.android.com.codecombatmobile.ui.widget.CodeEditor.syntax;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,17 +84,17 @@ public class OperationFactory {
             mName = name;
         }
 
-        public OperationType(@Operation.SyntaxType int syntaxType, String name, @NonNull List<java.lang.Object> data) {
-            this(syntaxType, name);
-            mData = data;
-        }
-
         public OperationType(@Operation.SyntaxType int syntaxType, String name, java.lang.Object data) {
-            this(syntaxType, name, new ArrayList<>(Collections.singletonList(data)));
+            this(syntaxType, name);
+            setData(new ArrayList<>(Collections.singletonList(data)));
         }
 
         public void setData(@NonNull List<java.lang.Object> data) {
             mData = data;
+        }
+
+        public void addData(@NonNull java.lang.Object data) {
+            mData.add(data);
         }
 
         public int getSyntaxType() {
@@ -105,7 +106,7 @@ public class OperationFactory {
         }
 
         public List<java.lang.Object> getData() {
-            return mData;
+            return mData != null ? new ArrayList<>(mData) : new ArrayList<>();
         }
 
         public boolean isBuiltIn() {

@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         initUiComponents();
 
-        boolean isDebugging = true;
+        boolean isDebugging = false;
         if (!isDebugging) {
             Intent intent = new Intent(this, SplashScreenActivity.class);
             startActivityForResult(intent, RC_LOGIN_ATTEMPT);
